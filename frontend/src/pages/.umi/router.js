@@ -120,18 +120,42 @@ models: () => [
         ]
       },
       {
-        "path": "/new",
-        "name": "new",
-        "icon": "dashboard",
-        "component": _dvaDynamic({
-  
-  component: () => import(/* webpackChunkName: "p__new" */'../new'),
+        "path": "/hbase",
+        "name": "hbase",
+        "icon": "database",
+        "routes": [
+          {
+            "path": "/hbase/adminOperation",
+            "name": "adminOperation",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__HBase__adminOperation" */'../HBase/adminOperation'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
-        "authority": [
-          "admin"
-        ],
-        "exact": true
+            "exact": true
+          },
+          {
+            "path": "/hbase/tableOperation",
+            "name": "tableOperation",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__HBase__tableOperation" */'../HBase/tableOperation'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
+          }
+        ]
       },
       {
         "name": "exception",

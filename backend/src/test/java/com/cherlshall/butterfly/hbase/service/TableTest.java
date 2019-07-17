@@ -1,6 +1,7 @@
-package com.cherlshall.butterfly;
+package com.cherlshall.butterfly.hbase.service;
 
-import com.cherlshall.butterfly.service.user.UserService;
+import com.cherlshall.butterfly.entity.hbase.HBaseTable;
+import com.cherlshall.butterfly.service.hbase.TableOperationService;
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,15 +11,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserTests {
+public class TableTest {
 
     @Autowired
-    private UserService userService;
+    TableOperationService service;
 
     @Test
-    public void getUsers() {
-        ResponseVO responseVO = userService.login("admin", "111111");
-        System.out.println(responseVO);
+    public void findAll() {
+        ResponseVO<HBaseTable> test = service.findByPage("test", null, 10);
+        System.out.println(test);
     }
-
 }

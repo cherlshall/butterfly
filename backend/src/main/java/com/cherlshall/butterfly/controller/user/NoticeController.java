@@ -1,6 +1,6 @@
-package com.cherlshall.butterfly.controller;
+package com.cherlshall.butterfly.controller.user;
 
-import com.cherlshall.butterfly.service.NoticeService;
+import com.cherlshall.butterfly.service.user.NoticeService;
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

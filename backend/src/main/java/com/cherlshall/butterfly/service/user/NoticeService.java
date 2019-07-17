@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.service;
+package com.cherlshall.butterfly.service.user;
 
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 

@@ -27,6 +27,7 @@ public class WebJavaBeanConfiguration {
                 registry.addInterceptor(loginInterceptor)
                         .addPathPatterns("/user/currentUser")
                         .addPathPatterns("/notice/notices");
+//                        .addPathPatterns("/hbase/**");
             }
         };
     }

@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.entity;
+package com.cherlshall.butterfly.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

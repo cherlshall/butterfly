@@ -39,5 +39,7 @@ export default {
   'menu.account.trigger': '触发报错',
   'menu.account.logout': '退出登录',
   'menu.account.login': '登录',
-  'menu.new': '新页面',
+  'menu.hbase': 'HBase',
+  'menu.hbase.adminOperation': '管理员操作',
+  'menu.hbase.tableOperation': '表格操作',
 };

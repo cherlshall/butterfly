@@ -1,8 +1,8 @@
-package com.cherlshall.butterfly.mapper;
+package com.cherlshall.butterfly.dao.user;
 
-import com.cherlshall.butterfly.entity.User;
-import com.cherlshall.butterfly.entity.UserDetail;
-import com.cherlshall.butterfly.entity.UserTag;
+import com.cherlshall.butterfly.entity.user.User;
+import com.cherlshall.butterfly.entity.user.UserDetail;
+import com.cherlshall.butterfly.entity.user.UserTag;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public interface UserMapper {
     @Select("select * from user where id = #{id}")
     @Results({
             @Result(column = "id", property = "tags", javaType = List.class,
-            many = @Many(select = "com.cherlshall.butterfly.mapper.UserMapper.getTagsByUserId"))
+            many = @Many(select = "com.cherlshall.butterfly.dao.user.UserMapper.getTagsByUserId"))
     })
     UserDetail getUserDetailById(int id);
 }

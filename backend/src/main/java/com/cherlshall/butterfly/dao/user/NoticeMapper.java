@@ -1,6 +1,6 @@
-package com.cherlshall.butterfly.mapper;
+package com.cherlshall.butterfly.dao.user;
 
-import com.cherlshall.butterfly.entity.Notice;
+import com.cherlshall.butterfly.entity.user.Notice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

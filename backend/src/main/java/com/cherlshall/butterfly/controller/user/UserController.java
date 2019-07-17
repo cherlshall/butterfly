@@ -1,8 +1,8 @@
-package com.cherlshall.butterfly.controller;
+package com.cherlshall.butterfly.controller.user;
 
-import com.cherlshall.butterfly.entity.UserDetail;
-import com.cherlshall.butterfly.entity.UserLogin;
-import com.cherlshall.butterfly.service.UserService;
+import com.cherlshall.butterfly.entity.user.UserDetail;
+import com.cherlshall.butterfly.entity.user.UserLogin;
+import com.cherlshall.butterfly.service.user.UserService;
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

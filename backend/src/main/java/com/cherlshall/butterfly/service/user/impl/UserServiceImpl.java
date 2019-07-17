@@ -1,11 +1,11 @@
-package com.cherlshall.butterfly.service.impl;
+package com.cherlshall.butterfly.service.user.impl;
 
 import com.cherlshall.butterfly.cache.GeographicConfig;
-import com.cherlshall.butterfly.entity.Geographic;
-import com.cherlshall.butterfly.entity.User;
-import com.cherlshall.butterfly.entity.UserDetail;
-import com.cherlshall.butterfly.mapper.UserMapper;
-import com.cherlshall.butterfly.service.UserService;
+import com.cherlshall.butterfly.entity.user.Geographic;
+import com.cherlshall.butterfly.entity.user.User;
+import com.cherlshall.butterfly.entity.user.UserDetail;
+import com.cherlshall.butterfly.dao.user.UserMapper;
+import com.cherlshall.butterfly.service.user.UserService;
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -40,11 +40,22 @@ export default [
         ],
       },
       {
-        path: '/new',
-        name: 'new',
-        icon: 'dashboard',
-        component: './new',
-        authority: ['admin'],
+        path: '/hbase',
+        name: 'hbase',
+        icon: 'database',
+        routes: [
+          {
+            path: '/hbase/adminOperation',
+            name: 'adminOperation',
+            component: './HBase/adminOperation',
+          },
+          {
+            path: '/hbase/tableOperation',
+            name: 'tableOperation',
+            component: './HBase/tableOperation',
+          },
+        ],
+        // authority: ['admin'],
       },
       {
         name: 'exception',

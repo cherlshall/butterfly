@@ -1,7 +1,7 @@
-package com.cherlshall.butterfly.service;
+package com.cherlshall.butterfly.service.user;
 
 import com.cherlshall.butterfly.util.vo.ResponseVO;
-import com.cherlshall.butterfly.entity.UserDetail;
+import com.cherlshall.butterfly.entity.user.UserDetail;
 
 import java.util.Map;
 

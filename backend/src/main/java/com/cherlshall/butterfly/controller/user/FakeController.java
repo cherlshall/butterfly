@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.controller;
+package com.cherlshall.butterfly.controller.user;
 
 import com.cherlshall.butterfly.cache.FakeConfig;
 import org.springframework.web.bind.annotation.RequestMapping;

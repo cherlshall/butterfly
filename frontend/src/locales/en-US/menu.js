@@ -39,4 +39,7 @@ export default {
   'menu.account.trigger': 'Trigger Error',
   'menu.account.logout': 'Logout',
   'menu.account.login': 'Login',
+  'menu.hbase': 'HBase',
+  'menu.hbase.adminOperation': 'Admin Operation',
+  'menu.hbase.tableOperation': 'Table Operation',
 };

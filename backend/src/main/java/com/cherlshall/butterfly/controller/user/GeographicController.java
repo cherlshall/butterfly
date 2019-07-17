@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.controller;
+package com.cherlshall.butterfly.controller.user;
 
 import com.cherlshall.butterfly.cache.GeographicConfig;
 import org.springframework.web.bind.annotation.PathVariable;
