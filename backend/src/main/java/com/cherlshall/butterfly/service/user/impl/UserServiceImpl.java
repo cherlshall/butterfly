@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserService {
             result.put("status", "error");
             result.put("type", "account");
             result.put("currentAuthority", "guest");
-            return ResponseVO.ofFailure(result);
+            ResponseVO<Map> responseVO = ResponseVO.ofFailure("login failure");
+            responseVO.setData(result);
+            return responseVO;
         }
     }
 

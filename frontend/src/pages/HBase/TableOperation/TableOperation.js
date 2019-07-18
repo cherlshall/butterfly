@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio } from 'antd';
-import styles from './TableOperation.less';
+import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ResizableTable from "@/mycomponents/ResizableTable";
+import styles from './TableOperation.less';
+
+const { Option } = Select;
 
 @connect(({ tableOperation, loading }) => ({
   tableOperation,
@@ -28,7 +30,6 @@ class TableOperation extends PureComponent {
   findFirstPage = (tableName) => {
     this.setState({
       lastRowKey: '',
-      currentTableName: tableName,
     }, () => this.findByPage(tableName, true))
   }
 
@@ -79,6 +80,12 @@ class TableOperation extends PureComponent {
     });
   };
 
+  changePageSize = (value) => {
+    this.setState({
+      pageSize: value,
+    }, () => this.findFirstPage(this.state.currentTableName))
+  }
+
   render() {
 
     const { tableOperation, loading } = this.props;
@@ -110,8 +117,13 @@ class TableOperation extends PureComponent {
           pagination={false}
         />
         <div style={{width: '100%', textAlign: 'right', marginTop: 12}}>
+          <Select style={{ width: 100 }} value={pageSize} onChange={this.changePageSize}>
+            <Option value={10}>10 items</Option>
+            <Option value={30}>30 items</Option>
+            <Option value={50}>50 items</Option>
+          </Select>
           {(!onFirstPage) && 
-            <Button type='primary' onClick={() => this.findFirstPage(currentTableName)}>
+            <Button type='primary' style={{marginLeft: 12}} onClick={() => this.findFirstPage(currentTableName)}>
               FIRST
             </Button>}
           {dataSource.length >= pageSize && 

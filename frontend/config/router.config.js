@@ -47,12 +47,12 @@ export default [
           {
             path: '/hbase/adminOperation',
             name: 'adminOperation',
-            component: './HBase/adminOperation',
+            component: './HBase/AdminOperation/AdminOperation',
           },
           {
             path: '/hbase/tableOperation',
             name: 'tableOperation',
-            component: './HBase/tableOperation',
+            component: './HBase/TableOperation/TableOperation',
           },
         ],
         // authority: ['admin'],

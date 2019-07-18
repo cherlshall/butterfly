@@ -1,17 +1,23 @@
 package com.cherlshall.butterfly.dao.hbase.impl;
 
 import com.cherlshall.butterfly.dao.hbase.AdminOperationDao;
+import com.cherlshall.butterfly.entity.hbase.HTableDetail;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.exceptions.DeserializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class AdminOperationDaoImpl implements AdminOperationDao {
@@ -40,7 +46,9 @@ public class AdminOperationDaoImpl implements AdminOperationDao {
         try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
              Admin admin = connection.getAdmin()) {
             TableName tn = TableName.valueOf(tableName);
-            admin.disableTable(tn);
+            if (admin.isTableDisabled(tn)) {
+                admin.disableTable(tn);
+            }
             admin.deleteTable(tn);
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,15 +58,14 @@ public class AdminOperationDaoImpl implements AdminOperationDao {
     }
 
     @Override
-    public boolean exist(String tableName) {
+    public Boolean exist(String tableName) {
         try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
              Admin admin = connection.getAdmin()) {
-            admin.tableExists(TableName.valueOf(tableName));
+            return admin.tableExists(TableName.valueOf(tableName));
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
     }
 
     @Override
@@ -75,5 +82,102 @@ public class AdminOperationDaoImpl implements AdminOperationDao {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<HTableDetail> detail() {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            HTableDescriptor[] hTables = admin.listTables();
+            List<HTableDetail> tables = new ArrayList<>();
+            for (HTableDescriptor hTable : hTables) {
+                HTableDetail detail = new HTableDetail();
+                detail.setTableName(hTable.getNameAsString());
+                detail.setReadOnly(hTable.isReadOnly());
+                detail.setRegionReplication(hTable.getRegionReplication());
+                detail.setDisable(admin.isTableDisabled(hTable.getTableName()));
+                Set<byte[]> familiesKeys = hTable.getFamiliesKeys();
+                List<String> families = new ArrayList<>();
+                detail.setFamilies(families);
+                for (byte[] key : familiesKeys) {
+                    families.add(new String(key));
+                }
+                tables.add(detail);
+            }
+            return tables;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean disable(String tableName) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            admin.disableTable(TableName.valueOf(tableName));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean enable(String tableName) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            admin.enableTable(TableName.valueOf(tableName));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean isDisable(String tableName) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            return admin.isTableDisabled(TableName.valueOf(tableName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean existFamily(String tableName, String family) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            return admin.getTableDescriptor(TableName.valueOf(tableName)).hasFamily(family.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean addFamily(String tableName, String family) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            admin.addColumn(TableName.valueOf(tableName), new HColumnDescriptor(family));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteFamily(String tableName, String family) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            admin.deleteColumn(TableName.valueOf(tableName), family.getBytes());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

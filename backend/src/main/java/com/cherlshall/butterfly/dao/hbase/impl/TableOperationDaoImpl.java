@@ -39,12 +39,19 @@ public class TableOperationDaoImpl implements TableOperationDao {
     }
 
     @Override
-    public int delete() {
-        return 0;
+    public int delete(String tableName, String rowName) {
+        return 1;
     }
 
     @Override
-    public int update() {
-        return 0;
+    public int delete(String tableName, String rowName, String familyName, String qualifier) {
+        template.delete(tableName, rowName, familyName, qualifier);
+        return 1;
+    }
+
+    @Override
+    public int update(String tableName, String rowName, String familyName, String qualifier, String value) {
+        template.put(tableName, rowName, familyName, qualifier, value.getBytes());
+        return 1;
     }
 }

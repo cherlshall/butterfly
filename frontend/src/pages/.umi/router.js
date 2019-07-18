@@ -133,7 +133,7 @@ models: () => [
   import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
   import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__HBase__adminOperation" */'../HBase/adminOperation'),
+  component: () => import(/* webpackChunkName: "p__HBase__AdminOperation__AdminOperation" */'../HBase/AdminOperation/AdminOperation'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true
@@ -147,7 +147,7 @@ models: () => [
   import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
   import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__HBase__tableOperation" */'../HBase/tableOperation'),
+  component: () => import(/* webpackChunkName: "p__HBase__TableOperation__TableOperation" */'../HBase/TableOperation/TableOperation'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true

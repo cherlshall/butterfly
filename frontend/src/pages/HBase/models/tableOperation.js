@@ -1,5 +1,6 @@
 import * as service from '@/services/tableOperation';
 import { list } from '@/services/adminOperation';
+import { message } from 'antd';
 
 export default {
   namespace: 'tableOperation',
@@ -24,6 +25,8 @@ export default {
         if (callback && response.data.length > 0) {
           callback(response.data[0]);
         }
+      } else {
+        message.error(response.msg || "unknown error");
       }
     },
 
@@ -41,6 +44,8 @@ export default {
         if (callback && data.dataList.length > 0) {
           callback(data.dataList[data.dataList.length - 1].rowkey);
         }
+      } else {
+        message.error(response.msg || "unknown error");
       }
     },
 

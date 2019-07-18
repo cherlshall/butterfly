@@ -1,6 +1,54 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-export async function list(params) {
-  return request('/server/hbase/admin/list');
+export async function list() {
+  return request('/server/hbase/admin/table');
+}
+
+export async function detail() {
+  return request('/server/hbase/admin/detail');
+}
+
+export async function create(params) {
+  return request('/server/hbase/admin/table', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function del({tableName}) {
+  return request(`/server/hbase/admin/table/${tableName}`, {
+    method: 'DELETE',
+    body: {},
+  });
+}
+
+export async function disable({tableName}) {
+  return request(`/server/hbase/admin/disable/${tableName}`, {
+    method: 'PUT',
+    body: {},
+  });
+}
+
+export async function enable({tableName}) {
+  return request(`/server/hbase/admin/enable/${tableName}`, {
+    method: 'PUT',
+    body: {},
+  });
+}
+
+export async function addFamily({tableName, family}) {
+  return request(`/server/hbase/admin/family/${tableName}/${family}`, {
+    method: 'POST',
+    body: {},
+  });
+}
+
+export async function deleteFamily({tableName}) {
+  return request(`/server/hbase/admin/family/${tableName}/${family}`, {
+    method: 'DELETE',
+    body: {},
+  });
 }

@@ -9,6 +9,8 @@ public class ResponseVO<T> {
 
     private Boolean success;
     private T data;
+    private String msg;
+    private int code;
 
     public static <T> ResponseVO<T> newInstance() {
         return new ResponseVO<>();
@@ -18,7 +20,7 @@ public class ResponseVO<T> {
         return new ResponseVO<T>().setSuccess(true).setData(data);
     }
 
-    public static <T> ResponseVO<T> ofFailure(T data) {
-        return new ResponseVO<T>().setSuccess(false).setData(data);
+    public static <T> ResponseVO<T> ofFailure(String msg) {
+        return new ResponseVO<T>().setSuccess(false).setMsg(msg);
     }
 }
