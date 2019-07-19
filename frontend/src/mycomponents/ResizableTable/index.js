@@ -54,15 +54,14 @@ class TableOperation extends PureComponent {
     }
   }
 
+  shouldComponentUpdate(newProps, newState) {
+    return true;
+  }
+
   render() {
 
     const { columns, ...rest } = this.props;
-
-    const otherProps = {};
-    if (columns.length > 1) {
-      otherProps.components = this.components;
-    }
-
+    
     const columnsResize = this.state.columns.map((col, index) => {
       if (col.children) {
         for(let i = 0; i < col.children.length; i++) {
@@ -93,9 +92,7 @@ class TableOperation extends PureComponent {
     return (
       <Table
         columns={columnsResize}
-        bordered
-        size="middle"
-        {...otherProps}
+        components={this.components}
         {...rest}
       />
     )

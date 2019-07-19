@@ -2,6 +2,9 @@
     .react-resizable {
         position: relative;
         background-clip: padding-box;
+        &:last-child > .react-resizable-handle {
+            width: 0px;
+        }
       }
       
     .react-resizable-handle {

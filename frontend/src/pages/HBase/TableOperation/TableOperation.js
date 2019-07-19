@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select } from 'antd';
+import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ResizableTable from "@/mycomponents/ResizableTable";
 import styles from './TableOperation.less';
+import InsertDialog from './InsertDialog';
 
 const { Option } = Select;
 
@@ -21,6 +22,9 @@ class TableOperation extends PureComponent {
     lastRowKey: '',
     pageSize: 10,
     onFirstPage: true,
+    insertDialogVisible: false,
+    columns: [],
+    deleteRowKey: new Set([]),
   }
 
   componentDidMount() {
@@ -43,17 +47,100 @@ class TableOperation extends PureComponent {
         pageSize,
         rowKey: lastRowKey,
       },
-      callback: (lastRowKey) => {
+      callback: (lastRowKey, familyAndQualifiers) => {
         const newState = {
           currentTableName: tableName,
-          lastRowKey,
+        }
+        if (lastRowKey !== undefined) {
+          newState.lastRowKey = lastRowKey;
         }
         if (onFirstPage !== undefined) {
           newState.onFirstPage = onFirstPage;
         }
         this.setState(newState)
+        this.generaterColumns(familyAndQualifiers)
       },
     });
+  }
+
+  deleteRow = rowKey => {
+    const { currentTableName } = this.state;
+    const { dispatch } = this.props;
+    this.setState({
+      deleteRowKey: this.state.deleteRowKey.add(rowKey),
+    })
+    dispatch({
+      type: 'tableOperation/deleteRow',
+      payload: {
+        tableName: currentTableName,
+        rowKey,
+      },
+      callback: () => {
+        const deleteRowKey = this.state.deleteRowKey;
+        deleteRowKey.delete(rowKey);
+        this.setState({
+          deleteRowKey,
+        })
+      },
+    });
+  }
+
+  generaterColumns = familyAndQualifiers => {
+    const columns = [
+      {
+        title: 'rowKey',
+        dataIndex: 'rowKey',
+        width: 120,
+      }
+    ];
+    for (let i = 0; i < familyAndQualifiers.length; i++) {
+      const faq = familyAndQualifiers[i];
+      const column = {title: faq.family, children: []};
+      const quas = faq.qualifiers;
+      for (let j = 0; j < quas.length; j++) {
+        const qua = quas[j];
+        column.children.push({
+          title: qua,
+          dataIndex: faq.family + "." + qua,
+          width: 120,
+        });
+      }
+      columns.push(column);
+    }
+    columns.push({
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => {
+        const deleting = this.state.deleteRowKey.has(record.rowKey);
+        const disabled = record.deleted || deleting;
+        const popParams = {};
+        if (disabled) {
+          popParams.visible = false;
+        }
+        return (
+          <Popconfirm
+            title="Are you sure delete this row?"
+            onConfirm={() => this.deleteRow(record.rowKey)}
+            okText="Yes"
+            cancelText="No"
+            disabled={disabled}
+            {...popParams}
+          >
+            <Button 
+              style={{cursor: "pointer"}} 
+              type="danger" 
+              size="small"
+              disabled={disabled}
+              icon={deleting ? 'loading' : record.deleted ? 'close-circle' : 'delete'}
+            >
+              {record.deleted ? "Deleted" : "Delete"}
+            </Button>
+          </Popconfirm>
+      )},
+    })
+    this.setState({
+      columns,
+    })
   }
 
   findNextPage = () => {
@@ -86,16 +173,36 @@ class TableOperation extends PureComponent {
     }, () => this.findFirstPage(this.state.currentTableName))
   }
 
-  render() {
+  changeInsertDialogVisible = (visible) => {
+    this.setState({
+      insertDialogVisible: visible,
+    });
+  };
 
+  insertOver = () => {
+    this.changeInsertDialogVisible(false);
+    this.findFirstPage(this.state.currentTableName);
+  }
+
+  render() {
     const { tableOperation, loading } = this.props;
-    const { columns, dataSource, tableNames } = tableOperation;
-    const { currentTableName, filterTable, drawerVisible, lastRowKey, pageSize, onFirstPage } = this.state;
+    const { dataSource, tableNames } = tableOperation;
+    const { columns, currentTableName, filterTable, drawerVisible, lastRowKey, pageSize, onFirstPage, 
+      insertDialogVisible } = this.state;
 
     return (
       <GridContent>
         <Row gutter={24} style={{marginBottom: 12}}>
-          <Col span={12}>{currentTableName && <Button type="primary">{currentTableName}</Button>}</Col>
+          <Col span={12}>
+            {currentTableName && 
+              <Button 
+                type="primary"
+                onClick={() => this.changeInsertDialogVisible(true)}
+              >
+                {`Insert To ${currentTableName}`}
+              </Button>
+            }
+          </Col>
           <Col span={12} style={{textAlign: "right"}}>
             <Radio.Group 
                 value={this.state.showMode} 
@@ -112,8 +219,11 @@ class TableOperation extends PureComponent {
         <ResizableTable
           columns={columns}
           dataSource={dataSource}
-          rowKey="rowkey"
-          loading={!!loading.effects["tableOperation/findByPage"]}
+          rowKey="rowKey"
+          bordered
+          size="middle"
+          loading={(!currentTableName && loading.effects["tableOperation/listTableName"]) || 
+            loading.effects["tableOperation/findByPage"]}
           pagination={false}
         />
         <div style={{width: '100%', textAlign: 'right', marginTop: 12}}>
@@ -170,6 +280,15 @@ class TableOperation extends PureComponent {
             ))}
           </Spin>
         </Drawer>
+        <Modal
+          // destroyOnClose={true}
+          title={`Insert To ${currentTableName}`}
+          visible={insertDialogVisible}
+          onCancel={() => this.changeInsertDialogVisible(false)}
+          footer={null}
+        >
+          <InsertDialog insertOver={this.insertOver} tableName={currentTableName} />
+        </Modal>
       </GridContent>
     )
   }

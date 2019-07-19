@@ -3,6 +3,7 @@ package com.cherlshall.butterfly.dao.hbase;
 import com.cherlshall.butterfly.entity.hbase.HTableDetail;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AdminOperationDao {
 
@@ -23,6 +24,8 @@ public interface AdminOperationDao {
     Boolean isDisable(String tableName);
 
     Boolean existFamily(String tableName, String family);
+
+    List<String> listFamily(String tableName);
 
     boolean addFamily(String tableName, String family);
 

@@ -1,6 +1,7 @@
 package com.cherlshall.butterfly.dao.hbase.impl;
 
 import com.cherlshall.butterfly.dao.hbase.TableOperationDao;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.PageFilter;
@@ -40,7 +41,15 @@ public class TableOperationDaoImpl implements TableOperationDao {
 
     @Override
     public int delete(String tableName, String rowName) {
-        return 1;
+        return template.execute(tableName, hTableInterface -> {
+            try {
+                Delete delete = new Delete(rowName.getBytes());
+                hTableInterface.delete(delete);
+                return 1;
+            } catch (Exception e) {
+                return 0;
+            }
+        });
     }
 
     @Override

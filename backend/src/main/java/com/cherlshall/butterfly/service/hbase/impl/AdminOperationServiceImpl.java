@@ -20,11 +20,18 @@ public class AdminOperationServiceImpl implements AdminOperationService {
         if (families.length == 0) {
             return ResponseVO.ofFailure("Table should have at least one column family");
         }
+        Boolean exist = dao.exist(tableName);
+        if (exist == null) {
+            return ResponseVO.ofFailure("server error");
+        }
+        if (exist) {
+            return ResponseVO.ofFailure("table is already exist");
+        }
         boolean create = dao.create(tableName, families);
         if (create) {
             return ResponseVO.ofSuccess(null);
         } else {
-            return ResponseVO.ofFailure(null);
+            return ResponseVO.ofFailure("server error");
         }
     }
 
@@ -93,6 +100,18 @@ public class AdminOperationServiceImpl implements AdminOperationService {
     }
 
     @Override
+    public ResponseVO<List<String>> listFamily(String tableName) {
+        Boolean exist = dao.exist(tableName);
+        if (exist == null) {
+            return ResponseVO.ofFailure("server error");
+        }
+        if (!exist) {
+            return ResponseVO.ofFailure("table does not exist");
+        }
+        return ResponseVO.ofSuccess(dao.listFamily(tableName));
+    }
+
+    @Override
     public ResponseVO<Void> addFamily(String tableName, String family) {
         Boolean exist = dao.exist(tableName);
         if (exist == null) {
@@ -121,9 +140,16 @@ public class AdminOperationServiceImpl implements AdminOperationService {
         if (!exist) {
             return ResponseVO.ofFailure("table does not exist");
         }
-        Boolean existFamily = dao.existFamily(tableName, family);
+        List<String> families = dao.listFamily(tableName);
+        if (families == null) {
+            return ResponseVO.ofFailure("server error");
+        }
+        boolean existFamily = families.contains(family);
         if (!existFamily) {
             return ResponseVO.ofFailure("family does not exist");
+        }
+        if (families.size() == 1) {
+            return ResponseVO.ofFailure("table has one family at least");
         }
         boolean delete = dao.deleteFamily(tableName, family);
         if (delete) {

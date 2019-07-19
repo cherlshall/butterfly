@@ -46,7 +46,7 @@ public class AdminOperationDaoImpl implements AdminOperationDao {
         try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
              Admin admin = connection.getAdmin()) {
             TableName tn = TableName.valueOf(tableName);
-            if (admin.isTableDisabled(tn)) {
+            if (!admin.isTableDisabled(tn)) {
                 admin.disableTable(tn);
             }
             admin.deleteTable(tn);
@@ -154,6 +154,23 @@ public class AdminOperationDaoImpl implements AdminOperationDao {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public List<String> listFamily(String tableName) {
+        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
+             Admin admin = connection.getAdmin()) {
+            Set<byte[]> familiesKeys = admin.getTableDescriptor(TableName.valueOf(tableName))
+                    .getFamiliesKeys();
+            List<String> list = new ArrayList<>();
+            for (byte[] key : familiesKeys) {
+                list.add(new String(key));
+            }
+            return list;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

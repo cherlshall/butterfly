@@ -46,6 +46,11 @@ public class AdminOperationController {
         return service.enable(tableName);
     }
 
+    @GetMapping("/family/{tableName}")
+    public ResponseVO<List<String>> listFamily(@PathVariable("tableName") String tableName) {
+        return service.listFamily(tableName);
+    }
+
     @PostMapping("/family/{tableName}/{family}")
     public ResponseVO<Void> addFamily(@PathVariable("tableName") String tableName,
                                       @PathVariable("family") String family) {

@@ -249,7 +249,6 @@ class AdminOperation extends PureComponent {
   ]
 
   render() {
-
     const { adminOperation, loading } = this.props;
     const { dataSource } = adminOperation;
     const { createDialogVisible } = this.state;
@@ -261,7 +260,7 @@ class AdminOperation extends PureComponent {
             <Button type="primary" onClick={() => this.changeCreateDialogVisible(true)}>Create Table</Button>
           </Col>
           <Col span={12} style={{textAlign: "right"}}>
-            {`total ${dataSource.length} items`}
+            <Button type="primary">Save Family Change</Button>
           </Col>
         </Row>
         <Table
@@ -271,7 +270,14 @@ class AdminOperation extends PureComponent {
           size="middle"
           rowKey="tableName"
           loading={!!loading.effects["adminOperation/detail"]}
-          pagination={false}
+          pagination={{
+            total: dataSource.length,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            size: 'middle',
+            showTotal: (total) => `Total ${total} items`,
+            pageSizeOptions: ["10", "30", "50"],
+          }}
         />
         <Modal
           title="Create Table"

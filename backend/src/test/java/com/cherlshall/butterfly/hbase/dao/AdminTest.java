@@ -82,7 +82,7 @@ public class AdminTest {
 
     @Test
     public void deleteFamily() {
-        boolean b = dao.deleteFamily("test1", "f4");
+        boolean b = dao.deleteFamily("test2", "f1");
         System.out.println(b);
     }
 }

@@ -19,6 +19,8 @@ public interface AdminOperationService {
 
     ResponseVO<Void> enable(String tableName);
 
+    ResponseVO<List<String>> listFamily(String tableName);
+
     ResponseVO<Void> addFamily(String tableName, String family);
 
     ResponseVO<Void> deleteFamily(String tableName, String family);

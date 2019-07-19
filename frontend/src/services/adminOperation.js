@@ -39,6 +39,10 @@ export async function enable({tableName}) {
   });
 }
 
+export async function listFamily({tableName}) {
+  return request(`/server/hbase/admin/family/${tableName}`);
+}
+
 export async function addFamily({tableName, family}) {
   return request(`/server/hbase/admin/family/${tableName}/${family}`, {
     method: 'POST',
