@@ -58,8 +58,12 @@ public class TableOperationDaoImpl implements TableOperationDao {
 
     @Override
     public int delete(String tableName, String rowName, String familyName, String qualifier) {
-        template.delete(tableName, rowName, familyName, qualifier);
-        return 1;
+        try {
+            template.delete(tableName, rowName, familyName, qualifier);
+            return 1;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override

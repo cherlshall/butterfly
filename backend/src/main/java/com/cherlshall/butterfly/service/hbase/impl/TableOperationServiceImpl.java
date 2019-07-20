@@ -36,6 +36,9 @@ public class TableOperationServiceImpl implements TableOperationService {
             pageSize++;
         }
         List<Result> results = dao.findByRowKeyAndPage(tableName, rowKey, pageSize);
+        if (removeFirst && results.size() > 0) {
+            results.remove(0);
+        }
         HBaseTable table = new HBaseTable(results);
         return ResponseVO.ofSuccess(table);
     }
@@ -78,6 +81,20 @@ public class TableOperationServiceImpl implements TableOperationService {
             return ResponseVO.ofSuccess(null);
         } else {
             return ResponseVO.ofFailure("server error");
+        }
+    }
+
+    @Override
+    public ResponseVO<Void> deleteCol(String tableName, String rowName, String familyName, String qualifier) {
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
+        }
+        int delete = dao.delete(tableName, rowName, familyName, qualifier);
+        if (delete > 0) {
+            return ResponseVO.ofSuccess(null);
+        } else {
+            return ResponseVO.ofFailure("delete failure, maybe resource does not exist");
         }
     }
 

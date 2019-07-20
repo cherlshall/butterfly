@@ -18,3 +18,10 @@ export async function deleteRow({tableName, rowKey}) {
     body: {},
   });
 }
+
+export async function deleteCol({tableName, rowKey, ...params}) {
+  return request(`/server/hbase/table/col/${tableName}/${rowKey}`, {
+    method: 'DELETE',
+    body: params,
+  });
+}

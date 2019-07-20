@@ -15,4 +15,6 @@ public interface TableOperationService {
     ResponseVO<Integer> insertRow(String tableName, String rowKey, List<HBaseBean> beans);
 
     ResponseVO<Void> deleteRow(String tableName, String rowKey);
+
+    ResponseVO<Void> deleteCol(String tableName, String rowName, String familyName, String qualifier);
 }

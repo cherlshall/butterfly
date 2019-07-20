@@ -42,4 +42,11 @@ public class TableOperationController {
                                       @PathVariable("rowKey") String rowKey) {
         return service.deleteRow(tableName, rowKey);
     }
+
+    @DeleteMapping("/col/{tableName}/{rowKey}")
+    public ResponseVO<Void> deleteCol(@PathVariable("tableName") String tableName,
+                                      @PathVariable("rowKey") String rowKey,
+                                      @RequestBody HBaseBean bean) {
+        return service.deleteCol(tableName, rowKey, bean.getFamily(), bean.getQualifier());
+    }
 }
