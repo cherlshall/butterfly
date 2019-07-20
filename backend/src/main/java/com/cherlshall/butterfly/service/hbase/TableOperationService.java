@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface TableOperationService {
 
-    ResponseVO<HBaseTable> findByPage(String tableName, String rowKey, int pageSize);
+    ResponseVO<HBaseTable> findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst);
+
+    ResponseVO<HBaseTable> findByRowKey(String tableName, String rowKey);
 
     ResponseVO<Integer> insertRow(String tableName, String rowKey, List<HBaseBean> beans);
 

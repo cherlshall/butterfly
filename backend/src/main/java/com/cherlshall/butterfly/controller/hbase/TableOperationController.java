@@ -16,11 +16,18 @@ public class TableOperationController {
     @Autowired
     TableOperationService service;
 
-    @GetMapping("/findByPage/{tableName}")
+    @GetMapping("/row/{tableName}")
     public ResponseVO<HBaseTable> findByPage(@PathVariable("tableName") String tableName,
                                              @RequestParam("rowKey") String rowKey,
-                                             @RequestParam("pageSize") int pageSize) {
-        return service.findByPage(tableName, rowKey, pageSize);
+                                             @RequestParam("pageSize") int pageSize,
+                                             @RequestParam("removeFirst") boolean removeFirst) {
+        return service.findByPage(tableName, rowKey, pageSize, removeFirst);
+    }
+
+    @GetMapping("/row/{tableName}/{rowKey}")
+    public ResponseVO<HBaseTable> findByRowKey(@PathVariable("tableName") String tableName,
+                                             @PathVariable("rowKey") String rowKey) {
+        return service.findByRowKey(tableName, rowKey);
     }
 
     @PostMapping("/row/{tableName}/{rowKey}")

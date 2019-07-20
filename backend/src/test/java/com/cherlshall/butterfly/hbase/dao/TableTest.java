@@ -37,7 +37,7 @@ public class TableTest {
 
     @Test
     public void find() {
-        List<Result> test = dao.findByPage("test", "2", 10);
+        List<Result> test = dao.findByPage("test", 10);
         System.out.println(test.size());
     }
 }

@@ -3,7 +3,6 @@ package com.cherlshall.butterfly.dao.hbase;
 import com.cherlshall.butterfly.entity.hbase.HTableDetail;
 
 import java.util.List;
-import java.util.Set;
 
 public interface AdminOperationDao {
 

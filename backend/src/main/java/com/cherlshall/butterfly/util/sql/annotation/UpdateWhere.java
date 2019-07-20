@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.util.sqlUtil.annotation;
+package com.cherlshall.butterfly.util.sql.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

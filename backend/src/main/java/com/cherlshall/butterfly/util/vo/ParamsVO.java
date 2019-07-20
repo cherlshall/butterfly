@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.util.vo;
 
-import com.cherlshall.butterfly.util.sqlUtil.annotation.Invisible;
+import com.cherlshall.butterfly.util.sql.annotation.Invisible;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.CaseFormat;
 import lombok.Data;

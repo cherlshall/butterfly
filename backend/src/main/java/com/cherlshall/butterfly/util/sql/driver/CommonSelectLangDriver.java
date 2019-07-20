@@ -1,10 +1,10 @@
-package com.cherlshall.butterfly.util.sqlUtil.driver;
+package com.cherlshall.butterfly.util.sql.driver;
 
-import com.cherlshall.butterfly.util.sqlUtil.annotation.Invisible;
-import com.cherlshall.butterfly.util.sqlUtil.annotation.Column;
-import com.cherlshall.butterfly.util.sqlUtil.annotation.Symbol;
-import com.cherlshall.butterfly.util.sqlUtil.annotation.TableAlias;
-import com.cherlshall.butterfly.util.sqlUtil.enums.SymbolEnum;
+import com.cherlshall.butterfly.util.sql.annotation.Invisible;
+import com.cherlshall.butterfly.util.sql.annotation.Column;
+import com.cherlshall.butterfly.util.sql.annotation.Symbol;
+import com.cherlshall.butterfly.util.sql.annotation.TableAlias;
+import com.cherlshall.butterfly.util.sql.enums.SymbolEnum;
 import com.google.common.base.CaseFormat;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;

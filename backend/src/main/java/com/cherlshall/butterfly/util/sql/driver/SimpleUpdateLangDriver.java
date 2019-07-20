@@ -1,6 +1,6 @@
-package com.cherlshall.butterfly.util.sqlUtil.driver;
+package com.cherlshall.butterfly.util.sql.driver;
 
-import com.cherlshall.butterfly.util.sqlUtil.annotation.Invisible;
+import com.cherlshall.butterfly.util.sql.annotation.Invisible;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;

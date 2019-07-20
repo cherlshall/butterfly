@@ -12,7 +12,7 @@ const ResizeableTitle = props => {
   );
 };
 
-class TableOperation extends PureComponent {
+class TableOperation extends React.Component {
 
   state = {
     columns: [],

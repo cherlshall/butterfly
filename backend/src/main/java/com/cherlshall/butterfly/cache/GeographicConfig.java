@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.cache;
 
-import com.cherlshall.butterfly.util.ioUtil.FileUtil;
+import com.cherlshall.butterfly.util.io.FileUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.context.annotation.Configuration;

@@ -18,7 +18,6 @@ class InsertDialog extends PureComponent {
   state = {
     tmpQualifiers: [],
     currentSearch: '',
-    qualifier: [],
   }
 
   componentDidMount() {
@@ -50,7 +49,7 @@ class InsertDialog extends PureComponent {
         rowKey,
         beans,
       },
-      callback: insertOver,
+      callback: () => insertOver(rowKey),
     });
   }
 
@@ -104,31 +103,27 @@ class InsertDialog extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { rowKey, keys, family, value } = values;
-        const { qualifier } = this.state;        
+        const { rowKey, keys, family, qualifier, value } = values;
         this.insert(rowKey, keys, family, qualifier, value);
       }
     });
   };
 
   onBlur = (value, k) => {
-    const { currentSearch, qualifier } = this.state;
+    const { currentSearch } = this.state;
     if (currentSearch) {
-      qualifier[k] = currentSearch;
       this.addQualifier(currentSearch);
+      this.props.form.setFieldsValue({[`qualifier[${k}]`]: currentSearch})
       this.setState({
         currentSearch: '',
-        qualifier,
       })
     }
   }
 
   onSelect = (value, k) => {
-    const { currentSearch, qualifier } = this.state;
-    qualifier[k] = value;
+    const { currentSearch } = this.state;
     this.setState({
       currentSearch: '',
-      qualifier: [...qualifier],
     })
   }
 
@@ -149,11 +144,32 @@ class InsertDialog extends PureComponent {
     }
   }
 
+  fieldHelp = (k, keys) => {
+    const { family, qualifier, value } = this.props.form.getFieldsValue();
+    if (!family && !qualifier && !value) {
+      return;
+    }
+    let onlyOne = true;
+    if (keys && keys.length > 1) {
+      onlyOne = false;
+    }
+    if (family && !family[k] && family[k] !== 0) {
+      return onlyOne ? 'Please input family.' : 'Please input family or delete this field.';
+    }
+    if (qualifier && !qualifier[k] && qualifier[k] !== 0) {
+      return onlyOne ? 'Please input qualifier.' : 'Please input qualifier or delete this field.';
+    }
+    if (value && !value[k] && value[k] !== 0) {
+      return onlyOne ? 'Please input value.' : 'Please input value or delete this field.';
+    }
+    return;
+  }
+
   render() {
     const { tableOperation, loading, tableName } = this.props;
     const { families, familyAndQualifiers } = tableOperation;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { tmpQualifiers, qualifier } = this.state;
+    const { tmpQualifiers } = this.state;
 
     const formItemLayout = {
       labelCol: {
@@ -179,6 +195,8 @@ class InsertDialog extends PureComponent {
         label={index === 0 ? 'F/Q/V' : ''}
         required={true}
         key={k}
+        help={this.fieldHelp(k, keys)}
+        validateStatus={this.fieldHelp(k) ? 'error' : 'success'}
       >
         <InputGroup style={{ width: '90%', marginRight: 8 }} compact>
           {getFieldDecorator(`family[${k}]`, {
@@ -199,34 +217,46 @@ class InsertDialog extends PureComponent {
               }
             </Select>
           )}
-          <Select 
-            style={{ width: '35%' }} 
-            placeholder="qualifier"
-            showSearch
-            value={qualifier[k] || ''}
-            onSearch={value => {
-              this.setState({currentSearch: value})
-            }}
-            onBlur={value => this.onBlur(value, k)}
-            onSelect={value => this.onSelect(value, k)}
-            filterOption={() => true}
-          >
-            {familyAndQualifiers.map(faq => (
-              <OptGroup key={faq.family} label={faq.family}>
-                {faq.qualifiers.map(qua => (
-                  <Option key={`${faq.family}.${qua}`} value={`${faq.family}.${qua}`}>{qua}</Option>
-                ))}
-              </OptGroup>
-            ))}
-            {tmpQualifiers.length > 0 && 
-              <OptGroup key="tmp_add_qua" label="new addition">
-                {tmpQualifiers.map(qua => {
-                  return (
-                  <Option key={`tmp_add_qua.${qua}`} value={`tmp_add_qua.${qua}`}>{qua}</Option>
-                )})}
-              </OptGroup>
-            }
-          </Select>
+          {getFieldDecorator(`qualifier[${k}]`, {
+            trigger: ['onSelect', 'onBlur'],
+            validateTrigger: ['onSelect'],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                message: keys.length === 1 ? "Please input qualifier." : "Please input or delete this field.",
+              },
+            ],
+          })(
+            <Select 
+              style={{ width: '35%' }} 
+              placeholder="qualifier"
+              showSearch
+              onSearch={value => {
+                this.setState({currentSearch: value})
+              }}
+              onBlur={value => this.onBlur(value, k)}
+              onSelect={value => this.onSelect(value, k)}
+              filterOption={() => true}
+            >
+              {tmpQualifiers.length > 0 && 
+                <OptGroup key="tmp_add_qua" label="new addition">
+                  {tmpQualifiers.map(qua => {
+                    return (
+                    <Option key={`tmp_add_qua.${qua}`} value={`tmp_add_qua.${qua}`}>{qua}</Option>
+                  )})}
+                </OptGroup>
+              }
+              {familyAndQualifiers.map(faq => (
+                <OptGroup key={faq.family} label={faq.family}>
+                  {faq.qualifiers.map(qua => (
+                    <Option key={`${faq.family}.${qua}`} value={`${faq.family}.${qua}`}>{qua}</Option>
+                  ))}
+                </OptGroup>
+              ))}
+            </Select>
+          )}
+          
           {getFieldDecorator(`value[${k}]`, {
             validateTrigger: ['onChange', 'onBlur'],
             rules: [

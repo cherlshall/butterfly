@@ -18,7 +18,7 @@ public class TableTest {
 
     @Test
     public void findAll() {
-        ResponseVO<HBaseTable> test = service.findByPage("test", null, 10);
+        ResponseVO<HBaseTable> test = service.findByPage("test", "", 10, false);
         System.out.println(test);
     }
 }

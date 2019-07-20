@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.cache;
 
-import com.cherlshall.butterfly.util.ioUtil.FileUtil;
+import com.cherlshall.butterfly.util.io.FileUtil;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;

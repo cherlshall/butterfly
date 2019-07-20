@@ -3,6 +3,7 @@ package com.cherlshall.butterfly.service.hbase.impl;
 import com.cherlshall.butterfly.dao.hbase.AdminOperationDao;
 import com.cherlshall.butterfly.entity.hbase.HTableDetail;
 import com.cherlshall.butterfly.service.hbase.AdminOperationService;
+import com.cherlshall.butterfly.util.hbase.Check;
 import com.cherlshall.butterfly.util.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,18 +15,17 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Autowired
     AdminOperationDao dao;
+    @Autowired
+    Check check;
 
     @Override
     public ResponseVO<Void> create(String tableName, String... families) {
         if (families.length == 0) {
             return ResponseVO.ofFailure("Table should have at least one column family");
         }
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (exist) {
-            return ResponseVO.ofFailure("table is already exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         boolean create = dao.create(tableName, families);
         if (create) {
@@ -37,6 +37,10 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> delete(String tableName) {
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
+        }
         boolean delete = dao.delete(tableName);
         if (delete) {
             return ResponseVO.ofSuccess(null);
@@ -61,12 +65,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> disable(String tableName) {
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (!exist) {
-            return ResponseVO.ofFailure("table does not exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         Boolean isDisable = dao.isDisable(tableName);
         if (isDisable) {
@@ -81,12 +82,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> enable(String tableName) {
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (!exist) {
-            return ResponseVO.ofFailure("table does not exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         Boolean isDisable = dao.isDisable(tableName);
         if (!isDisable) {
@@ -101,24 +99,18 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<List<String>> listFamily(String tableName) {
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (!exist) {
-            return ResponseVO.ofFailure("table does not exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         return ResponseVO.ofSuccess(dao.listFamily(tableName));
     }
 
     @Override
     public ResponseVO<Void> addFamily(String tableName, String family) {
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (!exist) {
-            return ResponseVO.ofFailure("table does not exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         Boolean existFamily = dao.existFamily(tableName, family);
         if (existFamily) {
@@ -133,12 +125,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> deleteFamily(String tableName, String family) {
-        Boolean exist = dao.exist(tableName);
-        if (exist == null) {
-            return ResponseVO.ofFailure("server error");
-        }
-        if (!exist) {
-            return ResponseVO.ofFailure("table does not exist");
+        String checkExist = check.checkExist(tableName);
+        if (checkExist != null) {
+            return ResponseVO.ofFailure(checkExist);
         }
         List<String> families = dao.listFamily(tableName);
         if (families == null) {

@@ -6,7 +6,11 @@ import java.util.List;
 
 public interface TableOperationDao {
 
-    List<Result> findByPage(String tableName, String rowKey, int pageSize);
+    List<Result> findByRowKeyAndPage(String tableName, String rowKey, int pageSize);
+
+    List<Result> findByPage(String tableName, int pageSize);
+
+    Result findByRowKey(String tableName, String rowKey);
 
     int insert(String tableName, String rowName, String familyName, String qualifier, String value);
 

@@ -1,6 +1,6 @@
-package com.cherlshall.butterfly.util.sqlUtil.annotation;
+package com.cherlshall.butterfly.util.sql.annotation;
 
-import com.cherlshall.butterfly.util.sqlUtil.enums.SymbolEnum;
+import com.cherlshall.butterfly.util.sql.enums.SymbolEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

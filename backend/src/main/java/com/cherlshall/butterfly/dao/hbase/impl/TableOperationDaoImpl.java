@@ -7,30 +7,34 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Component
+@Repository
 public class TableOperationDaoImpl implements TableOperationDao {
 
     @Autowired
     HbaseTemplate template;
 
     @Override
-    public List<Result> findByPage(String tableName, String rowKey, int pageSize) {
+    public List<Result> findByRowKeyAndPage(String tableName, String rowKey, int pageSize) {
         Scan scan = new Scan();
-        boolean first = rowKey != null && !rowKey.trim().equals("");
-        if (first) {
-            scan.setStartRow(rowKey.getBytes());
-            pageSize++;
-        }
+        scan.setStartRow(rowKey.getBytes());
         scan.setFilter(new PageFilter(pageSize));
-        List<Result> results = template.find(tableName, scan, (Result result, int i) -> result);
-        if (first) {
-            results.remove(0);
-        }
-        return results;
+        return template.find(tableName, scan, (Result result, int i) -> result);
+    }
+
+    @Override
+    public List<Result> findByPage(String tableName, int pageSize) {
+        Scan scan = new Scan();
+        scan.setFilter(new PageFilter(pageSize));
+        return template.find(tableName, scan, (Result result, int i) -> result);
+    }
+
+    @Override
+    public Result findByRowKey(String tableName, String rowKey) {
+        return template.get(tableName, rowKey, (Result result, int i) -> result);
     }
 
     @Override

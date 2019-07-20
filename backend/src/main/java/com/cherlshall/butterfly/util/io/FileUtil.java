@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.util.ioUtil;
+package com.cherlshall.butterfly.util.io;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

@@ -60,4 +60,37 @@ public class HBaseTable {
             }
         }
     }
+
+    public HBaseTable(Result result) {
+        familyAndQualifiers = new ArrayList<>();
+        dataList = new ArrayList<>();
+        Map<String, FamilyAndQualifier> map = new HashMap<>();
+        Map<String, String> data = new HashMap<>();
+        dataList.add(data);
+        String rowKey = new String(result.getRow());
+        data.put("rowKey", rowKey);
+        // key: family
+        NavigableMap<byte[], NavigableMap<byte[], NavigableMap<Long, byte[]>>> familyMap = result.getMap();
+        for (Map.Entry<byte[], NavigableMap<byte[], NavigableMap<Long, byte[]>>> familyEntry :
+                familyMap.entrySet()) {
+            String family = new String(familyEntry.getKey());
+            FamilyAndQualifier faq = map.get(family);
+            if (faq == null) {
+                faq = new FamilyAndQualifier(family);
+                familyAndQualifiers.add(faq);
+                map.put(family, faq);
+            }
+            // key: qualifier
+            NavigableMap<byte[], NavigableMap<Long, byte[]>> qualifierMap = familyEntry.getValue();
+            for (Map.Entry<byte[], NavigableMap<Long, byte[]>> qualifierEntry : qualifierMap.entrySet()) {
+                String qualifier = new String(qualifierEntry.getKey());
+                faq.qualifiers.add(qualifier);
+                // key: timestamp
+                NavigableMap<Long, byte[]> timestampMap = qualifierEntry.getValue();
+                Map.Entry<Long, byte[]> firstEntry = timestampMap.firstEntry();
+                String value = new String(firstEntry.getValue());
+                data.put(family + "." + qualifier, value);
+            }
+        }
+    }
 }

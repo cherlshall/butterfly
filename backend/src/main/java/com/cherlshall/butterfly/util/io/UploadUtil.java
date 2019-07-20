@@ -1,4 +1,4 @@
-package com.cherlshall.butterfly.util.ioUtil;
+package com.cherlshall.butterfly.util.io;
 
 import org.springframework.web.multipart.MultipartFile;
 

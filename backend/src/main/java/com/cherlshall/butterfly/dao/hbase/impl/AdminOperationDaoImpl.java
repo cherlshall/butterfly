@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.exceptions.DeserializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Component
+@Repository
 public class AdminOperationDaoImpl implements AdminOperationDao {
 
     @Autowired

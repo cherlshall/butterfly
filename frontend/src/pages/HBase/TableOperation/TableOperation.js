@@ -28,7 +28,12 @@ class TableOperation extends PureComponent {
   }
 
   componentDidMount() {
-    this.listTableName(this.findFirstPage);
+    const { tableName } = this.props.match.params;
+    if (tableName) {
+      this.listTableName(() => this.findFirstPage(tableName));
+    } else {
+      this.listTableName(this.findFirstPage);
+    }
   }
 
   findFirstPage = (tableName) => {
@@ -37,7 +42,7 @@ class TableOperation extends PureComponent {
     }, () => this.findByPage(tableName, true))
   }
 
-  findByPage = (tableName, onFirstPage) => {
+  findByPage = (tableName, onFirstPage, removeFirst) => {
     const { dispatch } = this.props;
     const { lastRowKey, pageSize } = this.state;
     dispatch({
@@ -46,6 +51,7 @@ class TableOperation extends PureComponent {
         tableName,
         pageSize,
         rowKey: lastRowKey,
+        removeFirst: removeFirst === undefined ? true : removeFirst,
       },
       callback: (lastRowKey, familyAndQualifiers) => {
         const newState = {
@@ -179,9 +185,11 @@ class TableOperation extends PureComponent {
     });
   };
 
-  insertOver = () => {
+  insertOver = (rowKey) => {
     this.changeInsertDialogVisible(false);
-    this.findFirstPage(this.state.currentTableName);
+    this.setState({
+      lastRowKey: rowKey,
+    }, () => this.findByPage(this.state.currentTableName, false, false))
   }
 
   render() {

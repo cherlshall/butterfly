@@ -54,6 +54,12 @@ export default [
             name: 'tableOperation',
             component: './HBase/TableOperation/TableOperation',
           },
+          {
+            path: '/hbase/tableOperation/:tableName',
+            hideInMenu:true,
+            name: 'tableOperation',
+            component: './HBase/TableOperation/TableOperation',
+          },
         ],
         // authority: ['admin'],
       },

@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Row, Col, Switch, Icon, Input, Radio, Tag, Popconfirm, Modal } from 'antd';
+import { Table, Button, Row, Col, Switch, Icon, Input, Radio, Tag, Popconfirm, Modal, message } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Highlighter from 'react-highlight-words';
 import styles from './AdminOperation.less';
 import CreateTableDialog from './CreateTableDialog';
+import router from 'umi/router';
+import Link from 'umi/link';
+
+// 跳转
+// router.push('/hbase/tableOperation/:tableName');
 
 @connect(({ adminOperation, loading }) => ({
   adminOperation,
@@ -135,14 +140,32 @@ class AdminOperation extends PureComponent {
         setTimeout(() => this.searchInput.select());
       }
     },
-    render: text => (
-      <Highlighter
-        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-        searchWords={[this.state.searchText]}
-        autoEscape
-        textToHighlight={text.toString()}
-      />
-    ),
+    render: (text, record) => {
+      if (record.disable) {
+        return (
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+            searchWords={[this.state.searchText]}
+            autoEscape
+            textToHighlight={text.toString()}
+            onClick={() => {message.error('table is disabled')}}
+            style={{cursor: "not-allowed", color: "#A9A9A9"}}
+          />
+        )
+      } else {
+        return (
+          <Link to={`/hbase/tableOperation/${text}`}>
+            <Highlighter
+              highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+              searchWords={[this.state.searchText]}
+              autoEscape
+              textToHighlight={text.toString()}
+            />
+          </Link>
+        )
+      }
+    },
+      
   });
 
   handleSearch = (selectedKeys, confirm) => {

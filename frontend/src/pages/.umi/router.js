@@ -153,6 +153,21 @@ models: () => [
             "exact": true
           },
           {
+            "path": "/hbase/tableOperation/:tableName",
+            "hideInMenu": true,
+            "name": "tableOperation",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__HBase__TableOperation__TableOperation" */'../HBase/TableOperation/TableOperation'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
             "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
           }
         ]
