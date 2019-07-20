@@ -86,6 +86,48 @@ export default {
       }
     },
 
+    *recoverRow({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.insertRow, payload);
+      if (response.success) {
+        const { family, qualifier, value } = payload.beans[0];
+        const dataSource = yield select(state =>
+          state.tableOperation.dataSource.map(item => {
+            const data = { ...item };
+            if (data.rowKey === payload.rowKey) {
+              data[`${family}.${qualifier}`] = value;
+              data.deleted = undefined;
+            }
+            return data;
+          })
+        );
+        const dataSourceCol = yield select(state =>
+          state.tableOperation.dataSourceCol.map(item => {
+            const data = { ...item };
+            
+            if (data.rowKey === payload.rowKey && 
+              data.family === family && 
+              data.qualifier === qualifier) {
+              data.deleted = undefined;
+            }
+            return data;
+          })
+        );
+        yield put({
+          type: 'save',
+          payload: {
+            dataSource,
+            dataSourceCol,
+          },
+        });
+        message.success("recover success")
+      } else {
+        message.error(response.msg || "unknown error");
+      }
+      if (callback) {
+        callback();
+      }
+    },
+
     *deleteRow({ payload, callback }, { call, put, select }) {
       const response = yield call(service.deleteRow, payload);
       if (response.success) {

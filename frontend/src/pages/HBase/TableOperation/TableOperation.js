@@ -6,15 +6,18 @@ import ResizableTable from "@/mycomponents/ResizableTable";
 import styles from './TableOperation.less';
 import InsertDialog from './InsertDialog';
 import Highlighter from 'react-highlight-words';
+import moment from 'moment';
 
 const { Option } = Select;
 const { Search } = Input;
+
+const rotateTimeOutId = [];
 
 @connect(({ tableOperation, loading }) => ({
   tableOperation,
   loading,
 }))
-class TableOperation extends PureComponent {
+class TableOperation extends React.Component {
 
   state = {
     currentTableName: '',
@@ -25,8 +28,12 @@ class TableOperation extends PureComponent {
     pageSize: 10,
     insertDialogVisible: false,
     columns: [],
-    deleteRowKey: new Set([]),
-    deleteColId: new Set([]),
+    deleteRowKey: new Set(),
+    deleteColId: new Set(),
+    timeMode: true,
+    rotate: 0,
+    editColIndex: -1,
+    recoverIndex: new Set(),
   }
 
   componentDidMount() {
@@ -285,6 +292,100 @@ class TableOperation extends PureComponent {
     this.setState({ searchText: '' });
   };
 
+  changeTimeMode = () => {
+    if (rotateTimeOutId) {
+      for (let i = 0; i < rotateTimeOutId.length; i++) {
+        clearTimeout(rotateTimeOutId[i]);
+      }
+    }
+    this.setState({
+      timeMode: !this.state.timeMode,
+    })
+    for (let i = 1; i < 6; i++) {
+      rotateTimeOutId[i] = setTimeout(() => {
+        const rotate = 36 * i;
+        this.setState({
+          rotate,
+        })
+      }, 100 * i)
+    }
+  }
+
+  changeEditIndex = (index) => {
+    if (this.cancleEditTimeout) {
+      clearTimeout(this.cancleEditTimeout);
+    }
+    setTimeout(() => {
+      const ref = this[`search_${index}`];
+      if (ref) {
+        this[`search_${index}`].focus();
+      }
+    }, 100)
+    this.setState({
+      editColIndex: index,
+    })
+  }
+
+  updateValue = (record, value, index) => {
+    if (this.cancleEditTimeout) {
+      clearTimeout(this.cancleEditTimeout);
+    }
+    this.insertRow(record, value, (rowKey) => {
+      this.setState({
+        editColIndex: -1,
+      })
+      this.insertOver(rowKey)
+    })
+  }
+
+  onBlurValueInput = () => {
+    this.cancleEditTimeout = setTimeout(() => {
+      this.setState({
+        editColIndex: -1,
+      })
+    }, 200)
+  }
+
+  insertRow = (record, value, callback) => {
+    const { rowKey, family, qualifier } = record;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableOperation/insertRow',
+      payload: {
+        tableName: this.state.currentTableName,
+        rowKey,
+        beans: [{family, qualifier, value}],
+      },
+      callback: () => callback(rowKey),
+    });
+  }
+
+  recoverRow = (record, callback) => {
+    const { rowKey, family, qualifier, value } = record;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableOperation/recoverRow',
+      payload: {
+        tableName: this.state.currentTableName,
+        rowKey,
+        beans: [{family, qualifier, value}],
+      },
+      callback,
+    });
+  }
+
+  pressRecover = (record, index) => {
+    this.setState({
+      recoverIndex: this.state.recoverIndex.add(index),
+    })
+    this.recoverRow(record, () => {
+      this.state.recoverIndex.delete(index);
+      this.setState({
+        recoverIndex: this.state.recoverIndex,
+      })
+    })
+  }
+
   columnsCol = [
     {
       title: 'RowKey',
@@ -306,22 +407,54 @@ class TableOperation extends PureComponent {
       title: 'Value',
       dataIndex: 'value',
       width: 200,
+      render: (text, record, index) => {
+        if (this.state.editColIndex === index) {
+          return (
+          <Spin spinning={!!this.props.loading.effects['tableOperation/insertRow']}>
+            <Search
+              defaultValue={text}
+              enterButton="Save"
+              size="small"
+              onSearch={value => this.updateValue(record, value)}
+              onBlur={this.onBlurValueInput}
+              ref={search => {
+                if (search) {
+                  this[`search_${index}`] = search
+                }
+              }}
+              id={`search_${index}`}
+            />
+          </Spin>)
+        } else {
+          return <div onClick={() => this.changeEditIndex(index)}>{text}</div>;
+        }
+      }
     },
     {
-      title: 'Timestamp',
+      title: () => (<div>
+        <span>Timestamp</span>
+        <Icon 
+          type="swap" 
+          onClick={this.changeTimeMode}
+          style={{color: '#1890FF', marginLeft: 8}}
+          rotate={this.state.rotate}
+        />
+      </div>),
       dataIndex: 'timestamp',
       width: 200,
+      render: text => this.state.timeMode ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text,
     },
     {
       title: 'Action',
       key: 'action',
-      render: (text, record) => {
+      render: (text, record, index) => {
         const deleting = this.state.deleteColId.has(this.getColId(record));
         const disabled = record.deleted || deleting;
         const popParams = {};
         if (disabled) {
           popParams.visible = false;
         }
+        const recovering = this.state.recoverIndex.has(index);
         return (
           <div>
             {!record.deleted && <Button 
@@ -330,6 +463,7 @@ class TableOperation extends PureComponent {
               size="small"
               disabled={disabled}
               icon={'edit'}
+              onClick={() => this.changeEditIndex(index)}
             >
               {'Edit'}
             </Button>}
@@ -337,7 +471,9 @@ class TableOperation extends PureComponent {
               style={{cursor: "pointer", marginRight: 8}} 
               type="primary" 
               size="small"
-              icon={'redo'}
+              icon={recovering ? 'loading' : 'redo'}
+              onClick={() => {this.pressRecover(record, index)}}
+              disabled={recovering}
             >
               {'Recover'}
             </Button>}
@@ -375,8 +511,9 @@ class TableOperation extends PureComponent {
       return (
       <GridContent>
         <Row gutter={24} style={{marginBottom: 12}}>
-          <Col span={6}>
+          <Col span={12}>
             {currentTableName && 
+            <div>
               <Button 
                 type="primary"
                 onClick={() => this.changeInsertDialogVisible(true)}
@@ -384,15 +521,16 @@ class TableOperation extends PureComponent {
               >
                 {`Insert To ${currentTableName}`}
               </Button>
+              <Search
+                placeholder="input start rowKey"
+                enterButton="Go!"
+                onSearch={this.findWithStartRowKey}
+                style={{display: 'inline-block', width: 220, marginRight: 12}}
+              />
+            </div>
             }
           </Col>
-          <Col span={18} style={{textAlign: "right"}}>
-            <Search
-              placeholder="input start rowKey"
-              enterButton="Go!"
-              onSearch={this.findWithStartRowKey}
-              style={{display: 'inline-block', width: 220, marginRight: 12}}
-            />
+          <Col span={12} style={{textAlign: "right"}}>
             <Radio.Group 
                 value={showMode} 
                 onChange={(e) => this.setState({showMode: e.target.value})}
@@ -424,7 +562,15 @@ class TableOperation extends PureComponent {
             size="middle"
             loading={(!currentTableName && loading.effects["tableOperation/listTableName"]) || 
               loading.effects["tableOperation/findByPage"]}
-            pagination={false}
+            pagination={{
+              total: dataSourceCol.length,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              size: 'middle',
+              showTotal: (total) => `Total ${total} columns`,
+              pageSizeOptions: ["10", "30", "50"],
+            }}
+            editColIndex={this.state.editColIndex}
           />
         }
         <div style={{width: '100%', textAlign: 'right', marginTop: 12}}>
