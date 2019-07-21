@@ -23,9 +23,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
         if (families.length == 0) {
             return ResponseVO.ofFailure("Table should have at least one column family");
         }
-        String checkExist = check.checkExist(tableName);
-        if (checkExist != null) {
-            return ResponseVO.ofFailure(checkExist);
+        String checkNotExist = check.checkNotExist(tableName);
+        if (checkNotExist != null) {
+            return ResponseVO.ofFailure(checkNotExist);
         }
         boolean create = dao.create(tableName, families);
         if (create) {
@@ -69,9 +69,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
         if (checkExist != null) {
             return ResponseVO.ofFailure(checkExist);
         }
-        Boolean isDisable = dao.isDisable(tableName);
-        if (isDisable) {
-            return ResponseVO.ofFailure("table is already disabled");
+        String checkEnable = check.checkEnable(tableName);
+        if (checkEnable != null) {
+            return ResponseVO.ofFailure(checkEnable);
         }
         boolean disable = dao.disable(tableName);
         if (!disable) {
@@ -86,9 +86,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
         if (checkExist != null) {
             return ResponseVO.ofFailure(checkExist);
         }
-        Boolean isDisable = dao.isDisable(tableName);
-        if (!isDisable) {
-            return ResponseVO.ofFailure("table is already enabled");
+        String checkDisable = check.checkDisable(tableName);
+        if (checkDisable != null) {
+            return ResponseVO.ofFailure(checkDisable);
         }
         boolean enable = dao.enable(tableName);
         if (!enable) {
@@ -108,13 +108,9 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> addFamily(String tableName, String family) {
-        String checkExist = check.checkExist(tableName);
-        if (checkExist != null) {
-            return ResponseVO.ofFailure(checkExist);
-        }
-        Boolean existFamily = dao.existFamily(tableName, family);
-        if (existFamily) {
-            return ResponseVO.ofFailure("family already exists");
+        String checkResult = check.checkTableAndFamily(tableName, family);
+        if (checkResult != null) {
+            return ResponseVO.ofFailure(checkResult);
         }
         boolean add = dao.addFamily(tableName, family);
         if (add) {

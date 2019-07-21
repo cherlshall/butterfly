@@ -34,6 +34,7 @@ class TableOperation extends React.Component {
     rotate: 0,
     editColIndex: -1,
     recoverIndex: new Set(),
+    onFirstPage: true,
   }
 
   componentDidMount() {
@@ -65,6 +66,7 @@ class TableOperation extends React.Component {
       callback: (lastRowKey, familyAndQualifiers) => {
         const newState = {
           currentTableName: tableName,
+          onFirstPage: this.state.lastRowKey === '',
         }
         if (lastRowKey !== undefined) {
           newState.lastRowKey = lastRowKey;
@@ -426,7 +428,17 @@ class TableOperation extends React.Component {
             />
           </Spin>)
         } else {
-          return <div onClick={() => this.changeEditIndex(index)}>{text}</div>;
+          const disabled = record.deleted || this.state.deleteColId.has(this.getColId(record));
+          return <div 
+            onClick={() => {
+              disabled ? 
+              message.warn("the column is deleted") : 
+              this.changeEditIndex(index)
+            }}
+            style={{cursor: disabled ? 'not-allowed' : 'edit'}}
+          >
+            {text}
+          </div>;
         }
       }
     },
@@ -442,7 +454,7 @@ class TableOperation extends React.Component {
       </div>),
       dataIndex: 'timestamp',
       width: 200,
-      render: text => this.state.timeMode ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text,
+      render: text => this.state.timeMode ? moment(text).format("YYYY-MM-DD HH:mm:ss.SSS") : text,
     },
     {
       title: 'Action',
@@ -506,7 +518,7 @@ class TableOperation extends React.Component {
     const { tableOperation, loading } = this.props;
     const { dataSource, dataSourceCol, tableNames } = tableOperation;
     const { columns, currentTableName, filterTable, drawerVisible, lastRowKey, pageSize, showMode,
-      insertDialogVisible } = this.state;
+      insertDialogVisible, onFirstPage } = this.state;
 
       return (
       <GridContent>
@@ -516,10 +528,18 @@ class TableOperation extends React.Component {
             <div>
               <Button 
                 type="primary"
+                onClick={() => this.findFirstPage(currentTableName)}
+                style={{marginRight: 12}}
+                icon='reload'
+              >
+                {currentTableName}
+              </Button>
+              <Button 
+                type="primary"
                 onClick={() => this.changeInsertDialogVisible(true)}
                 style={{marginRight: 12}}
               >
-                {`Insert To ${currentTableName}`}
+                Insert Row
               </Button>
               <Search
                 placeholder="input start rowKey"
@@ -579,7 +599,7 @@ class TableOperation extends React.Component {
             <Option value={30}>30 rows</Option>
             <Option value={50}>50 rows</Option>
           </Select>
-          {lastRowKey !== '' && 
+          {!onFirstPage && 
             <Button type='primary' style={{marginLeft: 12}} onClick={() => this.findFirstPage(currentTableName)}>
               FIRST
             </Button>}

@@ -53,6 +53,33 @@ export default {
       }
     },
 
+    *remake({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.create, payload);
+      if (response.success) {
+        const dataSource = yield select(state =>
+          state.adminOperation.dataSource.map(item => {
+            const data = { ...item };
+            if (data.tableName === payload.tableName) {
+              data.deleted = undefined;
+            }
+            return data;
+          })
+        );
+        yield put({
+          type: 'save',
+          payload: {
+            dataSource,
+          },
+        });
+        message.success("remake success")
+      } else {
+        message.error(response.msg || "unknown error");
+      }
+      if (callback) {
+        callback();
+      }
+    },
+
     *del({ payload, callback }, { call, put, select }) {
       const response = yield call(service.del, payload);
       if (response.success) {

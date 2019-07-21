@@ -64,9 +64,11 @@ class CreateTableDialog extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { tableName, keys, families } = values;
-        console.log('Received values of form: ', values);
-        console.log('Merged values:', keys.map(key => families[key]));
-        this.create(tableName, families);
+        const familiesByKey = [];
+        keys.forEach(k => {
+          familiesByKey.push(families[k]);
+        })
+        this.create(tableName, familiesByKey);
       }
     });
   };

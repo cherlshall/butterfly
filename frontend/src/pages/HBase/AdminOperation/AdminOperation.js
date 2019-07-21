@@ -18,8 +18,9 @@ import Link from 'umi/link';
 class AdminOperation extends PureComponent {
 
   state = {
-    changeDisableTableName: new Set([]),
-    deleteTableName: new Set([]),
+    changeDisableTableName: new Set(),
+    deleteTableName: new Set(),
+    remakeTableName: new Set(),
     createDialogVisible: false,
   }
 
@@ -141,14 +142,15 @@ class AdminOperation extends PureComponent {
       }
     },
     render: (text, record) => {
-      if (record.disable) {
+      if (record.disable || record.deleted || this.state.deleteTableName.has(record.tableName)) {
         return (
           <Highlighter
             highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
             searchWords={[this.state.searchText]}
             autoEscape
             textToHighlight={text.toString()}
-            onClick={() => {message.error('table is disabled')}}
+            onClick={() => {message.error(record.disable ? 'table is disabled' : 
+              record.deleted ? 'table has been deleted' : 'table is being deleted')}}
             style={{cursor: "not-allowed", color: "#A9A9A9"}}
           />
         )
@@ -177,6 +179,24 @@ class AdminOperation extends PureComponent {
     clearFilters();
     this.setState({ searchText: '' });
   };
+
+  remake = (tableName, families) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adminOperation/remake',
+      payload: {
+        tableName,
+        families,
+        remakeTableName: this.state.remakeTableName.add(tableName),
+      },
+      callback: () => {
+        this.state.remakeTableName.delete(tableName);
+        this.setState({
+          remakeTableName: this.state.remakeTableName,
+        })
+      },
+    });
+  }
 
   createOver = () => {
     this.changeCreateDialogVisible(false);
@@ -215,7 +235,7 @@ class AdminOperation extends PureComponent {
           unCheckedChildren={<Icon type="close" />}
           checked={!text}
           loading={this.state.changeDisableTableName.has(record.tableName)}
-          disabled={record.deleted}
+          disabled={record.deleted || this.state.deleteTableName.has(record.tableName)}
           onClick={text ? () => this.enable(record.tableName) : () => this.disable(record.tableName)}
         />
       ),
@@ -243,12 +263,24 @@ class AdminOperation extends PureComponent {
       width: 120,
       render: (text, record) => {
         const deleting = this.state.deleteTableName.has(record.tableName);
+        const remaking = this.state.remakeTableName.has(record.tableName);
         const disabled = record.deleted || deleting;
         const popParams = {};
         if (disabled) {
           popParams.visible = false;
         }
-        return (
+        return record.deleted ? (
+          <Button 
+            style={{cursor: "pointer"}} 
+            type="primary" 
+            size="small"
+            disabled={remaking}
+            icon={remaking ? 'loading' : 'redo'}
+            onClick={() => this.remake(record.tableName, record.families)}
+            style={{cursor: remaking ? 'not-allowed' : 'pointer'}}
+          >
+            Remake
+          </Button>) : (
           <Popconfirm
             title="Are you sure delete this table?"
             onConfirm={() => this.deleteTable(record.tableName)}
@@ -267,7 +299,7 @@ class AdminOperation extends PureComponent {
               {record.deleted ? "Deleted" : "Delete"}
             </Button>
           </Popconfirm>
-      )},
+        )},
     }
   ]
 
