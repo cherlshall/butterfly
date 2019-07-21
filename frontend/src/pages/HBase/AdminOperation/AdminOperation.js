@@ -7,6 +7,7 @@ import styles from './AdminOperation.less';
 import CreateTableDialog from './CreateTableDialog';
 import router from 'umi/router';
 import Link from 'umi/link';
+import EditableTags from '@/mycomponents/EditableTags';
 
 // 跳转
 // router.push('/hbase/tableOperation/:tableName');
@@ -22,6 +23,8 @@ class AdminOperation extends PureComponent {
     deleteTableName: new Set(),
     remakeTableName: new Set(),
     createDialogVisible: false,
+    editTableName: '',
+    editingTableName: new Set(),
   }
 
   componentDidMount() {
@@ -203,6 +206,30 @@ class AdminOperation extends PureComponent {
     this.detail();
   }
 
+  saveTags = (deleteValue, additionTagsValue) => {
+    const { dispatch } = this.props;
+    const { editTableName } = this.state;
+    this.setState({
+      editingTableName: this.state.editingTableName.add(editTableName),
+    })
+    dispatch({
+      type: 'adminOperation/changeFamily',
+      payload: {
+        tableName: editTableName,
+        remove: deleteValue,
+        addition: additionTagsValue,
+      },
+      callback: () => {
+        this.state.editingTableName.delete(editTableName);
+        this.setState({
+          editTableName: '',
+          editingTableName: this.state.editingTableName,
+        })
+        this.detail();
+      }
+    });
+  }
+
   columns = [
     {
       title: 'Table Name',
@@ -221,7 +248,7 @@ class AdminOperation extends PureComponent {
       title: 'Read Only',
       dataIndex: 'readOnly',
       key: 'readOnly',
-      width: 120,
+      width: 80,
       render: text => <span>{text ? "yes" : "no"}</span>,
     },
     {
@@ -245,9 +272,11 @@ class AdminOperation extends PureComponent {
       dataIndex: 'families',
       key: 'families',
       width: 360,
-      render: families => (
+      render: (text, record, index) => this.state.editTableName === record.tableName ? (
+        <EditableTags initValues={text} save={this.saveTags} saving={this.state.editingTableName.has(record.tableName)} />
+      ) : (
         <span>
-          {families.map(family => {
+          {text.map(family => {
             return (
               <Tag color='geekblue' key={family}>
                 {family}
@@ -260,11 +289,12 @@ class AdminOperation extends PureComponent {
     {
       title: 'Action',
       key: 'action',
-      width: 120,
+      width: 160,
       render: (text, record) => {
         const deleting = this.state.deleteTableName.has(record.tableName);
         const remaking = this.state.remakeTableName.has(record.tableName);
         const disabled = record.deleted || deleting;
+        const editing = this.state.editTableName === record.tableName;
         const popParams = {};
         if (disabled) {
           popParams.visible = false;
@@ -281,24 +311,37 @@ class AdminOperation extends PureComponent {
           >
             Remake
           </Button>) : (
-          <Popconfirm
-            title="Are you sure delete this table?"
-            onConfirm={() => this.deleteTable(record.tableName)}
-            okText="Yes"
-            cancelText="No"
-            disabled={disabled}
-            {...popParams}
-          >
+          <div>
             <Button 
-              style={{cursor: "pointer"}} 
-              type="danger" 
+              style={{cursor: "pointer", marginRight: 8}} 
+              type={editing ? "default" : 'primary'}
               size="small"
               disabled={disabled}
-              icon={deleting ? 'loading' : record.deleted ? 'close-circle' : 'delete'}
+              icon={editing ? 'close-circle' : 'edit'}
+              onClick={() => this.setState({editTableName: editing ? '' : record.tableName})}
             >
-              {record.deleted ? "Deleted" : "Delete"}
+              {editing ? "Cancel" : "Edit"}
             </Button>
-          </Popconfirm>
+            <Popconfirm
+              title="Are you sure delete this table?"
+              onConfirm={() => this.deleteTable(record.tableName)}
+              okText="Yes"
+              cancelText="No"
+              disabled={disabled}
+              {...popParams}
+            >
+              <Button 
+                style={{cursor: "pointer"}} 
+                type="danger" 
+                size="small"
+                disabled={disabled}
+                icon={deleting ? 'loading' : record.deleted ? 'close-circle' : 'delete'}
+              >
+                {record.deleted ? "Deleted" : "Delete"}
+              </Button>
+            </Popconfirm>
+          </div>
+          
         )},
     }
   ]

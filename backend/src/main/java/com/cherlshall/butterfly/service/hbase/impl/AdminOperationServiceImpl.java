@@ -108,7 +108,7 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
     @Override
     public ResponseVO<Void> addFamily(String tableName, String family) {
-        String checkResult = check.checkTableAndFamily(tableName, family);
+        String checkResult = check.checkTableButFamily(tableName, family);
         if (checkResult != null) {
             return ResponseVO.ofFailure(checkResult);
         }

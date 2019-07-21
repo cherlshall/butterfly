@@ -179,6 +179,18 @@ export default {
       }
     },
 
+    *changeFamily({ payload, callback }, { call, put }) {
+      const response = yield call(service.changeFamily, payload);
+      if (response.success) {
+        if (callback) {
+          callback();
+        }
+        message.success("change family success")
+      } else {
+        message.error(response.msg || "unknown error");
+      }
+    },
+
   },
 
   reducers: {

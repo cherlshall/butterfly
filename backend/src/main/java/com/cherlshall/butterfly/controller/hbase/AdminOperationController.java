@@ -1,5 +1,6 @@
 package com.cherlshall.butterfly.controller.hbase;
 
+import com.cherlshall.butterfly.entity.hbase.FamilyChange;
 import com.cherlshall.butterfly.entity.hbase.HTableDetail;
 import com.cherlshall.butterfly.entity.hbase.HTableSimple;
 import com.cherlshall.butterfly.service.hbase.AdminOperationService;
@@ -61,5 +62,26 @@ public class AdminOperationController {
     public ResponseVO<Void> deleteFamily(@PathVariable("tableName") String tableName,
                                          @PathVariable("family") String family) {
         return service.deleteFamily(tableName, family);
+    }
+
+    @PostMapping("/family/{tableName}")
+    public ResponseVO<int[]> changeFamily(@PathVariable("tableName") String tableName,
+                                         @RequestBody FamilyChange change) {
+        int count = 0;
+        int[] counts = new int[2];
+        for (int i = 0; i < change.getAddition().size(); i++) {
+            ResponseVO<Void> res = service.addFamily(tableName, change.getAddition().get(i));
+            if (res.getSuccess())
+                count++;
+        }
+        counts[0] = count;
+        count = 0;
+        for (int i = 0; i < change.getRemove().size(); i++) {
+            ResponseVO<Void> res = service.deleteFamily(tableName, change.getRemove().get(i));
+            if (res.getSuccess())
+                count++;
+        }
+        counts[1] = count;
+        return ResponseVO.ofSuccess(counts);
     }
 }

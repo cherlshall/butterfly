@@ -26,6 +26,14 @@ public class Check {
         return checkExist(tableName, family);
     }
 
+    public String checkTableButFamily(String tableName, String family) {
+        String checkExist = checkExist(tableName);
+        if (checkExist != null) {
+            return checkExist;
+        }
+        return checkNotExist(tableName, family);
+    }
+
     public String checkExist(String tableName) {
         Boolean exist = dao.exist(tableName);
         if (exist == null) {
@@ -86,7 +94,7 @@ public class Check {
         if (exist == null) {
             return "server error";
         }
-        if (!exist) {
+        if (exist) {
             return "family " + family + " is already exist in table " + tableName;
         }
         return null;

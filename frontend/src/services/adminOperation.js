@@ -56,3 +56,10 @@ export async function deleteFamily({tableName}) {
     body: {},
   });
 }
+
+export async function changeFamily({tableName, ...params}) {
+  return request(`/server/hbase/admin/family/${tableName}`, {
+    method: 'POST',
+    body: params,
+  });
+}
