@@ -12,7 +12,7 @@ export default {
   effects: {
     *list({ callback }, { call, put }) {
       const response = yield call(service.list);
-      if (response.success) {
+      if (response.code === 200) {
         yield put({
           type: 'save',
           payload: {
@@ -29,7 +29,7 @@ export default {
 
     *detail(_, { call, put }) {
       const response = yield call(service.detail);
-      if (response.success) {
+      if (response.code === 200) {
         yield put({
           type: 'save',
           payload: {
@@ -43,7 +43,7 @@ export default {
 
     *create({ payload, callback }, { call, put }) {
       const response = yield call(service.create, payload);
-      if (response.success) {
+      if (response.code === 200) {
         message.success("create success")
         if (callback) {
           callback();
@@ -55,7 +55,7 @@ export default {
 
     *remake({ payload, callback }, { call, put, select }) {
       const response = yield call(service.create, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.adminOperation.dataSource.map(item => {
             const data = { ...item };
@@ -82,7 +82,7 @@ export default {
 
     *del({ payload, callback }, { call, put, select }) {
       const response = yield call(service.del, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.adminOperation.dataSource.map(item => {
             const data = { ...item };
@@ -109,7 +109,7 @@ export default {
 
     *disable({ payload, callback }, { call, put, select }) {
       const response = yield call(service.disable, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.adminOperation.dataSource.map(item => {
             const data = { ...item };
@@ -136,7 +136,7 @@ export default {
 
     *enable({ payload, callback }, { call, put, select }) {
       const response = yield call(service.enable, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.adminOperation.dataSource.map(item => {
             const data = { ...item };
@@ -163,7 +163,7 @@ export default {
 
     *addFamily({ payload, callback }, { call, put, select }) {
       const response = yield call(service.addFamily, payload);
-      if (response.success) {
+      if (response.code === 200) {
         message.success("add family success")
       } else {
         message.error(response.msg || "unknown error");
@@ -172,7 +172,7 @@ export default {
 
     *deleteFamily({ payload, callback }, { call, put }) {
       const response = yield call(service.deleteFamily, payload);
-      if (response.success) {
+      if (response.code === 200) {
         message.success("delete family success")
       } else {
         message.error(response.msg || "unknown error");
@@ -181,7 +181,7 @@ export default {
 
     *changeFamily({ payload, callback }, { call, put }) {
       const response = yield call(service.changeFamily, payload);
-      if (response.success) {
+      if (response.code === 200) {
         if (callback) {
           callback();
         }

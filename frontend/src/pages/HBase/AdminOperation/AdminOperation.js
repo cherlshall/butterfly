@@ -354,11 +354,8 @@ class AdminOperation extends PureComponent {
     return (
       <GridContent>
         <Row gutter={24} style={{marginBottom: 12}}>
-          <Col span={12}>
+          <Col span={24}>
             <Button type="primary" onClick={() => this.changeCreateDialogVisible(true)}>Create Table</Button>
-          </Col>
-          <Col span={12} style={{textAlign: "right"}}>
-            <Button type="primary">Save Family Change</Button>
           </Col>
         </Row>
         <Table

@@ -1,9 +1,8 @@
 package com.cherlshall.butterfly.module.basic.controller;
 
-import com.cherlshall.butterfly.module.basic.entity.UserDetail;
+import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.module.basic.entity.UserLogin;
 import com.cherlshall.butterfly.module.basic.service.UserService;
-import com.cherlshall.butterfly.common.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +22,8 @@ public class UserController {
 
     @RequestMapping("/login/account")
     public Object login(@RequestBody UserLogin user, HttpServletRequest request) {
-        ResponseVO<Map> vo = userService.login(user.getUserName(), user.getPassword());
-        Map result = vo.getData();
-        if (vo.getSuccess()) {
+        Map<String, Object> result = userService.login(user.getUserName(), user.getPassword());
+        if ("ok".equals(result.get("status"))) {
             HttpSession session = request.getSession();
             session.setAttribute("id", result.get("id"));
             session.setAttribute("authority", result.get("currentAuthority"));
@@ -35,7 +33,7 @@ public class UserController {
     }
 
     @RequestMapping("currentAuthority")
-    public Map getCurrentAuthority(HttpServletRequest request) {
+    public Map<String, Object> getCurrentAuthority(HttpServletRequest request) {
         HttpSession session = request.getSession();
         Map<String, Object> data = new HashMap<>();
         data.put("authority", session.getAttribute("authority"));
@@ -43,18 +41,18 @@ public class UserController {
     }
 
     @RequestMapping("/logout/account")
-    public ResponseVO logout(HttpServletRequest request) {
+    public R logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.removeAttribute("id");
         session.removeAttribute("authority");
-        return ResponseVO.ofSuccess("退出成功");
+        return R.ok("logout success");
     }
 
     @RequestMapping("/currentUser")
-    public ResponseVO<UserDetail> currentUser(HttpServletRequest request) {
+    public R currentUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
         int id = (int) session.getAttribute("id");
-        return userService.getCurrentUser(id);
+        return R.ok(userService.getCurrentUser(id));
     }
 
 }

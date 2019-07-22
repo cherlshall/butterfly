@@ -1,6 +1,5 @@
 package com.cherlshall.butterfly.module.hbase.service;
 
-import com.cherlshall.butterfly.common.vo.ResponseVO;
 import com.cherlshall.butterfly.module.hbase.entity.HBaseTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,7 @@ public class TableTest {
 
     @Test
     public void findAll() {
-        ResponseVO<HBaseTable> test = service.findByPage("test", "", 10, false);
+        HBaseTable test = service.findByPage("test", "", 10, false);
         System.out.println(test);
     }
 }

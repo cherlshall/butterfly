@@ -1,14 +1,11 @@
 package com.cherlshall.butterfly.module.hbase.controller;
 
-import com.cherlshall.butterfly.common.vo.ResponseVO;
+import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.module.hbase.entity.FamilyChange;
-import com.cherlshall.butterfly.module.hbase.entity.HTableDetail;
 import com.cherlshall.butterfly.module.hbase.entity.HTableSimple;
 import com.cherlshall.butterfly.module.hbase.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/hbase/admin")
@@ -18,46 +15,50 @@ public class AdminController {
     AdminService service;
 
     @GetMapping("/table")
-    public ResponseVO<String[]> list() {
-        return service.list();
+    public R list() {
+        return R.ok(service.list());
     }
 
     @GetMapping("/detail")
-    public ResponseVO<List<HTableDetail>> detail() {
-        return service.detail();
+    public R detail() {
+        return R.ok(service.detail());
     }
 
     @PostMapping("/table")
-    public ResponseVO<Void> create(@RequestBody HTableSimple hTableSimple) {
-        return service.create(hTableSimple.getTableName(), hTableSimple.getFamilies().toArray(new String[0]));
+    public R create(@RequestBody HTableSimple hTableSimple) {
+        service.create(hTableSimple.getTableName(), hTableSimple.getFamilies().toArray(new String[0]));
+        return R.ok();
     }
 
     @DeleteMapping("/table/{tableName}")
-    public ResponseVO<Void> delete(@PathVariable("tableName") String tableName) {
-        return service.delete(tableName);
+    public R delete(@PathVariable("tableName") String tableName) {
+        service.delete(tableName);
+        return R.ok();
     }
 
     @PutMapping("/disable/{tableName}")
-    public ResponseVO<Void> disable(@PathVariable("tableName") String tableName) {
-        return service.disable(tableName);
+    public R disable(@PathVariable("tableName") String tableName) {
+        service.disable(tableName);
+        return R.ok();
     }
 
     @PutMapping("/enable/{tableName}")
-    public ResponseVO<Void> enable(@PathVariable("tableName") String tableName) {
-        return service.enable(tableName);
+    public R enable(@PathVariable("tableName") String tableName) {
+        service.enable(tableName);
+        return R.ok();
     }
 
     @GetMapping("/family/{tableName}")
-    public ResponseVO<List<String>> listFamily(@PathVariable("tableName") String tableName) {
-        return service.listFamily(tableName);
+    public R listFamily(@PathVariable("tableName") String tableName) {
+        return R.ok(service.listFamily(tableName));
     }
 
     @PostMapping("/family/{tableName}")
-    public ResponseVO<int[]> changeFamily(@PathVariable("tableName") String tableName,
+    public R changeFamily(@PathVariable("tableName") String tableName,
                                          @RequestBody FamilyChange change) {
         int[] counts = new int[2];
         counts[0] = service.addFamily(tableName, change.getAddition().toArray(new String[0]));
         counts[1] = service.deleteFamily(tableName, change.getRemove().toArray(new String[0]));
-        return ResponseVO.ofSuccess(counts);
+        return R.ok(counts);
     }
 }

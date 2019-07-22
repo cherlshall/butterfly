@@ -303,9 +303,9 @@ class TableOperation extends React.Component {
     this.setState({
       timeMode: !this.state.timeMode,
     })
-    for (let i = 1; i < 6; i++) {
+    for (let i = 1; i < 4; i++) {
       rotateTimeOutId[i] = setTimeout(() => {
-        const rotate = 36 * i;
+        const rotate = 60 * i;
         this.setState({
           rotate,
         })

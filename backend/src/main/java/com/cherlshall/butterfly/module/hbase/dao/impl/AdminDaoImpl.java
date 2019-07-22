@@ -22,6 +22,8 @@ public class AdminDaoImpl implements AdminDao {
 
     @Autowired
     HbaseTemplate template;
+    @Autowired
+    Admin admin;
 
     @Override
     public boolean create(String tableName, String... families) {
@@ -41,8 +43,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public boolean delete(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             TableName tn = TableName.valueOf(tableName);
             if (!admin.isTableDisabled(tn)) {
                 admin.disableTable(tn);
@@ -57,8 +58,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public Boolean exist(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             return admin.tableExists(TableName.valueOf(tableName));
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,8 +68,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public String[] list() {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             TableName[] tableNames = admin.listTableNames();
             String[] tableStrNames = new String[tableNames.length];
             for (int i = 0; i < tableNames.length; i++) {
@@ -84,8 +83,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public List<HTableDetail> detail() {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             HTableDescriptor[] hTables = admin.listTables();
             List<HTableDetail> tables = new ArrayList<>();
             for (HTableDescriptor hTable : hTables) {
@@ -111,8 +109,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public boolean disable(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             admin.disableTable(TableName.valueOf(tableName));
             return true;
         } catch (IOException e) {
@@ -123,8 +120,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public boolean enable(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             admin.enableTable(TableName.valueOf(tableName));
             return true;
         } catch (IOException e) {
@@ -135,8 +131,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public Boolean isDisable(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             return admin.isTableDisabled(TableName.valueOf(tableName));
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,8 +141,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public Boolean existFamily(String tableName, String family) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             return admin.getTableDescriptor(TableName.valueOf(tableName)).hasFamily(family.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,8 +151,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public List<String> listFamily(String tableName) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             Set<byte[]> familiesKeys = admin.getTableDescriptor(TableName.valueOf(tableName))
                     .getFamiliesKeys();
             List<String> list = new ArrayList<>();
@@ -174,39 +167,27 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public int addFamily(String tableName, String... families) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
-            int addNum = 0;
-            for (String f : families) {
-                try {
-                    admin.addColumn(TableName.valueOf(tableName), new HColumnDescriptor(f));
-                    addNum++;
-                } catch (Exception ignore) {
-                }
+        int addNum = 0;
+        for (String f : families) {
+            try {
+                admin.addColumn(TableName.valueOf(tableName), new HColumnDescriptor(f));
+                addNum++;
+            } catch (Exception ignore) {
             }
-            return addNum;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
         }
+        return addNum;
     }
 
     @Override
     public int deleteFamily(String tableName, String... families) {
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
-            int deleteNum = 0;
-            for (String f : families) {
-                try {
-                    admin.deleteColumn(TableName.valueOf(tableName), f.getBytes());
-                    deleteNum++;
-                } catch (Exception ignore) {
-                }
+        int deleteNum = 0;
+        for (String f : families) {
+            try {
+                admin.deleteColumn(TableName.valueOf(tableName), f.getBytes());
+                deleteNum++;
+            } catch (Exception ignore) {
             }
-            return deleteNum;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
         }
+        return deleteNum;
     }
 }

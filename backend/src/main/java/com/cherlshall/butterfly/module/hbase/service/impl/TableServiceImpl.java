@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.module.hbase.service.impl;
 
-import com.cherlshall.butterfly.common.vo.ResponseVO;
+import com.cherlshall.butterfly.common.exception.ButterflyException;
 import com.cherlshall.butterfly.module.hbase.dao.TableDao;
 import com.cherlshall.butterfly.module.hbase.entity.HBaseBean;
 import com.cherlshall.butterfly.module.hbase.dao.AdminDao;
@@ -24,10 +24,10 @@ public class TableServiceImpl implements TableService {
     Check check;
 
     @Override
-    public ResponseVO<HBaseTable> findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst) {
+    public HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst) {
         check.checkUsable(tableName);
         if (rowKey == null || rowKey.isEmpty()) {
-            return ResponseVO.ofSuccess(new HBaseTable(dao.findByPage(tableName, pageSize)));
+            return new HBaseTable(dao.findByPage(tableName, pageSize));
         }
         if (removeFirst) {
             pageSize++;
@@ -36,18 +36,17 @@ public class TableServiceImpl implements TableService {
         if (removeFirst && results.size() > 0) {
             results.remove(0);
         }
-        HBaseTable table = new HBaseTable(results);
-        return ResponseVO.ofSuccess(table);
+        return new HBaseTable(results);
     }
 
     @Override
-    public ResponseVO<HBaseTable> findByRowKey(String tableName, String rowKey) {
+    public HBaseTable findByRowKey(String tableName, String rowKey) {
         check.checkUsable(tableName);
-        return ResponseVO.ofSuccess(new HBaseTable(dao.findByRowKey(tableName, rowKey)));
+        return new HBaseTable(dao.findByRowKey(tableName, rowKey));
     }
 
     @Override
-    public ResponseVO<Integer> insertRow(String tableName, String rowKey, List<HBaseBean> beans) {
+    public int insertRow(String tableName, String rowKey, List<HBaseBean> beans) {
         check.checkUsable(tableName);
         int insertSuccess = 0;
         for (HBaseBean bean : beans) {
@@ -58,28 +57,24 @@ public class TableServiceImpl implements TableService {
                 e.printStackTrace();
             }
         }
-        return ResponseVO.ofSuccess(insertSuccess);
+        return insertSuccess;
     }
 
     @Override
-    public ResponseVO<Void> deleteRow(String tableName, String rowKey) {
+    public void deleteRow(String tableName, String rowKey) {
         check.checkExist(tableName);
         int delete = dao.delete(tableName, rowKey);
-        if (delete > 0) {
-            return ResponseVO.ofSuccess(null);
-        } else {
-            return ResponseVO.ofFailure("server error");
+        if (delete <= 0) {
+            throw new ButterflyException();
         }
     }
 
     @Override
-    public ResponseVO<Void> deleteCol(String tableName, String rowName, String familyName, String qualifier) {
+    public void deleteCol(String tableName, String rowName, String familyName, String qualifier) {
         check.checkExist(tableName);
         int delete = dao.delete(tableName, rowName, familyName, qualifier);
-        if (delete > 0) {
-            return ResponseVO.ofSuccess(null);
-        } else {
-            return ResponseVO.ofFailure("delete failure, maybe resource does not exist");
+        if (delete <= 0) {
+            throw new ButterflyException("delete failure, maybe resource does not exist");
         }
     }
 

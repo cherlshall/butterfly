@@ -17,7 +17,7 @@ export default {
 
     *listTableName({ callback }, { call, put }) {
       const response = yield call(list);
-      if (response.success) {
+      if (response.code === 200) {
         yield put({
           type: 'save',
           payload: {
@@ -34,7 +34,7 @@ export default {
 
     *findByPage({ payload, callback }, { call, put }) {
       const response = yield call(service.findByPage, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const data = response.data;
         const familyAndQualifiers = data.familyAndQualifiers;
         yield put({
@@ -59,7 +59,7 @@ export default {
 
     *listFamily({ payload, callback }, { call, put }) {
       const response = yield call(listFamily, payload);
-      if (response.success) {
+      if (response.code === 200) {
         yield put({
           type: 'save',
           payload: {
@@ -76,7 +76,7 @@ export default {
 
     *insertRow({ payload, callback }, { call, put }) {
       const response = yield call(service.insertRow, payload);
-      if (response.success) {
+      if (response.code === 200) {
         message.success(`insert ${response.data} ${response.data.length === 1 ? 'field' : 'fields'} success`)
       } else {
         message.error(response.msg || "unknown error");
@@ -88,7 +88,7 @@ export default {
 
     *recoverRow({ payload, callback }, { call, put, select }) {
       const response = yield call(service.insertRow, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const { family, qualifier, value } = payload.beans[0];
         const dataSource = yield select(state =>
           state.tableOperation.dataSource.map(item => {
@@ -130,7 +130,7 @@ export default {
 
     *deleteRow({ payload, callback }, { call, put, select }) {
       const response = yield call(service.deleteRow, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.tableOperation.dataSource.map(item => {
             const data = { ...item };
@@ -167,7 +167,7 @@ export default {
 
     *deleteCol({ payload, callback }, { call, put, select }) {
       const response = yield call(service.deleteCol, payload);
-      if (response.success) {
+      if (response.code === 200) {
         const dataSource = yield select(state =>
           state.tableOperation.dataSource.map(item => {
             const data = { ...item };

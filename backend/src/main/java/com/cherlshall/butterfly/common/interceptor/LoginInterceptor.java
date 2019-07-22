@@ -1,5 +1,7 @@
 package com.cherlshall.butterfly.common.interceptor;
 
+import com.cherlshall.butterfly.common.exception.ButterflyException;
+import com.cherlshall.butterfly.common.vo.Code;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,6 +16,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         HttpSession session = request.getSession();
         Object id = session.getAttribute("id");
-        return id != null;
+        if (id == null) {
+            throw new ButterflyException(Code.UNAUTH, "not logged in");
+        }
+        return true;
     }
 }

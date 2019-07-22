@@ -4,6 +4,7 @@ import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
 import { accountLogin, accountLogout } from '@/services/user';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { message } from 'antd';
 
 export default {
   namespace: 'login',
@@ -38,6 +39,8 @@ export default {
           }
         }
         yield put(routerRedux.replace(redirect || '/'));
+      } else {
+        message.error(response.msg);
       }
     },
 
@@ -47,7 +50,7 @@ export default {
 
     *logout(_, { call, put }) {
       const response = yield call(accountLogout);
-      if (response && response.success) {
+      if (response.code === 200) {
         yield put({
           type: 'changeLoginStatus',
           payload: {
