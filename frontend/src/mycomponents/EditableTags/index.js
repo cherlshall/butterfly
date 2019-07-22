@@ -139,7 +139,7 @@ export default class EditableTags extends Component {
           );
         })}
         {additionTagsValue.map(value => {
-          const isLongTag = value.length > 20;
+          const isLongTag = value.length > 10;
           const tagElem = (
             <Tag 
               key={`add_${value}`} 
@@ -147,7 +147,7 @@ export default class EditableTags extends Component {
               color='green'
               onClose={() => this.handleClose(value, false)}
             >
-              {isLongTag ? `${value.slice(0, 20)}...` : value}
+              {isLongTag ? `${value.slice(0, 10)}...` : value}
             </Tag>
           );
           return isLongTag ? (
@@ -175,7 +175,12 @@ export default class EditableTags extends Component {
             <Icon type="plus" /> New Tag
           </Tag>
         )}
-        <Button type="primary" size='small' icon='save' loading={!!saving} onClick={this.save}>
+        <Button 
+          type="primary" size='small' icon='save' 
+          loading={!!saving} 
+          onClick={this.save} 
+          style={{ height: 22, verticalAlign: 'bottom' }}
+        >
           Save
         </Button>
       </div>

@@ -239,10 +239,10 @@ class AdminOperation extends PureComponent {
       ...this.getColumnSearchProps('tableName'),
     },
     {
-      title: 'Region Replication',
+      title: 'Replica',
       dataIndex: 'regionReplication',
       key: 'regionReplication',
-      width: 120,
+      width: 80,
     },
     {
       title: 'Read Only',
@@ -255,7 +255,7 @@ class AdminOperation extends PureComponent {
       title: 'Enabled',
       dataIndex: 'disable',
       key: 'disable',
-      width: 120,
+      width: 80,
       render: (text, record, index) => (
         <Switch
           checkedChildren={<Icon type="check" />}
@@ -271,7 +271,7 @@ class AdminOperation extends PureComponent {
       title: 'Families',
       dataIndex: 'families',
       key: 'families',
-      width: 360,
+      width: 380,
       render: (text, record, index) => this.state.editTableName === record.tableName ? (
         <EditableTags initValues={text} save={this.saveTags} saving={this.state.editingTableName.has(record.tableName)} />
       ) : (
