@@ -1,15 +1,15 @@
 package com.cherlshall.butterfly.module.hbase.util;
 
-import com.cherlshall.butterfly.module.hbase.dao.AdminDao;
+import com.cherlshall.butterfly.module.hbase.dao.HbaseAdminDao;
 import com.cherlshall.butterfly.common.exception.ButterflyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Check {
+public class HbaseCheck {
 
     @Autowired
-    AdminDao dao;
+    HbaseAdminDao dao;
 
     public void checkUsable(String tableName) {
         checkExist(tableName);

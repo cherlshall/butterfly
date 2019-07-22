@@ -3,16 +3,16 @@ package com.cherlshall.butterfly.module.hbase.controller;
 import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.module.hbase.entity.FamilyChange;
 import com.cherlshall.butterfly.module.hbase.entity.HTableSimple;
-import com.cherlshall.butterfly.module.hbase.service.AdminService;
+import com.cherlshall.butterfly.module.hbase.service.HbaseAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/hbase/admin")
-public class AdminController {
+public class HbaseAdminController {
 
     @Autowired
-    AdminService service;
+    private HbaseAdminService service;
 
     @GetMapping("/table")
     public R list() {

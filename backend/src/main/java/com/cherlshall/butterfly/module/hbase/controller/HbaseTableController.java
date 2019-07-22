@@ -2,7 +2,7 @@ package com.cherlshall.butterfly.module.hbase.controller;
 
 import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.module.hbase.entity.HBaseBean;
-import com.cherlshall.butterfly.module.hbase.service.TableService;
+import com.cherlshall.butterfly.module.hbase.service.HbaseTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/hbase/table")
-public class TableController {
+public class HbaseTableController {
 
     @Autowired
-    TableService service;
+    private HbaseTableService service;
 
     @GetMapping("/row/{tableName}")
     public R findByPage(@PathVariable("tableName") String tableName,

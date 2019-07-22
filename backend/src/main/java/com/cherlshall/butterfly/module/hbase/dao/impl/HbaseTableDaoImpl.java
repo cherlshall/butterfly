@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.module.hbase.dao.impl;
 
-import com.cherlshall.butterfly.module.hbase.dao.TableDao;
+import com.cherlshall.butterfly.module.hbase.dao.HbaseTableDao;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public class TableDaoImpl implements TableDao {
+public class HbaseTableDaoImpl implements HbaseTableDao {
 
     @Autowired
     HbaseTemplate template;

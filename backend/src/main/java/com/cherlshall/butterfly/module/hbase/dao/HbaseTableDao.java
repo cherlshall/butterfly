@@ -4,7 +4,7 @@ import org.apache.hadoop.hbase.client.Result;
 
 import java.util.List;
 
-public interface TableDao {
+public interface HbaseTableDao {
 
     List<Result> findByRowKeyAndPage(String tableName, String rowKey, int pageSize);
 

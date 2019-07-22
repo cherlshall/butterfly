@@ -4,7 +4,7 @@ import com.cherlshall.butterfly.module.hbase.entity.HTableDetail;
 
 import java.util.List;
 
-public interface AdminDao {
+public interface HbaseAdminDao {
 
     boolean create(String tableName, String... families);
 

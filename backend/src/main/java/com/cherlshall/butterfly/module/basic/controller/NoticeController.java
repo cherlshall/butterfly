@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 public class NoticeController {
 
     @Autowired
-    NoticeService noticeService;
+    private NoticeService noticeService;
 
     @RequestMapping("/notices")
     public R getUserNotices(HttpServletRequest request) {

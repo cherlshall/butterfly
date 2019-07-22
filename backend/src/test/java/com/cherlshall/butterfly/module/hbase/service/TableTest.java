@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TableTest {
 
     @Autowired
-    TableService service;
+    HbaseTableService service;
 
     @Test
     public void findAll() {

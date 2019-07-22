@@ -12,7 +12,7 @@ import java.util.List;
 public class NoticeServiceImpl implements NoticeService {
 
     @Autowired
-    NoticeMapper noticeMapper;
+    private NoticeMapper noticeMapper;
 
     @Override
     public List<Notice> getNotices(int userId) {

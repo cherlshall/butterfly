@@ -1,6 +1,6 @@
 package com.cherlshall.butterfly.module.hbase.dao.impl;
 
-import com.cherlshall.butterfly.module.hbase.dao.AdminDao;
+import com.cherlshall.butterfly.module.hbase.dao.HbaseAdminDao;
 import com.cherlshall.butterfly.module.hbase.entity.HTableDetail;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public class AdminDaoImpl implements AdminDao {
+public class HbaseAdminDaoImpl implements HbaseAdminDao {
 
     @Autowired
     HbaseTemplate template;

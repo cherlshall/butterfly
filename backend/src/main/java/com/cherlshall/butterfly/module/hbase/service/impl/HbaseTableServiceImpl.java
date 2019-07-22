@@ -1,12 +1,11 @@
 package com.cherlshall.butterfly.module.hbase.service.impl;
 
 import com.cherlshall.butterfly.common.exception.ButterflyException;
-import com.cherlshall.butterfly.module.hbase.dao.TableDao;
+import com.cherlshall.butterfly.module.hbase.dao.HbaseTableDao;
 import com.cherlshall.butterfly.module.hbase.entity.HBaseBean;
-import com.cherlshall.butterfly.module.hbase.dao.AdminDao;
 import com.cherlshall.butterfly.module.hbase.entity.HBaseTable;
-import com.cherlshall.butterfly.module.hbase.service.TableService;
-import com.cherlshall.butterfly.module.hbase.util.Check;
+import com.cherlshall.butterfly.module.hbase.service.HbaseTableService;
+import com.cherlshall.butterfly.module.hbase.util.HbaseCheck;
 import org.apache.hadoop.hbase.client.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,14 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TableServiceImpl implements TableService {
+public class HbaseTableServiceImpl implements HbaseTableService {
 
     @Autowired
-    TableDao dao;
+    private HbaseTableDao dao;
     @Autowired
-    AdminDao adminDao;
-    @Autowired
-    Check check;
+    private HbaseCheck check;
 
     @Override
     public HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst) {

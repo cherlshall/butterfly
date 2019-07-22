@@ -4,7 +4,7 @@ import com.cherlshall.butterfly.module.hbase.entity.HTableDetail;
 
 import java.util.List;
 
-public interface AdminService {
+public interface HbaseAdminService {
 
     void create(String tableName, String... families);
 

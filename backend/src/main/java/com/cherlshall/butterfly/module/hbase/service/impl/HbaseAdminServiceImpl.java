@@ -1,22 +1,22 @@
 package com.cherlshall.butterfly.module.hbase.service.impl;
 
 import com.cherlshall.butterfly.common.exception.ButterflyException;
-import com.cherlshall.butterfly.module.hbase.service.AdminService;
-import com.cherlshall.butterfly.module.hbase.dao.AdminDao;
+import com.cherlshall.butterfly.module.hbase.service.HbaseAdminService;
+import com.cherlshall.butterfly.module.hbase.dao.HbaseAdminDao;
 import com.cherlshall.butterfly.module.hbase.entity.HTableDetail;
-import com.cherlshall.butterfly.module.hbase.util.Check;
+import com.cherlshall.butterfly.module.hbase.util.HbaseCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class HbaseAdminServiceImpl implements HbaseAdminService {
 
     @Autowired
-    AdminDao dao;
+    private HbaseAdminDao dao;
     @Autowired
-    Check check;
+    private HbaseCheck check;
 
     @Override
     public void create(String tableName, String... families) {

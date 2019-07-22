@@ -5,7 +5,7 @@ import com.cherlshall.butterfly.module.hbase.entity.HBaseTable;
 
 import java.util.List;
 
-public interface TableService {
+public interface HbaseTableService {
 
     HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst);
 

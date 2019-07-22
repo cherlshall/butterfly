@@ -14,7 +14,7 @@ import java.util.List;
 public class TableTest {
 
     @Autowired
-    TableDao dao;
+    HbaseTableDao dao;
 
     @Test
     public void insert() {
