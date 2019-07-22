@@ -14,21 +14,26 @@
 
 ## 本地运行
 
-- 前端（根目录：butterfy/frontend）
-  1. 根目录执行cmd命令**npm start**
-  2. 浏览器观察**8000端口**
-- 后端（根目录：buttery/backend）
-  1. 修改**application.yml.template**为application.yml，修改其中部分数据库配置
-  2. 使用**IDEA**打开后端工程
-  3. 使用**Maven**导入相关依赖
-  4. 运行**Application.java**中的main方法
+1. 前端（根目录：butterfy/frontend）
+   - 根目录执行cmd命令**npm install**下载依赖
+   - 根目录执行cmd命令**npm start**启动
+   - 浏览器观察**8000端口**
+
+2. 后端（根目录：buttery/backend）
+   - 修改**application.yml.template**为application.yml，修改其中部分数据库配置
+   - 使用**IDEA**打开后端工程
+   - 使用**Maven**导入相关依赖
+   - 运行**Application.java**中的main方法
 
 ## 打包部署
 
-- 前端
-  1. 根目录执行cmd命令**npm run build**
-  2. 将根目录下生成的**dict**文件夹上传到tomcat的webapp下，并更名为**ROOT**
-- 后端
-  1. 执行maven命令**mvn package**
-  2. 将根目录/**target**下生成的**war包**上传到tomcat的webapp下，并更名为**server.war**
+1. 前端（根目录：butterfy/frontend）
+   - 根目录执行cmd命令**npm install**下载依赖
+   - 根目录执行cmd命令**npm run build**
+   - 将根目录下生成的**dict**文件夹上传到tomcat的webapp下，并更名为**ROOT**
+
+2. 后端（根目录：buttery/backend）
+   - 根目录执行maven命令**mvn install**下载依赖
+   - 根目录执行maven命令**mvn package**打包
+   - 将根目录/**target**下生成的**war包**上传到tomcat的webapp下，并更名为**server.war**
 
