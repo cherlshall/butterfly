@@ -125,44 +125,67 @@ models: () => [
         "icon": "database",
         "routes": [
           {
-            "path": "/hbase/adminOperation",
-            "name": "adminOperation",
+            "path": "/hbase/hbaseAdmin",
+            "name": "hbaseAdmin",
             "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
-  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
-  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+  import(/* webpackChunkName: 'p__HBase__models__hbaseAdmin.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseAdmin.js').then(m => { return { namespace: 'hbaseAdmin',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__hbaseTable.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseTable.js').then(m => { return { namespace: 'hbaseTable',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__HBase__AdminOperation__AdminOperation" */'../HBase/AdminOperation/AdminOperation'),
+  component: () => import(/* webpackChunkName: "p__HBase__hbaseAdmin__hbaseAdmin" */'../HBase/hbaseAdmin/hbaseAdmin'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true
           },
           {
-            "path": "/hbase/tableOperation",
-            "name": "tableOperation",
+            "path": "/hbase/hbaseTable",
+            "name": "hbaseTable",
             "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
-  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
-  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+  import(/* webpackChunkName: 'p__HBase__models__hbaseAdmin.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseAdmin.js').then(m => { return { namespace: 'hbaseAdmin',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__hbaseTable.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseTable.js').then(m => { return { namespace: 'hbaseTable',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__HBase__TableOperation__TableOperation" */'../HBase/TableOperation/TableOperation'),
+  component: () => import(/* webpackChunkName: "p__HBase__hbaseTable__hbaseTable" */'../HBase/hbaseTable/hbaseTable'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true
           },
           {
-            "path": "/hbase/tableOperation/:tableName",
+            "path": "/hbase/hbaseTable/:tableName",
             "hideInMenu": true,
-            "name": "tableOperation",
+            "name": "hbaseTable",
             "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
-  import(/* webpackChunkName: 'p__HBase__models__adminOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/adminOperation.js').then(m => { return { namespace: 'adminOperation',...m.default}}),
-  import(/* webpackChunkName: 'p__HBase__models__tableOperation.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/tableOperation.js').then(m => { return { namespace: 'tableOperation',...m.default}})
+  import(/* webpackChunkName: 'p__HBase__models__hbaseAdmin.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseAdmin.js').then(m => { return { namespace: 'hbaseAdmin',...m.default}}),
+  import(/* webpackChunkName: 'p__HBase__models__hbaseTable.js' */'C:/work/source/butterfly/frontend/src/pages/HBase/models/hbaseTable.js').then(m => { return { namespace: 'hbaseTable',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__HBase__TableOperation__TableOperation" */'../HBase/TableOperation/TableOperation'),
+  component: () => import(/* webpackChunkName: "p__HBase__hbaseTable__hbaseTable" */'../HBase/hbaseTable/hbaseTable'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
+          }
+        ]
+      },
+      {
+        "path": "/elasticsearch",
+        "name": "elasticsearch",
+        "icon": "database",
+        "routes": [
+          {
+            "path": "/elasticsearch/esCluster",
+            "name": "esCluster",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsCluster__EsCluster" */'../ElasticSearch/EsCluster/EsCluster'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true

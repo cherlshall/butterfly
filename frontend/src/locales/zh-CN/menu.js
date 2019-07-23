@@ -40,6 +40,8 @@ export default {
   'menu.account.logout': '退出登录',
   'menu.account.login': '登录',
   'menu.hbase': 'HBase',
-  'menu.hbase.adminOperation': '管理员操作',
-  'menu.hbase.tableOperation': '表格操作',
+  'menu.hbase.hbaseAdmin': '管理员操作',
+  'menu.hbase.hbaseTable': '表格操作',
+  'menu.elasticsearch': 'ElasticSearch',
+  'menu.elasticsearch.esCluster': '集群管理',
 };

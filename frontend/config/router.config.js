@@ -45,20 +45,33 @@ export default [
         icon: 'database',
         routes: [
           {
-            path: '/hbase/adminOperation',
-            name: 'adminOperation',
-            component: './HBase/AdminOperation/AdminOperation',
+            path: '/hbase/hbaseAdmin',
+            name: 'hbaseAdmin',
+            component: './HBase/hbaseAdmin/hbaseAdmin',
           },
           {
-            path: '/hbase/tableOperation',
-            name: 'tableOperation',
-            component: './HBase/TableOperation/TableOperation',
+            path: '/hbase/hbaseTable',
+            name: 'hbaseTable',
+            component: './HBase/hbaseTable/hbaseTable',
           },
           {
-            path: '/hbase/tableOperation/:tableName',
+            path: '/hbase/hbaseTable/:tableName',
             hideInMenu:true,
-            name: 'tableOperation',
-            component: './HBase/TableOperation/TableOperation',
+            name: 'hbaseTable',
+            component: './HBase/hbaseTable/hbaseTable',
+          },
+        ],
+        // authority: ['admin'],
+      },
+      {
+        path: '/elasticsearch',
+        name: 'elasticsearch',
+        icon: 'database',
+        routes: [
+          {
+            path: '/elasticsearch/esCluster',
+            name: 'esCluster',
+            component: './ElasticSearch/EsCluster/EsCluster',
           },
         ],
         // authority: ['admin'],

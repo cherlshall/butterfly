@@ -19,7 +19,7 @@ public class AdminTest {
     @Autowired
     HbaseTemplate template;
     @Autowired
-    HbaseAdminDao dao;
+    HBaseAdminDao dao;
 
     @Test
     public void create() {

@@ -19,3 +19,5 @@ hbase:
   config:
     hbase.zookeeper.quorum: node1,node2,node3
     hbase.zookeeper.port: 2181
+elasticsearch:
+  host: 192.168.6.3:9200,192.168.6.4:9200,192.168.6.5:9200

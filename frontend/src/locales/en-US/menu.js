@@ -40,6 +40,8 @@ export default {
   'menu.account.logout': 'Logout',
   'menu.account.login': 'Login',
   'menu.hbase': 'HBase',
-  'menu.hbase.adminOperation': 'Admin Operation',
-  'menu.hbase.tableOperation': 'Table Operation',
+  'menu.hbase.hbaseAdmin': 'Admin Operation',
+  'menu.hbase.hbaseTable': 'Table Operation',
+  'menu.elasticsearch': 'ElasticSearch',
+  'menu.elasticsearch.esCluster': 'Cluster Manager',
 };
