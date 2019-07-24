@@ -76,18 +76,14 @@ models: () => [
     "routes": [
       {
         "path": "/",
-        "redirect": "/dashboard/analysis",
+        "redirect": "/dashboard",
         "exact": true
       },
       {
         "path": "/dashboard",
         "name": "dashboard",
         "icon": "dashboard",
-        "routes": [
-          {
-            "path": "/dashboard/analysis",
-            "name": "analysis",
-            "component": _dvaDynamic({
+        "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
   import(/* webpackChunkName: 'p__Dashboard__models__activities.js' */'C:/work/source/butterfly/frontend/src/pages/Dashboard/models/activities.js').then(m => { return { namespace: 'activities',...m.default}}),
@@ -97,27 +93,7 @@ models: () => [
   component: () => import(/* webpackChunkName: "p__Dashboard__Analysis" */'../Dashboard/Analysis'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
-            "exact": true
-          },
-          {
-            "path": "/dashboard/monitor",
-            "name": "monitor",
-            "component": _dvaDynamic({
-  app: window.g_app,
-models: () => [
-  import(/* webpackChunkName: 'p__Dashboard__models__activities.js' */'C:/work/source/butterfly/frontend/src/pages/Dashboard/models/activities.js').then(m => { return { namespace: 'activities',...m.default}}),
-  import(/* webpackChunkName: 'p__Dashboard__models__chart.js' */'C:/work/source/butterfly/frontend/src/pages/Dashboard/models/chart.js').then(m => { return { namespace: 'chart',...m.default}}),
-  import(/* webpackChunkName: 'p__Dashboard__models__monitor.js' */'C:/work/source/butterfly/frontend/src/pages/Dashboard/models/monitor.js').then(m => { return { namespace: 'monitor',...m.default}})
-],
-  component: () => import(/* webpackChunkName: "p__Dashboard__Monitor" */'../Dashboard/Monitor'),
-  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
-}),
-            "exact": true
-          },
-          {
-            "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
-          }
-        ]
+        "exact": true
       },
       {
         "path": "/hbase",
@@ -183,9 +159,39 @@ models: () => [
             "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}})
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
 ],
   component: () => import(/* webpackChunkName: "p__ElasticSearch__EsCluster__EsCluster" */'../ElasticSearch/EsCluster/EsCluster'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "path": "/elasticsearch/esIndex",
+            "name": "esIndex",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "path": "/elasticsearch/esIndex/:indexName",
+            "hideInMenu": true,
+            "name": "esIndex",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
             "exact": true

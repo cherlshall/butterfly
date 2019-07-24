@@ -132,6 +132,7 @@ class Pie extends Component {
       animate = true,
       colors,
       lineWidth = 1,
+      hasTopLegend = false,
     } = this.props;
 
     const { legendData, legendBlock } = this.state;
@@ -208,6 +209,28 @@ class Pie extends Component {
 
     return (
       <div ref={this.handleRoot} className={pieClassName} style={style}>
+        {hasTopLegend && (
+          <span >
+            {legendData.map((item, i) => (
+              <span 
+                key={item.x} 
+                style={{marginRight: i === legendData.length - 1 ? 0 : 8, cursor: 'pointer'}} 
+                onClick={() => this.handleLegendClick(item, i)}
+              >
+                <span
+                  className={styles.dot}
+                  style={{
+                    backgroundColor: !item.checked ? '#aaa' : item.color,
+                    marginRight: 4,
+                  }}
+                />
+                <span className={styles.legendTitle}>{item.x}</span>
+                <Divider type="vertical" style={{margin: '0 4px'}} />
+                <span className={styles.percent}>{valueFormat ? valueFormat(item.y) : item.y}</span>
+              </span>
+            ))}
+          </span>
+        )}
         <ReactFitText maxFontSize={25}>
           <div className={styles.chart}>
             <Chart
@@ -230,7 +253,6 @@ class Pie extends Component {
                 selected={selected}
               />
             </Chart>
-
             {(subTitle || total) && (
               <div className={styles.total}>
                 {subTitle && <h4 className="pie-sub-title">{subTitle}</h4>}

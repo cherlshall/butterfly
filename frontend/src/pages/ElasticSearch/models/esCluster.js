@@ -1,4 +1,5 @@
 import * as service from '@/services/esCluster';
+import { queryTags } from '@/services/api';
 import { message } from 'antd';
 
 export default {
@@ -7,6 +8,7 @@ export default {
   state: {
     clusterHealth: {},
     indexHealth: [],
+    searchTags: [],
   },
 
   effects: {
@@ -27,6 +29,16 @@ export default {
       if (callback) {
         callback();
       }
+    },
+
+    *fetchTags(_, { call, put }) {
+      const response = yield call(queryTags);
+      yield put({
+        type: 'save',
+        payload: {
+          searchTags: response.list
+        },
+      });
     },
 
   },

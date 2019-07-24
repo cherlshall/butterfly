@@ -21,23 +21,25 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis' },
+      // { path: '/', redirect: '/dashboard/analysis' },
+      { path: '/', redirect: '/dashboard' },
       {
         path: '/dashboard',
         name: 'dashboard',
         icon: 'dashboard',
-        routes: [
-          {
-            path: '/dashboard/analysis',
-            name: 'analysis',
-            component: './Dashboard/Analysis',
-          },
-          {
-            path: '/dashboard/monitor',
-            name: 'monitor',
-            component: './Dashboard/Monitor',
-          },
-        ],
+        component: './Dashboard/Analysis',
+        // routes: [
+        //   {
+        //     path: '/dashboard/analysis',
+        //     name: 'analysis',
+        //     component: './Dashboard/Analysis',
+        //   },
+        //   {
+        //     path: '/dashboard/monitor',
+        //     name: 'monitor',
+        //     component: './Dashboard/Monitor',
+        //   },
+        // ],
       },
       {
         path: '/hbase',
@@ -72,6 +74,17 @@ export default [
             path: '/elasticsearch/esCluster',
             name: 'esCluster',
             component: './ElasticSearch/EsCluster/EsCluster',
+          },
+          {
+            path: '/elasticsearch/esIndex',
+            name: 'esIndex',
+            component: './ElasticSearch/EsIndex/EsIndex',
+          },
+          {
+            path: '/elasticsearch/esIndex/:indexName',
+            hideInMenu:true,
+            name: 'esIndex',
+            component: './ElasticSearch/EsIndex/EsIndex',
           },
         ],
         // authority: ['admin'],

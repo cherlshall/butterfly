@@ -1,22 +1,37 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Row, Col, Switch, Icon, Input, Radio, Tag, Popconfirm, Progress, message } from 'antd';
+import { Table, Button, Row, Col, Card, Icon, Input, Radio, Tag, Popconfirm, Progress, message } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Highlighter from 'react-highlight-words';
 import router from 'umi/router';
 import Link from 'umi/link';
+import { Pie, WaterWave, Gauge, TagCloud } from '@/components/Charts';
+import ActiveChart from '@/mycomponents/ActiveChart';
+import styles from './EsCluster.less';
+import CreateIndexDialog from './CreateIndexDialog';
 
 @connect(({ esCluster, loading }) => ({
   esCluster,
   loading,
 }))
-class EsCluster extends PureComponent {
+class EsCluster extends React.Component {
 
   state = {
+    showClusterInfo: true,
+    createIndexVisible: false,
+    deleteIndexName: new Set(),
   }
 
   componentDidMount() {
     this.health();
+    this.searchTags();
+  }
+
+  searchTags = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'esCluster/fetchTags',
+    });
   }
 
   health = () => {
@@ -118,11 +133,11 @@ class EsCluster extends PureComponent {
       width: 80,
     },
     {
-      title: 'Status(Active shards / All shards)',
+      title: 'Status (Active shards / All shards)',
       dataIndex: 'status',
       width: 160,
       render: (text, record) => {
-        const color = text === 0 ? "#52c41a" : text === 1 ? "#ffc53d" : "#f5222d";
+        const color = this.getColor(text);
         return (
           <Row gutter={12}>
             <Col span={6} style={{ textAlign: 'left', color: color, margin: '2px 0 -2px 0', fontWeight: 'bold' }}>
@@ -145,32 +160,180 @@ class EsCluster extends PureComponent {
       title: 'Action',
       key: 'action',
       width: 120,
-      render: (text, record) => (
-        <Popconfirm
-          title="Are you sure delete this index?"
-          onConfirm={() => {}}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button 
-            style={{cursor: "pointer"}} 
-            type="danger" 
-            size="small"
-            icon={'delete'}
+      render: (text, record) => {
+        const deleting = this.state.deleteIndexName.has(record.indexName);
+        const popParams = {};
+        if (deleting) {
+          popParams.visible = false;
+        }
+        return (
+          <Popconfirm
+            title="Are you sure delete this index?"
+            onConfirm={() => {this.deleteIndex(record.indexName)}}
+            okText="Yes"
+            cancelText="No"
+            {...popParams}
           >
-            {"Delete"}
-          </Button>
-        </Popconfirm>
-      )
+            <Button 
+              style={{cursor: "pointer"}} 
+              type="danger" 
+              size="small"
+              icon={'delete'}
+              disabled={deleting}
+              loading={deleting}
+            >
+              {"Delete"}
+            </Button>
+          </Popconfirm>
+        )
+      }
     },
   ];
 
+  getColor = status => {
+    return status === 0 ? "#52c41a" : status === 1 ? "#ffc53d" : "#f5222d"
+  }
+
+  getWaterWave = (title, percent, color) => {
+    return (
+      <WaterWave
+        height={161}
+        title={title}
+        percent={percent}
+        color={color}
+      />
+    )
+  }
+
+  changeShowClusterInfo = show => {
+    this.setState({
+      showClusterInfo: show,
+    })
+  }
+
+  changeCreateIndexVisible = visible => {
+    this.setState({
+      createIndexVisible: visible,
+    })
+  }
+
+  deleteIndex = indexName => {
+    const { dispatch } = this.props;
+    this.setState({
+      deleteIndexName: this.state.deleteIndexName.add(indexName),
+    })
+    dispatch({
+      type: 'esIndex/deleteIndex',
+      payload: {
+        indexName,
+      },
+      callback: () => {
+        this.state.deleteIndexName.delete(indexName);
+        this.setState({
+          deleteIndexName: this.state.deleteIndexName,
+        })
+        this.health();
+      },
+    });
+  }
+
   render() {
     const { esCluster, loading } = this.props;
-    const { clusterHealth, indexHealth } = esCluster;
+    const { clusterHealth, indexHealth, searchTags } = esCluster;
+    const { clusterName, activeShardNum, unassignedShardNum, activeShardPercent, status, dataNodeNum, nodeNum } = clusterHealth;
+    const { showClusterInfo, createIndexVisible } = this.state;
 
     return (
       <GridContent>
+        <Row
+         gutter={12}
+         style={{height: showClusterInfo ? 266 : 0, marginBottom: showClusterInfo ? 12 : 0}}
+         className={styles.hiddenableRow}
+        >
+          <Col span={6}>
+            <Card
+              title={`Cluster Shards`}
+              bodyStyle={{ textAlign: 'center', height: 210, paddingTop: 4 }}
+              bordered={false}
+              loading={loading.effects['esCluster/health']}
+            >
+              <div 
+                style={{ 
+                  marginBottom: 4, 
+                  color: this.getColor(status), 
+                  fontWeight: 'bold', 
+                  fontSize: 'large', 
+                }}
+              >
+                {clusterName}
+              </div>
+              {status !== undefined &&
+                this.getWaterWave(`${activeShardNum} / ${activeShardNum+unassignedShardNum}`, 
+                  activeShardPercent, this.getColor(status))}
+            </Card>
+          </Col>
+          <Col span={6}>
+          <Card
+            loading={loading.effects['esCluster/health']}
+            bordered={false}
+            title={"Nodes"}
+            bodyStyle={{ textAlign: 'center', height: 210, paddingTop: 12 }}
+          >
+            <Pie
+              hasTopLegend
+              subTitle={`Total`}
+              total={nodeNum}
+              data={[{x: 'Data Node', y: dataNodeNum}, {x: 'Non-data Node', y: nodeNum - dataNodeNum}]}
+              valueFormat={value => value}
+              height={161}
+              lineWidth={4}
+            />
+          </Card>
+          </Col>
+          <Col span={6}>
+            <Card
+              title={"Keyword Distribution"}
+              bodyStyle={{ textAlign: 'center', height: 210 }}
+              bordered={false}
+              loading={loading.effects['esCluster/fetchTags']}
+            >
+              <TagCloud data={searchTags} height={161} />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card
+              title={"Traffic Monitor"}
+              bodyStyle={{ height: 210, paddingTop: 4 }}
+              bordered={false}
+              loading={false}
+            >
+              <ActiveChart
+                subTitle="Alarm situation"
+                total="Normal traffic range"
+                unit="Mbps"
+              />
+            </Card>
+          </Col>
+        </Row>
+        <Row style={{marginBottom: 8}}>
+          <Col span={12}>
+            <Button
+              type='primary'
+              icon={showClusterInfo ? 'up' : 'down'}
+              onClick={() => this.changeShowClusterInfo(!showClusterInfo)}
+              style={{ marginRight: 8 }}
+            >
+              {showClusterInfo ? 'Hid Cluster Info' : 'Show Cluster Info'}
+            </Button>
+            <Button
+              type='primary'
+              onClick={() => this.changeCreateIndexVisible(true)}
+            >
+              Create Index
+            </Button>
+          </Col>
+          <Col span={12}></Col>
+        </Row>
         <Table
           columns={this.columns}
           dataSource={indexHealth}
@@ -186,6 +349,11 @@ class EsCluster extends PureComponent {
             showTotal: (total) => `Total ${total} items`,
             pageSizeOptions: ["10", "30", "50"],
           }}
+        />
+        <CreateIndexDialog
+          visible={createIndexVisible} 
+          closeDialog={() => this.changeCreateIndexVisible(false)}
+          createOver={this.health}
         />
       </GridContent>
     )

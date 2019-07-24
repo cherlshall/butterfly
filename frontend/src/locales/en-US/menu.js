@@ -44,4 +44,5 @@ export default {
   'menu.hbase.hbaseTable': 'Table Operation',
   'menu.elasticsearch': 'ElasticSearch',
   'menu.elasticsearch.esCluster': 'Cluster Manager',
+  'menu.elasticsearch.esIndex': 'Index Detail',
 };

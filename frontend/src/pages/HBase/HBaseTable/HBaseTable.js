@@ -295,22 +295,10 @@ class HBaseTable extends React.Component {
   };
 
   changeTimeMode = () => {
-    if (rotateTimeOutId) {
-      for (let i = 0; i < rotateTimeOutId.length; i++) {
-        clearTimeout(rotateTimeOutId[i]);
-      }
-    }
     this.setState({
       timeMode: !this.state.timeMode,
+      rotate: this.state.rotate === 0 ? 180 : 0,
     })
-    for (let i = 1; i < 4; i++) {
-      rotateTimeOutId[i] = setTimeout(() => {
-        const rotate = 60 * i;
-        this.setState({
-          rotate,
-        })
-      }, 100 * i)
-    }
   }
 
   changeEditIndex = (index) => {
@@ -449,6 +437,7 @@ class HBaseTable extends React.Component {
           type="swap" 
           onClick={this.changeTimeMode}
           style={{color: '#1890FF', marginLeft: 8}}
+          className={styles.transitionIcon}
           rotate={this.state.rotate}
         />
       </div>),
@@ -512,7 +501,7 @@ class HBaseTable extends React.Component {
     }
   ]
 
-  getColId = (record) => record.rowKey + "." + record.family + "." + record.qualifier + "." + record.value + "." + record.timestamp;
+  getColId = (record) => `${record.rowKey}.${record.family}.${record.qualifier}.${record.value}.${record.timestamp}`;
 
   render() {
     const { hbaseTable, loading } = this.props;

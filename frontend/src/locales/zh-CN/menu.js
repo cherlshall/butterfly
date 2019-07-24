@@ -44,4 +44,5 @@ export default {
   'menu.hbase.hbaseTable': '表格操作',
   'menu.elasticsearch': 'ElasticSearch',
   'menu.elasticsearch.esCluster': '集群管理',
+  'menu.elasticsearch.esIndex': '索引详情',
 };
