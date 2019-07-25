@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table, message } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ResizableTable from "@/mycomponents/ResizableTable";
+import ListDrawer from "@/mycomponents/ListDrawer";
 import styles from './HBaseTable.less';
 import InsertDialog from './InsertDialog';
 import Highlighter from 'react-highlight-words';
@@ -147,6 +148,7 @@ class HBaseTable extends React.Component {
     columns.push({
       title: 'Action',
       key: 'action',
+      fixed: 'right',
       render: (text, record) => {
         const deleting = this.state.deleteRowKey.has(record.rowKey);
         const disabled = record.deleted || deleting;
@@ -448,6 +450,7 @@ class HBaseTable extends React.Component {
     {
       title: 'Action',
       key: 'action',
+      fixed: 'right',
       render: (text, record, index) => {
         const deleting = this.state.deleteColId.has(this.getColId(record));
         const disabled = record.deleted || deleting;
@@ -502,6 +505,18 @@ class HBaseTable extends React.Component {
   ]
 
   getColId = (record) => `${record.rowKey}.${record.family}.${record.qualifier}.${record.value}.${record.timestamp}`;
+
+  getColNum = (columns) => {
+    let num = 0;
+    columns.forEach(item => {
+      if (item.children) {
+        num += item.children.length;
+      } else {
+        num += 1;
+      }
+    })
+    return num;
+  }
 
   render() {
     const { hbaseTable, loading } = this.props;
@@ -562,6 +577,7 @@ class HBaseTable extends React.Component {
             loading={(!currentTableName && loading.effects["hbaseTable/listTableName"]) || 
               loading.effects["hbaseTable/findByPage"]}
             pagination={false}
+            scroll={{x: this.getColNum(columns) > 5 ? 'max-content' : false}}
           /> : 
           <ResizableTable
             columns={this.columnsCol}
@@ -580,6 +596,7 @@ class HBaseTable extends React.Component {
               pageSizeOptions: ["10", "30", "50"],
             }}
             editColIndex={this.state.editColIndex}
+            scroll={{x: this.getColNum(this.columnsCol) > 5 ? 'max-content' : false}}
           />
         }
         <div style={{width: '100%', textAlign: 'right', marginTop: 12}}>
@@ -597,45 +614,16 @@ class HBaseTable extends React.Component {
               NEXT
             </Button>}
         </div>
-        <Drawer
-          title={
-            <div>
-              <span style={{display: "inline-block", width: "70%"}}>ALL TABLE</span>
-              <span style={{display: "inline-block", width: "30%", textAlign: "right"}}>
-                <Icon type="reload" style={{cursor: "pointer", color: "#096dd9"}} onClick={this.listTableName} />
-              </span>
-              <Input 
-                style={{marginTop: 12}} 
-                allowClear 
-                onChange={(e) => {this.setState({filterTable: e.target.value})}}
-                placeholder="For Search"
-                prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)'}} />}
-               />
-            </div>
-          }
-          placement="right"
-          closable={false}
-          onClose={this.onClose}
+        <ListDrawer 
+          title='ALL TABLE'
+          loading={!!loading.effects["hbaseTable/listTableName"]}
+          onReload={this.listTableName}
           visible={drawerVisible}
-        >
-          <Spin spinning={!!loading.effects["hbaseTable/listTableName"]}>
-            {tableNames.filter((tableName) => {
-              if (tableName.indexOf(filterTable) !== -1) {
-                return true;
-              } else {
-                return false;
-              }
-            }).map((tableName) => (
-              <p 
-                key={tableName}
-                className={currentTableName === tableName ? styles.table_name_select : styles.table_name}
-                onClick={() => this.findFirstPage(tableName)}
-              >
-                {tableName}
-              </p>
-            ))}
-          </Spin>
-        </Drawer>
+          onClose={this.onClose}
+          dataSource={tableNames}
+          selected={currentTableName}
+          onSelect={this.findFirstPage}
+        />
         <Modal
           // destroyOnClose={true}
           title={`Insert To ${currentTableName}`}

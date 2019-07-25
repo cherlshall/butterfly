@@ -28,7 +28,7 @@ public interface UserMapper {
     @Select("select * from user where id = #{id}")
     @Results({
             @Result(column = "id", property = "tags", javaType = List.class,
-            many = @Many(select = "UserMapper.getTagsByUserId"))
+            many = @Many(select = "com.cherlshall.butterfly.module.basic.dao.UserMapper.getTagsByUserId"))
     })
     UserDetail getUserDetailById(int id);
 }

@@ -28,9 +28,43 @@ public class ParamsVO {
     }
 
     @JsonIgnore
+    public int getStartIndexWithDefault() {
+        if (currentPage == null) {
+            return 0;
+        }
+        if (pageSize == null) {
+            return (this.currentPage - 1) * 10;
+        }
+        return (this.currentPage - 1) * this.pageSize;
+    }
+
+    @JsonIgnore
+    public int getPageSizeWithDefault() {
+        return pageSize == null ? 10 : pageSize;
+    }
+
+    @JsonIgnore
     public String getOrderName() {
         if (this.orderName == null)
             return null;
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.orderName);
+    }
+
+    @JsonIgnore
+    public Boolean isOrderAsc() {
+        if (orderDirection == null) {
+            return null;
+        }
+        return orderDirection.equalsIgnoreCase("asc") ||
+                orderDirection.equalsIgnoreCase("ascend");
+    }
+
+    @JsonIgnore
+    public Boolean isOrderDesc() {
+        if (orderDirection == null) {
+            return null;
+        }
+        return orderDirection.equalsIgnoreCase("desc") ||
+                orderDirection.equalsIgnoreCase("descend");
     }
 }

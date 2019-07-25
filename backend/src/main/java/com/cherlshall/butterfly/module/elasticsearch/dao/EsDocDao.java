@@ -1,5 +1,7 @@
 package com.cherlshall.butterfly.module.elasticsearch.dao;
 
+import com.cherlshall.butterfly.common.vo.PageData;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,5 +14,8 @@ public interface EsDocDao {
     int delete(String indexName, String id);
 
     int update(String indexName, String id, Map<String, Object> data);
+
+    PageData<Map<String, Object>> selectByPage(String indexName, int from, int size,
+                                               String orderName, Boolean orderAsc);
 
 }

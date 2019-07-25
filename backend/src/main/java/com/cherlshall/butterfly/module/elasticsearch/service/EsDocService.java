@@ -1,5 +1,8 @@
 package com.cherlshall.butterfly.module.elasticsearch.service;
 
+import com.cherlshall.butterfly.common.vo.PageData;
+import com.cherlshall.butterfly.common.vo.ParamsVO;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,4 +15,6 @@ public interface EsDocService {
     int delete(String indexName, String id);
 
     int update(String indexName, String id, Map<String, Object> data);
+
+    PageData<Map<String, Object>> selectByPage(String indexName, ParamsVO params);
 }

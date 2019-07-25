@@ -1,5 +1,8 @@
 package com.cherlshall.butterfly.module.elasticsearch.service.impl;
 
+import com.cherlshall.butterfly.common.exception.ButterflyException;
+import com.cherlshall.butterfly.common.vo.PageData;
+import com.cherlshall.butterfly.common.vo.ParamsVO;
 import com.cherlshall.butterfly.module.elasticsearch.dao.EsDocDao;
 import com.cherlshall.butterfly.module.elasticsearch.service.EsDocService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +35,22 @@ public class EsDocServiceImpl implements EsDocService {
     @Override
     public int update(String indexName, String id, Map<String, Object> data) {
         return dao.update(indexName, id, data);
+    }
+
+    @Override
+    public PageData<Map<String, Object>> selectByPage(String indexName, ParamsVO params) {
+        String orderDirection = params.getOrderDirection();
+        Boolean asc;
+        if (orderDirection == null) {
+            asc = null;
+        } else {
+            asc = params.isOrderAsc();
+        }
+        PageData<Map<String, Object>> pageData = dao.selectByPage(indexName, params.getStartIndexWithDefault(),
+                params.getPageSizeWithDefault(), params.getOrderName(), asc);
+        if (pageData == null) {
+            throw new ButterflyException();
+        }
+        return pageData;
     }
 }

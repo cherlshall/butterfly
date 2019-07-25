@@ -124,18 +124,18 @@ class EsCluster extends React.Component {
       title: 'Index Name',
       dataIndex: 'indexName',
       key: 'indexName',
-      width: 180,
+      width: 240,
       ...this.getColumnSearchProps('indexName'),
     },
     {
       title: 'Replica',
       dataIndex: 'replicaNum',
-      width: 80,
+      width: 100,
     },
     {
       title: 'Status (Active shards / All shards)',
       dataIndex: 'status',
-      width: 160,
+      width: 180,
       render: (text, record) => {
         const color = this.getColor(text);
         return (
@@ -159,7 +159,7 @@ class EsCluster extends React.Component {
     {
       title: 'Action',
       key: 'action',
-      width: 120,
+      width: 40,
       render: (text, record) => {
         const deleting = this.state.deleteIndexName.has(record.indexName);
         const popParams = {};

@@ -9,4 +9,7 @@ public interface EsIndexDao {
     boolean deleteIndex(String indexName);
 
     String[] list();
+
+    Map<String, Object> mapping(String indexName);
+
 }

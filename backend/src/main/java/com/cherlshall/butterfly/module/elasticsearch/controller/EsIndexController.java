@@ -30,4 +30,13 @@ public class EsIndexController {
         service.delete(indexName);
         return R.ok();
     }
+
+    @GetMapping("/{indexName}")
+    public R properties(@PathVariable("indexName") String indexName) {
+        String[] properties = service.properties(indexName);
+        if (properties == null) {
+            return R.error();
+        }
+        return R.ok(properties);
+    }
 }

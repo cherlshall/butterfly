@@ -66,8 +66,6 @@ class CreateIndexDialog extends PureComponent {
       if (!err) {
         const { indexName, keys, properties, types } = values;
         this.create(indexName, properties, types);
-      } else {
-        console.log(111, err)
       }
     });
   };

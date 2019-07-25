@@ -38,4 +38,23 @@ public class EsIndexServiceImpl implements EsIndexService {
         }
         return indices;
     }
+
+    @Override
+    public String[] properties(String indexName) {
+        Map<String, Object> mapping = dao.mapping(indexName);
+        if (mapping == null) {
+            return new String[0];
+        }
+        Object properties = mapping.get("properties");
+        if (properties == null) {
+            return new String[0];
+        }
+        @SuppressWarnings("unchecked") Map<String, Object> propsMap = (Map<String,Object>) properties;
+        String[] propNames = new String[propsMap.size()];
+        int index = 0;
+        for (Map.Entry<String, Object> entry : propsMap.entrySet()) {
+            propNames[index++] = entry.getKey();
+        }
+        return propNames;
+    }
 }

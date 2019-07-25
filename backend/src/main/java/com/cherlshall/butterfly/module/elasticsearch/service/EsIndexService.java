@@ -9,4 +9,6 @@ public interface EsIndexService {
     void delete(String indexName);
 
     String[] list();
+
+    String[] properties(String indexName);
 }

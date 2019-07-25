@@ -91,7 +91,7 @@ export default {
       if (response.code === 200) {
         const { family, qualifier, value } = payload.beans[0];
         const dataSource = yield select(state =>
-          state.tableOperation.dataSource.map(item => {
+          state.hbaseTable.dataSource.map(item => {
             const data = { ...item };
             if (data.rowKey === payload.rowKey) {
               data[`${family}.${qualifier}`] = value;
@@ -101,7 +101,7 @@ export default {
           })
         );
         const dataSourceCol = yield select(state =>
-          state.tableOperation.dataSourceCol.map(item => {
+          state.hbaseTable.dataSourceCol.map(item => {
             const data = { ...item };
             
             if (data.rowKey === payload.rowKey && 
@@ -132,7 +132,7 @@ export default {
       const response = yield call(service.deleteRow, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.tableOperation.dataSource.map(item => {
+          state.hbaseTable.dataSource.map(item => {
             const data = { ...item };
             if (data.rowKey === payload.rowKey) {
               data.deleted = true;
@@ -141,7 +141,7 @@ export default {
           })
         );
         const dataSourceCol = yield select(state =>
-          state.tableOperation.dataSourceCol.map(item => {
+          state.hbaseTable.dataSourceCol.map(item => {
             const data = { ...item };
             if (data.rowKey === payload.rowKey) {
               data.deleted = true;
@@ -169,7 +169,7 @@ export default {
       const response = yield call(service.deleteCol, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.tableOperation.dataSource.map(item => {
+          state.hbaseTable.dataSource.map(item => {
             const data = { ...item };
             if (data.rowKey === payload.rowKey) {
               data[`${payload.family}.${payload.qualifier}`] = null;
@@ -178,7 +178,7 @@ export default {
           })
         );
         const dataSourceCol = yield select(state =>
-          state.tableOperation.dataSourceCol.map(item => {
+          state.hbaseTable.dataSourceCol.map(item => {
             const data = { ...item };
             if (data.rowKey === payload.rowKey && 
               data.family === payload.family && 
