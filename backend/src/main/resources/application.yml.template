@@ -21,3 +21,5 @@ hbase:
     hbase.zookeeper.port: 2181
 elasticsearch:
   host: 192.168.6.3:9200,192.168.6.4:9200,192.168.6.5:9200
+hdfs:
+  path: hdfs://192.168.6.3:9000

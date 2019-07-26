@@ -42,6 +42,30 @@ export default [
         // ],
       },
       {
+        path: '/elasticsearch',
+        name: 'elasticsearch',
+        icon: 'search',
+        routes: [
+          {
+            path: '/elasticsearch/esCluster',
+            name: 'esCluster',
+            component: './ElasticSearch/EsCluster/EsCluster',
+          },
+          {
+            path: '/elasticsearch/esIndex',
+            name: 'esIndex',
+            component: './ElasticSearch/EsIndex/EsIndex',
+          },
+          {
+            path: '/elasticsearch/esIndex/:indexName',
+            hideInMenu:true,
+            name: 'esIndex',
+            component: './ElasticSearch/EsIndex/EsIndex',
+          },
+        ],
+        // authority: ['admin'],
+      },
+      {
         path: '/hbase',
         name: 'hbase',
         icon: 'database',
@@ -66,27 +90,10 @@ export default [
         // authority: ['admin'],
       },
       {
-        path: '/elasticsearch',
-        name: 'elasticsearch',
-        icon: 'database',
-        routes: [
-          {
-            path: '/elasticsearch/esCluster',
-            name: 'esCluster',
-            component: './ElasticSearch/EsCluster/EsCluster',
-          },
-          {
-            path: '/elasticsearch/esIndex',
-            name: 'esIndex',
-            component: './ElasticSearch/EsIndex/EsIndex',
-          },
-          {
-            path: '/elasticsearch/esIndex/:indexName',
-            hideInMenu:true,
-            name: 'esIndex',
-            component: './ElasticSearch/EsIndex/EsIndex',
-          },
-        ],
+        path: '/hdfs',
+        name: 'hdfs',
+        icon: 'folder',
+        component: './Hdfs/Hdfs',
         // authority: ['admin'],
       },
       {

@@ -96,6 +96,59 @@ models: () => [
         "exact": true
       },
       {
+        "path": "/elasticsearch",
+        "name": "elasticsearch",
+        "icon": "search",
+        "routes": [
+          {
+            "path": "/elasticsearch/esCluster",
+            "name": "esCluster",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsCluster__EsCluster" */'../ElasticSearch/EsCluster/EsCluster'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "path": "/elasticsearch/esIndex",
+            "name": "esIndex",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "path": "/elasticsearch/esIndex/:indexName",
+            "hideInMenu": true,
+            "name": "esIndex",
+            "component": _dvaDynamic({
+  app: window.g_app,
+models: () => [
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
+  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+],
+  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
+  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
+}),
+            "exact": true
+          },
+          {
+            "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
+          }
+        ]
+      },
+      {
         "path": "/hbase",
         "name": "hbase",
         "icon": "database",
@@ -149,57 +202,18 @@ models: () => [
         ]
       },
       {
-        "path": "/elasticsearch",
-        "name": "elasticsearch",
-        "icon": "database",
-        "routes": [
-          {
-            "path": "/elasticsearch/esCluster",
-            "name": "esCluster",
-            "component": _dvaDynamic({
+        "path": "/hdfs",
+        "name": "hdfs",
+        "icon": "folder",
+        "component": _dvaDynamic({
   app: window.g_app,
 models: () => [
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
+  import(/* webpackChunkName: 'p__Hdfs__models__hdfs.js' */'C:/work/source/butterfly/frontend/src/pages/Hdfs/models/hdfs.js').then(m => { return { namespace: 'hdfs',...m.default}})
 ],
-  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsCluster__EsCluster" */'../ElasticSearch/EsCluster/EsCluster'),
+  component: () => import(/* webpackChunkName: "p__Hdfs__Hdfs" */'../Hdfs/Hdfs'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
-            "exact": true
-          },
-          {
-            "path": "/elasticsearch/esIndex",
-            "name": "esIndex",
-            "component": _dvaDynamic({
-  app: window.g_app,
-models: () => [
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
-],
-  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
-  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
-}),
-            "exact": true
-          },
-          {
-            "path": "/elasticsearch/esIndex/:indexName",
-            "hideInMenu": true,
-            "name": "esIndex",
-            "component": _dvaDynamic({
-  app: window.g_app,
-models: () => [
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esCluster.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esCluster.js').then(m => { return { namespace: 'esCluster',...m.default}}),
-  import(/* webpackChunkName: 'p__ElasticSearch__models__esIndex.js' */'C:/work/source/butterfly/frontend/src/pages/ElasticSearch/models/esIndex.js').then(m => { return { namespace: 'esIndex',...m.default}})
-],
-  component: () => import(/* webpackChunkName: "p__ElasticSearch__EsIndex__EsIndex" */'../ElasticSearch/EsIndex/EsIndex'),
-  LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
-}),
-            "exact": true
-          },
-          {
-            "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
-          }
-        ]
+        "exact": true
       },
       {
         "name": "exception",

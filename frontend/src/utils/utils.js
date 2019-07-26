@@ -2,6 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import nzh from 'nzh/cn';
 import { parse, stringify } from 'qs';
+import { Tooltip } from 'antd';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -175,6 +176,40 @@ export function formatWan(val) {
     );
   }
   return result;
+}
+
+export function formatTrafic(val) {
+  const kb = 1024;
+  const mb = 1024 * kb;
+  const gb = 1024 * mb;
+  const tb = 1024 * gb;
+
+  if (val > tb) {
+    return `${Math.floor(val / tb)} TB`
+  }
+  if (val > gb) {
+    return `${Math.floor(val / gb)} GB`
+  }
+  if (val > mb) {
+    return `${Math.floor(val / mb)} MB`
+  }
+  if (val > kb) {
+    return `${Math.floor(val / kb)} KB`
+  }
+  return `${val} B`
+}
+
+export function splitLongText(text) {
+  const len = text ? text.length : 0;
+  if (len > 30) {
+    return (
+      <Tooltip title={text}>
+        {`${text.slice(0, 30)}...`}
+      </Tooltip>
+    );
+  } else {
+    return text;
+  }
 }
 
 // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性

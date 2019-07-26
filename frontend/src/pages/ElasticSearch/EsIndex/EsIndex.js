@@ -11,6 +11,7 @@ import styles from './EsIndex.less';
 import CreateDocDialog from './CreateDocDialog';
 import ListDrawer from "@/mycomponents/ListDrawer";
 import { object } from 'prop-types';
+import { splitLongText } from '@/utils/utils';
 
 @connect(({ esIndex, loading }) => ({
   esIndex,
@@ -84,38 +85,13 @@ class EsIndex extends React.Component {
     const columns = [{
       title: '_id',
       dataIndex: '_id',
-      render: text => {
-        const len = text ? text.length : 0;
-        if (len > 20) {
-          return (
-            <Tooltip title={text}>
-              {`${text.slice(0, 20)}...`}
-            </Tooltip>
-          );
-        } else {
-          return text;
-        }
-      }
+      render: text => splitLongText(text),
     }];
     properties.forEach(property => {
       columns.push({
         title: property,
         dataIndex: property,
-        render: text => {
-          const len = text ? text.length : 0;
-          if (len > 20) {
-            return (
-              <Tooltip title={text}>
-                {`${text.slice(0, 20)}...`}
-              </Tooltip>
-              // <div style={{ wordWrap: 'break-word', wordBreak: 'break-all' }}>
-              //   {text}
-              // </div>
-            );
-          } else {
-            return text;
-          }
-        }
+        render: text => splitLongText(text),
       })
     })
     columns.push({

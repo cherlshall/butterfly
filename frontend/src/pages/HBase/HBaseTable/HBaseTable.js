@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table, message } from 'antd';
+import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table, message, Tooltip } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ResizableTable from "@/mycomponents/ResizableTable";
 import ListDrawer from "@/mycomponents/ListDrawer";
@@ -8,6 +8,7 @@ import styles from './HBaseTable.less';
 import InsertDialog from './InsertDialog';
 import Highlighter from 'react-highlight-words';
 import moment from 'moment';
+import { splitLongText } from '@/utils/utils';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -141,6 +142,7 @@ class HBaseTable extends React.Component {
           title: qua,
           dataIndex: faq.family + "." + qua,
           width: 120,
+          render: text => splitLongText(text),
         });
       }
       columns.push(column);
