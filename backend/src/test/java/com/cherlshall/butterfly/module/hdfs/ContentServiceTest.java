@@ -47,6 +47,18 @@ public class ContentServiceTest {
     }
 
     @Test
+    public void writeOne() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("filed1", "hello");
+        jsonObject.put("filed2", "world");
+        jsonObject.put("filed3", "hello world hello world hello world hello world");
+        jsonObject.put("filed4", "bye");
+        jsonObject.put("filed5", "world");
+        boolean write = service.write("/test1/json1", jsonObject.toJSONString());
+        System.out.println(write);
+    }
+
+    @Test
     public void readToJson() {
         TableData tableData = service.readToTable("/test/json1.txt", new ParamsVO());
         System.out.println(tableData);

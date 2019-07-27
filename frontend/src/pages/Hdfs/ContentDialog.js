@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal, Icon, Button, Table, Spin, Tabs, Skeleton, Slider } from 'antd';
+import { Row, Col, Modal, Icon, Button, Table, Spin, Tabs, Skeleton, Slider, message } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 // import Json2Html from 'json-pretty-html';
 import JSONTree from 'react-json-tree';
@@ -164,6 +164,15 @@ class ContentDialog extends Component {
     })
   }
 
+  strToJson = text => {
+    try {
+      return JSON.parse(text)      
+    } catch (error) {
+      message.error('format error')
+      return {text}
+    }
+  }
+
   render() {
     const { loading, hdfs, filePath, height, width } = this.props;
     const { content, contentColumn, contentDataSource, contentTotal } = hdfs;
@@ -239,7 +248,7 @@ class ContentDialog extends Component {
         >
           <ReactJson 
             name={null}
-            src={JSON.parse(jsonLine)} 
+            src={this.strToJson(jsonLine)} 
             displayObjectSize={false} 
             displayDataTypes={false} 
             enableClipboard={false}
