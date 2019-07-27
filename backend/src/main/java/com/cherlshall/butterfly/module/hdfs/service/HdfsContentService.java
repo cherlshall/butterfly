@@ -1,5 +1,7 @@
 package com.cherlshall.butterfly.module.hdfs.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cherlshall.butterfly.common.vo.PageData;
 import com.cherlshall.butterfly.common.vo.ParamsVO;
 import com.cherlshall.butterfly.common.vo.TableData;
 
@@ -9,5 +11,7 @@ public interface HdfsContentService {
 
     String read(String path);
 
-    TableData readToJson(String path, ParamsVO params);
+    TableData<JSONObject> readToTable(String path, ParamsVO params);
+
+    PageData<String> readToJson(String path, ParamsVO params);
 }

@@ -48,7 +48,7 @@ public class ContentServiceTest {
 
     @Test
     public void readToJson() {
-        TableData tableData = service.readToJson("/test/json1.txt", new ParamsVO());
+        TableData tableData = service.readToTable("/test/json1.txt", new ParamsVO());
         System.out.println(tableData);
     }
 }

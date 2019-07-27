@@ -327,7 +327,7 @@ class Hdfs extends React.Component {
           style={{ top: 24 }}
           bodyStyle={{ height: this.state.height - 48 - 55, overflow: 'auto' }}
         >
-          <ContentDialog filePath={filePath} />
+          <ContentDialog filePath={filePath} width={this.state.width - 48} height={this.state.height - 48 - 55} />
         </Modal>
       </GridContent>
     )

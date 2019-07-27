@@ -100,8 +100,8 @@ export default {
       }
     },
 
-    *readJson({ payload, callback }, { call, put }) {
-      const response = yield call(contentService.readJson, payload);
+    *readToTable({ payload, callback }, { call, put }) {
+      const response = yield call(contentService.readToTable, payload);
       if (response.code === 200) {
         const contentColumn = [];
         response.data.columns.forEach(col => {

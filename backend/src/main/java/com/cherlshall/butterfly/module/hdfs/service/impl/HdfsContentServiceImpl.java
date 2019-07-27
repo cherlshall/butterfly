@@ -29,7 +29,7 @@ public class HdfsContentServiceImpl implements HdfsContentService {
     }
 
     @Override
-    public TableData readToJson(String path, ParamsVO params) {
+    public TableData<JSONObject> readToTable(String path, ParamsVO params) {
         PageData<String> pageData = dao.readLine(path,
                 params.getStartIndexWithDefault(),
                 params.getPageSizeWithDefault());
@@ -48,6 +48,13 @@ public class HdfsContentServiceImpl implements HdfsContentService {
         tableData.setTotal(pageData.getTotal());
         tableData.setDataSource(dataSource);
         return tableData;
+    }
+
+    @Override
+    public PageData<String> readToJson(String path, ParamsVO params) {
+        return dao.readLine(path,
+                params.getStartIndexWithDefault(),
+                params.getPageSizeWithDefault());
     }
 
 }

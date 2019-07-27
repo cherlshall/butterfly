@@ -45,4 +45,5 @@ export default {
   'menu.elasticsearch': 'ElasticSearch',
   'menu.elasticsearch.esCluster': '集群管理',
   'menu.elasticsearch.esIndex': '索引详情',
+  'menu.hdfs': 'HDFS',
 };

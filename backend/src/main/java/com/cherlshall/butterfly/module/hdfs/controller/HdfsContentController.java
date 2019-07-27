@@ -18,10 +18,20 @@ public class HdfsContentController {
         return R.ok(service.read(path));
     }
 
-    @GetMapping("/json")
-    public R readJson(@RequestParam("path") String path,
+    @GetMapping("/table")
+    public R readToTable(@RequestParam("path") String path,
                       @RequestParam("currentPage") int currentPage,
                       @RequestParam("pageSize") int pageSize) {
+        ParamsVO params = new ParamsVO();
+        params.setCurrentPage(currentPage);
+        params.setPageSize(pageSize);
+        return R.ok(service.readToTable(path, params));
+    }
+
+    @GetMapping("/json")
+    public R readToJson(@RequestParam("path") String path,
+                         @RequestParam("currentPage") int currentPage,
+                         @RequestParam("pageSize") int pageSize) {
         ParamsVO params = new ParamsVO();
         params.setCurrentPage(currentPage);
         params.setPageSize(pageSize);

@@ -45,4 +45,5 @@ export default {
   'menu.elasticsearch': 'ElasticSearch',
   'menu.elasticsearch.esCluster': 'Cluster Manager',
   'menu.elasticsearch.esIndex': 'Index Detail',
+  'menu.hdfs': 'HDFS',
 };
