@@ -17,3 +17,6 @@ eureka:
     serviceUrl:
       #在注册中心中进行注册
       defaultZone: http://localhost:8888/eureka/
+
+elasticsearch:
+  host: 192.168.6.3:9200,192.168.6.4:9200,192.168.6.5:9200

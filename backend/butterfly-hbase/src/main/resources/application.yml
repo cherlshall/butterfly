@@ -17,3 +17,9 @@ eureka:
     serviceUrl:
       #在注册中心中进行注册
       defaultZone: http://localhost:8888/eureka/
+
+hbase:
+  zookeeper:
+    quorum: node1,node2,node3
+    property:
+      clientPort: 2181

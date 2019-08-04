@@ -1,0 +1,28 @@
+spring:
+  application:
+    #服务名
+    name: service-user
+  datasource:
+    url: jdbc:mysql://192.168.6.3:3306/butterfly?serverTimezone=Asia/Shanghai
+    username: root
+    password: 111111
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  #服务端口
+  port: 8004
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+eureka:
+  instance:
+    #eureka主机名，会在控制页面中显示
+    hostname: localhost
+    #eureka服务器页面中status的请求路径
+    status-page-url: http://${eureka.instance.hostname}:${server.port}/index
+  client:
+    serviceUrl:
+      #在注册中心中进行注册
+      defaultZone: http://localhost:8888/eureka/

@@ -23,6 +23,7 @@
         <module>butterfly-gateway</module>
         <module>butterfly-elasticsearch</module>
         <module>butterfly-hdfs</module>
+        <module>butterfly-user</module>
     </modules>
 
     <properties>
@@ -38,7 +39,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <optional>true</optional>
+                <version>1.18.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
