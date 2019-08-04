@@ -1,0 +1,18 @@
+server:
+  # 服务端口
+  port: 8888
+
+eureka:
+  instance:
+    # eureka主机名，会在控制页面中显示
+    hostname: localhost
+  client:
+    # 是否将自己注册到Eureka Server，默认为true
+    # 由于当前这个应用就是Eureka Server，故而设为false
+    registerWithEureka: false
+    # 表示是否从Eureka Server获取注册信息，默认为true。因为这是一个单点的Eureka Server，
+    # 不需要同步其他的Eureka Server节点的数据，故而设为false
+    fetchRegistry: false
+    serviceUrl:
+      # eureka注册中心服务器地址
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

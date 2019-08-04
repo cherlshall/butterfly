@@ -1,1 +1,0 @@
-CREATE DATABASE 'test' CHARACTER SET 'utf8';
