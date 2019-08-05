@@ -1,19 +1,19 @@
 package com.cherlshall.butterfly.user.service;
 
+import com.cherlshall.butterfly.user.entity.Notice;
 import com.cherlshall.butterfly.user.entity.UserDetail;
 
-import java.util.Map;
+import java.util.List;
 
 public interface UserService {
 
     /**
-     * 根据账号密码登陆
+     * 根据用户id查询通知信息
      */
-    Map<String, Object> login(String userName, String password);
+    List<Notice> getNotices(int userId);
 
     /**
      * 根据用户id获得用户详细信息
      */
     UserDetail getCurrentUser(int id);
-
 }

@@ -1,18 +1,5 @@
-import { currentAuthority } from '@/services/user';
-import { async } from 'q';
-
-// use localStorage to store the authority info, which might be sent from server in actual project.
-export function getAuthority(str) {
-  let responseAuthority;
-  createRequest("/server/user/currentAuthority", (xmlhttp) => {
-    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-      const data = JSON.parse(xmlhttp.responseText);
-      responseAuthority = data.authority;
-    }
-  });
-  const authorityString =
-    typeof str === 'undefined' ? responseAuthority : str;
-  // authorityString could be admin, "admin", ["admin"]
+export function getAuthority() {
+  const authorityString = getCookie("token") === "" ? "admin" : "guest";
   let authority;
   try {
     authority = JSON.parse(authorityString);
@@ -25,20 +12,48 @@ export function getAuthority(str) {
   return authority || ['guest'];
 }
 
-function createXmlHttp() {
-  //创建xmlhttp对象
-  if (window.XMLHttpRequest) 
-      return new XMLHttpRequest(); 
-  else 
-      return new ActiveXObject("Microsoft.XMLHTTP");
+export function getToken() {
+  return getCookie("token");
 }
-  
-function createRequest(url, callback, data) {
-  const xmlhttp = createXmlHttp();
-  xmlhttp.onreadystatechange = () => {
-    callback(xmlhttp);
-  };
-  xmlhttp.open('post', url, false);
-  xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  xmlhttp.send(data);
+
+export function setToken(token) {
+  return setCookie('token', token, 1);
+}
+
+export function removeToken() {
+  return removeCookie('token');
+}
+
+export function getUid() {
+  return getCookie("uid");
+}
+
+export function setUid(uid) {
+  return setCookie('uid', uid, 1);
+}
+
+export function removeUid() {
+  return removeCookie('uid');
+}
+
+function setCookie(name, value, hours, path, domain, secure) {
+  let cdata = name + "=" + value;
+  if (hours) {
+      const d = new Date();
+      d.setHours(d.getHours() + hours);
+      cdata += "; expires=" + d.toGMTString();
+  }
+  cdata += path ? ("; path=" + path) : "" ;
+  cdata += domain ? ("; domain=" + domain) : "" ;
+  cdata += secure ? ("; secure=" + secure) : "" ;
+  document.cookie = cdata;
+}
+
+function getCookie(name) {
+  const reg = eval("/(?:^|;\\s*)" + name + "=([^=]+)(?:;|$)/"); 
+  return reg.test(document.cookie) ? RegExp.$1 : "";
+}
+
+function removeCookie(name, path, domain){
+  setCookie(name, "", -1, path, domain);
 }

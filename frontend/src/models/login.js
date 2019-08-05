@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
-import { accountLogin, accountLogout } from '@/services/user';
+import { accountLogin, accountLogout } from '@/services/account';
+import { setToken, getToken, removeToken, setUid, getUid, removeUid } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 import { message } from 'antd';
@@ -16,48 +16,69 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(accountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
-      // Login successfully
-      if (response.status === 'ok') {
-        reloadAuthorized();
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
-        let { redirect } = params;
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
+      if (response.code === 200) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: response.data,
+        });
+        // Login successfully
+        if (response.data.status === 'ok') {
+          setToken(response.data.token);
+          setUid(response.data.id);
+          reloadAuthorized();
+          const urlParams = new URL(window.location.href);
+          const params = getPageQuery();
+          let { redirect } = params;
+          if (redirect) {
+            const redirectUrlParams = new URL(redirect);
+            if (redirectUrlParams.origin === urlParams.origin) {
+              redirect = redirect.substr(urlParams.origin.length);
+              if (redirect.match(/^\/.*#/)) {
+                redirect = redirect.substr(redirect.indexOf('#') + 1);
+              }
+            } else {
+              window.location.href = redirect;
+              return;
             }
-          } else {
-            window.location.href = redirect;
-            return;
           }
+          yield put(routerRedux.replace(redirect || '/'));
         }
-        yield put(routerRedux.replace(redirect || '/'));
       } else {
-        message.error(response.msg);
+        message.error(response.msg || "server error");
       }
     },
 
     *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
+      
     },
 
     *logout(_, { call, put }) {
-      const response = yield call(accountLogout);
-      if (response.code === 200) {
-        yield put({
-          type: 'changeLoginStatus',
-          payload: {
-            status: false,
-            currentAuthority: 'guest',
-          },
-        });
+      const uid = getUid();
+      if (uid !== '') {
+        const response = yield call(accountLogout, {uid});
+        if (response.code === 200) {
+          yield put({
+            type: 'changeLoginStatus',
+            payload: {
+              status: false,
+              currentAuthority: 'guest',
+            },
+          });
+          removeToken();
+          removeUid();
+          reloadAuthorized();
+          yield put(
+            routerRedux.replace({
+              pathname: '/user/login',
+              search: stringify({
+                redirect: window.location.href,
+              }),
+            })
+          );
+        }
+      } else {
+        removeToken();
+        removeUid();
         reloadAuthorized();
         yield put(
           routerRedux.replace({
@@ -68,7 +89,9 @@ export default {
           })
         );
       }
+      
     },
+
   },
 
   reducers: {

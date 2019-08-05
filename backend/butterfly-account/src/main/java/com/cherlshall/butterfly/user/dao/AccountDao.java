@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface UserMapper {
+public interface AccountDao {
 
     /**
      * 根据用户名和密码查询用户id和权限 一般用于登陆
@@ -28,7 +28,7 @@ public interface UserMapper {
     @Select("select * from user where id = #{id}")
     @Results({
             @Result(column = "id", property = "tags", javaType = List.class,
-            many = @Many(select = "com.cherlshall.butterfly.module.basic.dao.UserMapper.getTagsByUserId"))
+            many = @Many(select = "com.cherlshall.butterfly.user.dao.AccountDao.getTagsByUserId"))
     })
     UserDetail getUserDetailById(int id);
 }

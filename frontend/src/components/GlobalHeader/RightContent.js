@@ -3,7 +3,7 @@ import { FormattedMessage, formatMessage } from 'umi/locale';
 import { Spin, Tag, Menu, Icon, Avatar, Tooltip, message } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
-import { getAuthority } from '@/utils/authority';
+import { getToken } from '@/utils/authority';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
 import HeaderDropdown from '../HeaderDropdown';
@@ -19,7 +19,7 @@ export default class GlobalHeaderRight extends PureComponent {
     const newNotices = notices.map(notice => {
       const newNotice = { ...notice };
       if (newNotice.datetime) {
-        newNotice.datetime = moment.unix(notice.datetime).fromNow();
+        newNotice.datetime = moment(notice.datetime).fromNow();
       }
       if (newNotice.id) {
         newNotice.key = newNotice.id;
@@ -72,9 +72,9 @@ export default class GlobalHeaderRight extends PureComponent {
       onMenuClick,
       onNoticeClear,
       theme,
+      fetchingCurrentUser,
     } = this.props;
-
-    const loginOk = getAuthority().toString() !== ["guest"].toString();
+    const logined = getToken() !== "";
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
         <Menu.Item key="userCenter">
@@ -85,6 +85,10 @@ export default class GlobalHeaderRight extends PureComponent {
           <Icon type="setting" />
           <FormattedMessage id="menu.account.settings" defaultMessage="account settings" />
         </Menu.Item>
+        <Menu.Item key="triggerError">
+          <Icon type="close-circle" />
+          <FormattedMessage id="menu.account.trigger" defaultMessage="Trigger Error" />
+        </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout">
           <Icon type="logout" />
@@ -94,12 +98,12 @@ export default class GlobalHeaderRight extends PureComponent {
     );
     const menuNoLogin = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item key="logout">
+        <Menu.Item key="login">
           <Icon type="login" />
           <FormattedMessage id="menu.account.login" defaultMessage="login" />
         </Menu.Item>
       </Menu>
-    );
+    )
     const noticeData = this.getNoticeData();
     const unreadMsg = this.getUnreadData(noticeData);
     let className = styles.right;
@@ -179,20 +183,21 @@ export default class GlobalHeaderRight extends PureComponent {
             showViewMore
           />
         </NoticeIcon>
-        {loginOk && !currentUser.name ? (
-          <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />          
-        ) : (
-          <HeaderDropdown overlay={loginOk ? menu : menuNoLogin}>
+        {!fetchingCurrentUser ? (
+          <HeaderDropdown overlay={logined ? menu : menuNoLogin}>
             <span className={`${styles.action} ${styles.account}`}>
               <Avatar
                 size="small"
                 className={styles.avatar}
-                src={loginOk ? currentUser.avatar : "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"}
+                // src={currentUser.avatar || require('@/assets/antd/avatar.png')}
+                src={require('@/assets/antd/avatar.png')}
                 alt="avatar"
               />
-              <span className={styles.name}>{loginOk ? currentUser.name : "guest"}</span>
+              <span className={styles.name}>{logined ? currentUser.name : 'guest'}</span>
             </span>
           </HeaderDropdown>
+        ) : (
+          <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
         )}
         <SelectLang className={styles.action} />
       </div>

@@ -2,43 +2,35 @@ package com.cherlshall.butterfly.user.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cherlshall.butterfly.user.cache.GeographicConfig;
-import com.cherlshall.butterfly.user.dao.UserMapper;
+import com.cherlshall.butterfly.user.dao.AccountDao;
+import com.cherlshall.butterfly.user.dao.NoticeDao;
 import com.cherlshall.butterfly.user.entity.Geographic;
-import com.cherlshall.butterfly.user.entity.User;
+import com.cherlshall.butterfly.user.entity.Notice;
 import com.cherlshall.butterfly.user.entity.UserDetail;
 import com.cherlshall.butterfly.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
-    private UserMapper userMapper;
+    private NoticeDao noticeDao;
+    @Autowired
+    private AccountDao accountDao;
 
     @Override
-    public Map<String, Object> login(String userName, String password) {
-        User user = userMapper.getIdAndAuthority(userName, password);
-        Map<String, Object> result = new HashMap<>();
-        if (user != null && user.getAuthority() != null) {
-            result.put("status", "ok");
-            result.put("type", "account");
-            result.put("currentAuthority", user.getAuthority());
-            result.put("id", user.getId());
-            return result;
-        } else {
-            result.put("status", "error");
-            result.put("type", "account");
-            result.put("currentAuthority", "guest");
-            return result;
-        }
+    public List<Notice> getNotices(int userId) {
+        return noticeDao.getNoticesByUserId(userId);
     }
 
     @Override
     public UserDetail getCurrentUser(int id) {
-        UserDetail userDetail = userMapper.getUserDetailById(id);
+        UserDetail userDetail = accountDao.getUserDetailById(id);
         String provinceId = userDetail.getProvince();
         String cityId = userDetail.getCity();
         JSONObject city = GeographicConfig.getCity(provinceId, cityId);
@@ -48,5 +40,4 @@ public class UserServiceImpl implements UserService {
         userDetail.setGeographic(geographic);
         return userDetail;
     }
-
 }

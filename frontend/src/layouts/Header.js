@@ -7,6 +7,7 @@ import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
+import { stringify } from 'qs';
 
 const { Header } = Layout;
 
@@ -72,6 +73,10 @@ class HeaderView extends Component {
       dispatch({
         type: 'login/logout',
       });
+    }
+    if (key === 'login') {
+      router.push(`/user/login?${stringify({redirect: window.location.href})}`);
+      return;
     }
   };
 
@@ -155,6 +160,7 @@ export default connect(({ user, global, setting, loading }) => ({
   collapsed: global.collapsed,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
   fetchingNotices: loading.effects['global/fetchNotices'],
+  fetchingCurrentUser: loading.effects['user/fetchCurrent'],
   notices: global.notices,
   setting,
 }))(HeaderView);

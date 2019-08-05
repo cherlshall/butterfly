@@ -1,13 +1,14 @@
 spring:
   application:
     #服务名
-    name: service-user
+    name: service-account
   datasource:
-    url: jdbc:mysql://192.168.6.3:3306/butterfly?serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://188.131.238.102:3306/butterfly?serverTimezone=Asia/Shanghai
     username: root
-    password: 111111
+    password: clearlove321
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  redis:
+    host: 192.168.6.3
 server:
   #服务端口
   port: 8004

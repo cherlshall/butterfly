@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-public interface NoticeMapper {
+public interface NoticeDao {
 
     /**
      * 查询用户的通知信息
