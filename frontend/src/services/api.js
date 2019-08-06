@@ -117,8 +117,8 @@ export async function fakeRegister(params) {
   });
 }
 
-export async function queryNotices() {
-  return request(`/server/notice/notices`);
+export async function queryNotices(params) {
+  return request(`/server/user/notices?${stringify(params)}`);
 }
 
 export async function getFakeCaptcha(mobile) {

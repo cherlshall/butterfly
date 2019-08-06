@@ -63,7 +63,7 @@ export default [
             component: './ElasticSearch/EsIndex/EsIndex',
           },
         ],
-        // authority: ['admin'],
+        authority: ['admin'],
       },
       {
         path: '/hbase',
@@ -87,14 +87,14 @@ export default [
             component: './HBase/hbaseTable/hbaseTable',
           },
         ],
-        // authority: ['admin'],
+        authority: ['admin'],
       },
       {
         path: '/hdfs',
         name: 'hdfs',
         icon: 'folder',
         component: './Hdfs/Hdfs',
-        // authority: ['admin'],
+        authority: ['admin'],
       },
       {
         name: 'exception',

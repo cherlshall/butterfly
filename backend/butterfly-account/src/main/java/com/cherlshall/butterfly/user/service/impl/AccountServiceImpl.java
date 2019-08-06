@@ -1,6 +1,7 @@
 package com.cherlshall.butterfly.user.service.impl;
 
 import com.cherlshall.butterfly.common.TokenUtil;
+import com.cherlshall.butterfly.user.config.AccountConfig;
 import com.cherlshall.butterfly.user.dao.AccountDao;
 import com.cherlshall.butterfly.user.entity.User;
 import com.cherlshall.butterfly.user.service.AccountService;
@@ -16,8 +17,9 @@ import java.util.concurrent.TimeUnit;
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
+    private AccountConfig config;
+    @Autowired
     private AccountDao accountDao;
-
     @Autowired
     private StringRedisTemplate template;
 
@@ -32,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
             result.put("currentAuthority", user.getAuthority());
             result.put("id", user.getId());
             result.put("token", token);
-            template.opsForValue().set(user.getId().toString(), token, 1, TimeUnit.HOURS);
+            template.opsForValue().set(user.getId().toString(), token, config.getTokenTimeout(), TimeUnit.HOURS);
             return result;
         } else {
             result.put("status", "error");

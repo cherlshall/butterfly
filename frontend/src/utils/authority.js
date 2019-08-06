@@ -1,5 +1,8 @@
+// token和uid过期时间（小时）
+const tokenTimeout = 24;
+
 export function getAuthority() {
-  const authorityString = getCookie("token") === "" ? "admin" : "guest";
+  const authorityString = getCookie("token") === "" ? "guest" : "admin";
   let authority;
   try {
     authority = JSON.parse(authorityString);
@@ -17,7 +20,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
-  return setCookie('token', token, 1);
+  return setCookie('token', token, tokenTimeout);
 }
 
 export function removeToken() {
@@ -29,7 +32,7 @@ export function getUid() {
 }
 
 export function setUid(uid) {
-  return setCookie('uid', uid, 1);
+  return setCookie('uid', uid, tokenTimeout);
 }
 
 export function removeUid() {

@@ -1,4 +1,5 @@
 import { queryNotices } from '@/services/api';
+import { getUid } from '@/utils/authority';
 
 export default {
   namespace: 'global',
@@ -10,23 +11,26 @@ export default {
 
   effects: {
     *fetchNotices(_, { call, put, select }) {
-      const response = yield call(queryNotices);
-      if (response && response.data) {
-        const data = response.data;
-        yield put({
-          type: 'saveNotices',
-          payload: data,
-        });
-        const unreadCount = yield select(
-          state => state.global.notices.filter(item => !item.read).length
-        );
-        yield put({
-          type: 'user/changeNotifyCount',
-          payload: {
-            totalCount: data.length,
-            unreadCount,
-          },
-        });
+      const uid = getUid();
+      if (uid !== '') {
+        const response = yield call(queryNotices, {uid});
+        if (response && response.data) {
+          const data = response.data;
+          yield put({
+            type: 'saveNotices',
+            payload: data,
+          });
+          const unreadCount = yield select(
+            state => state.global.notices.filter(item => !item.read).length
+          );
+          yield put({
+            type: 'user/changeNotifyCount',
+            payload: {
+              totalCount: data.length,
+              unreadCount,
+            },
+          });
+        }
       }
     },
     *clearNotices({ payload }, { put, select }) {

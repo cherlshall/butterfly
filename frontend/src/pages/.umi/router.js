@@ -146,6 +146,9 @@ models: () => [
           {
             "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
           }
+        ],
+        "authority": [
+          "admin"
         ]
       },
       {
@@ -199,6 +202,9 @@ models: () => [
           {
             "component": () => React.createElement(require('C:/work/source/butterfly/frontend/node_modules/umi-build-dev/lib/plugins/404/NotFound.js').default, { pagesPath: 'src/pages', hasRoutesInConfig: true })
           }
+        ],
+        "authority": [
+          "admin"
         ]
       },
       {
@@ -213,6 +219,9 @@ models: () => [
   component: () => import(/* webpackChunkName: "p__Hdfs__Hdfs" */'../Hdfs/Hdfs'),
   LoadingComponent: require('C:/work/source/butterfly/frontend/src/components/PageLoading/index').default,
 }),
+        "authority": [
+          "admin"
+        ],
         "exact": true
       },
       {
