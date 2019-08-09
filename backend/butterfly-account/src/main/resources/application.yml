@@ -11,7 +11,7 @@ spring:
     host: 192.168.6.3
 server:
   #服务端口
-  port: 8004
+  port: 8001
 
 mybatis:
   configuration:
