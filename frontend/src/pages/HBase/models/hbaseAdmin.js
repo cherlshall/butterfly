@@ -57,7 +57,7 @@ export default {
       const response = yield call(service.create, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.deleted = undefined;
@@ -84,7 +84,7 @@ export default {
       const response = yield call(service.del, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.deleted = true;
@@ -111,7 +111,7 @@ export default {
       const response = yield call(service.disable, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.disable = true;
@@ -138,7 +138,7 @@ export default {
       const response = yield call(service.enable, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.disable = false;
