@@ -23,6 +23,7 @@
         <module>butterfly-elasticsearch</module>
         <module>butterfly-hdfs</module>
         <module>butterfly-account</module>
+        <module>butterfly-ui</module>
     </modules>
 
     <properties>
