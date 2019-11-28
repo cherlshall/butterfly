@@ -297,7 +297,7 @@ class InsertDialog extends PureComponent {
                   message: "Please input rowKey.",
                 },
               ],
-            })(<Input placeholder="rowKey" style={{ width: '90%', marginRight: 8 }} />)}
+            })(<Input placeholder="hex string" style={{ width: '90%', marginRight: 8 }} />)}
           </Form.Item>
           {formItems}
           <Form.Item {...formItemLayoutWithOutLabel}>

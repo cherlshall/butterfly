@@ -23,4 +23,11 @@ public interface HBaseAdminService {
     int addFamily(String tableName, String... family);
 
     int deleteFamily(String tableName, String... family);
+
+    /**
+     * 清空表
+     * @param tableName 需要清空的表的表名
+     * @return 清空失败的表名
+     */
+    List<String> truncate(List<String> tableName);
 }

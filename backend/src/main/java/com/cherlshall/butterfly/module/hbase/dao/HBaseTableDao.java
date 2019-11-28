@@ -10,6 +10,10 @@ public interface HBaseTableDao {
 
     List<Result> findByPage(String tableName, int pageSize);
 
+    List<Result> findByTimestampAndRowKey(String tableName, String rowKey, int pageSize, long start, long end);
+
+    List<Result> findByTimestamp(String tableName, int pageSize, long start, long end);
+
     Result findByRowKey(String tableName, String rowKey);
 
     int insert(String tableName, String rowName, String familyName, String qualifier, String value);

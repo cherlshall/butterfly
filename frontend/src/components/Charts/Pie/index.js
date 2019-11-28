@@ -133,6 +133,7 @@ class Pie extends Component {
       colors,
       lineWidth = 1,
       hasTopLegend = false,
+      ulRestProps = {},
     } = this.props;
 
     const { legendData, legendBlock } = this.state;
@@ -266,7 +267,7 @@ class Pie extends Component {
         </ReactFitText>
 
         {hasLegend && (
-          <ul className={styles.legend}>
+          <ul className={styles.legend}{...ulRestProps}>
             {legendData.map((item, i) => (
               <li key={item.x} onClick={() => this.handleLegendClick(item, i)}>
                 <span

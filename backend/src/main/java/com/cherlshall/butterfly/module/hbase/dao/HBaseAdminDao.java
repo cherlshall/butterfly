@@ -30,4 +30,6 @@ public interface HBaseAdminDao {
 
     int deleteFamily(String tableName, String... families);
 
+    boolean truncate(String tableName);
+
 }

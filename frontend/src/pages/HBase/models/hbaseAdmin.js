@@ -57,7 +57,7 @@ export default {
       const response = yield call(service.create, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.deleted = undefined;
@@ -80,11 +80,28 @@ export default {
       }
     },
 
+    *truncate({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.truncate, payload);
+      if (response.code === 200) {
+        const failNum = response.data.length;
+        if (failNum === 0) {
+          message.success("success all")
+        } else {
+          message.warn(`failure ${failNum} tables! table names are [${response.data.toString()}]`)
+        }
+      } else {
+        message.error(response.msg || "unknown error");
+      }
+      if (callback) {
+        callback(response.data);
+      }
+    },
+
     *del({ payload, callback }, { call, put, select }) {
       const response = yield call(service.del, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.deleted = true;
@@ -111,7 +128,7 @@ export default {
       const response = yield call(service.disable, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.disable = true;
@@ -138,7 +155,7 @@ export default {
       const response = yield call(service.enable, payload);
       if (response.code === 200) {
         const dataSource = yield select(state =>
-          state.adminOperation.dataSource.map(item => {
+          state.hbaseAdmin.dataSource.map(item => {
             const data = { ...item };
             if (data.tableName === payload.tableName) {
               data.disable = false;

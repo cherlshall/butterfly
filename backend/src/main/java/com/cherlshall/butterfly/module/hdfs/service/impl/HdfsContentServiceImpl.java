@@ -1,7 +1,6 @@
 package com.cherlshall.butterfly.module.hdfs.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cherlshall.butterfly.common.exception.ButterflyException;
 import com.cherlshall.butterfly.common.vo.PageData;
 import com.cherlshall.butterfly.common.vo.ParamsVO;
 import com.cherlshall.butterfly.common.vo.TableData;
