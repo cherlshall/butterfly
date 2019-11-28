@@ -2,6 +2,7 @@ package com.cherlshall.butterfly.hbase.entity;
 
 import lombok.Data;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.*;
 
@@ -49,7 +50,7 @@ public class HBaseTable {
     private void fromResult(Result result, Map<String, FamilyAndQualifier> map) {
         Map<String, String> data = new HashMap<>();
         dataList.add(data);
-        String rowKey = new String(result.getRow());
+        String rowKey = Bytes.toHex(result.getRow());
         data.put("rowKey", rowKey);
         // key: family
         NavigableMap<byte[], NavigableMap<byte[], NavigableMap<Long, byte[]>>> familyMap = result.getMap();

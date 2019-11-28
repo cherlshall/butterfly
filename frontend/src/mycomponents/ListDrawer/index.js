@@ -14,7 +14,7 @@ class ListDrawer extends PureComponent {
 
   render() {
 
-    const { title, loading, onReload, visible, onClose, dataSource, selected, onSelect } = this.props;
+    const { title, loading, onReload, visible, onClose, dataSource, selected, onSelect, ...rest } = this.props;
     const { filterText } = this.state;
 
     return (
@@ -38,6 +38,7 @@ class ListDrawer extends PureComponent {
         closable={false}
         onClose={onClose}
         visible={visible}
+        {...rest}
       >
         <Spin spinning={loading}>
           {dataSource.filter(item => {

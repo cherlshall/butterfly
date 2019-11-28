@@ -80,6 +80,23 @@ export default {
       }
     },
 
+    *truncate({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.truncate, payload);
+      if (response.code === 200) {
+        const failNum = response.data.length;
+        if (failNum === 0) {
+          message.success("success all")
+        } else {
+          message.warn(`failure ${failNum} tables! table names are [${response.data.toString()}]`)
+        }
+      } else {
+        message.error(response.msg || "unknown error");
+      }
+      if (callback) {
+        callback(response.data);
+      }
+    },
+
     *del({ payload, callback }, { call, put, select }) {
       const response = yield call(service.del, payload);
       if (response.code === 200) {

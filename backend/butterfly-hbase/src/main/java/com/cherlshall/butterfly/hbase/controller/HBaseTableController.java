@@ -19,8 +19,10 @@ public class HBaseTableController {
     public R findByPage(@PathVariable("tableName") String tableName,
                         @RequestParam("rowKey") String rowKey,
                         @RequestParam("pageSize") int pageSize,
-                        @RequestParam("removeFirst") boolean removeFirst) {
-        return R.ok(service.findByPage(tableName, rowKey, pageSize, removeFirst));
+                        @RequestParam("removeFirst") boolean removeFirst,
+                        @RequestParam("startTime") Long startTime,
+                        @RequestParam("endTime") Long endTime) {
+        return R.ok(service.findByPage(tableName, rowKey, pageSize, removeFirst, startTime, endTime));
     }
 
     @GetMapping("/row/{tableName}/{rowKey}")

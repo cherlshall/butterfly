@@ -3,9 +3,12 @@ package com.cherlshall.butterfly.hbase.controller;
 import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.hbase.entity.FamilyChange;
 import com.cherlshall.butterfly.hbase.entity.HTableSimple;
+import com.cherlshall.butterfly.hbase.entity.TableNameBean;
 import com.cherlshall.butterfly.hbase.service.HBaseAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/hbase/admin")
@@ -28,6 +31,12 @@ public class HBaseAdminController {
     public R create(@RequestBody HTableSimple hTableSimple) {
         service.create(hTableSimple.getTableName(), hTableSimple.getFamilies().toArray(new String[0]));
         return R.ok();
+    }
+
+    @DeleteMapping("/truncate")
+    public R truncate(@RequestBody TableNameBean bean) {
+        List<String> failTableNames = service.truncate(bean.getTableNames());
+        return R.ok(failTableNames);
     }
 
     @DeleteMapping("/table/{tableName}")

@@ -18,6 +18,13 @@ export async function create(params) {
   });
 }
 
+export async function truncate({tableNames}) {
+  return request(`/server/hbase/admin/truncate`, {
+    method: 'DELETE',
+    body: {tableNames},
+  });
+}
+
 export async function del({tableName}) {
   return request(`/server/hbase/admin/table/${tableName}`, {
     method: 'DELETE',

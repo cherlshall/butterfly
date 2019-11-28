@@ -21,15 +21,23 @@ public class HBaseTableServiceImpl implements HBaseTableService {
     private HBaseCheck check;
 
     @Override
-    public HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst) {
+    public HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst, Long start, Long end) {
         check.checkUsable(tableName);
         if (rowKey == null || rowKey.isEmpty()) {
+            if (start != null && end != null && start > 0 && end > 0) {
+                return new HBaseTable(dao.findByTimestamp(tableName, pageSize, start, end));
+            }
             return new HBaseTable(dao.findByPage(tableName, pageSize));
         }
         if (removeFirst) {
             pageSize++;
         }
-        List<Result> results = dao.findByRowKeyAndPage(tableName, rowKey, pageSize);
+        List<Result> results;
+        if (start != null && end != null && start > 0 && end > 0) {
+            results = dao.findByTimestampAndRowKey(tableName, rowKey, pageSize, start, end);
+        } else {
+            results = dao.findByRowKeyAndPage(tableName, rowKey, pageSize);
+        }
         if (removeFirst && results.size() > 0) {
             results.remove(0);
         }

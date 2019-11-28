@@ -25,6 +25,7 @@ class HBaseAdmin extends PureComponent {
     createDialogVisible: false,
     editTableName: '',
     editingTableName: new Set(),
+    selectedRowKeys: [],
   }
 
   componentDidMount() {
@@ -346,16 +347,48 @@ class HBaseAdmin extends PureComponent {
     }
   ]
 
+  onSelectChange = selectedRowKeys => {
+    this.setState({selectedRowKeys})
+  }
+
+  truncate = (tableNames, callback) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'hbaseAdmin/truncate',
+      payload: {
+        tableNames,
+      },
+      callback,
+    });
+  }
+
+  onClickTruncate = () => {
+    const { selectedRowKeys } = this.state;
+    this.truncate(selectedRowKeys, (failTableNames) => {
+      this.setState({selectedRowKeys: failTableNames})
+    })
+  }
+
   render() {
     const { hbaseAdmin, loading } = this.props;
     const { dataSource } = hbaseAdmin;
-    const { createDialogVisible } = this.state;
+    const { createDialogVisible, selectedRowKeys } = this.state;
 
     return (
       <GridContent>
         <Row gutter={24} style={{marginBottom: 12}}>
           <Col span={24}>
             <Button type="primary" onClick={() => this.changeCreateDialogVisible(true)}>Create Table</Button>
+            {selectedRowKeys.length > 0 && 
+              <Button 
+                loading={loading.effects['hbaseAdmin/truncate']} 
+                type="primary" 
+                onClick={this.onClickTruncate}
+                style={{ marginLeft: 4 }}
+              >
+                {`Truncate [${selectedRowKeys.length}]`}
+              </Button>
+            }
           </Col>
         </Row>
         <Table
@@ -373,10 +406,14 @@ class HBaseAdmin extends PureComponent {
             showTotal: (total) => `Total ${total} items`,
             pageSizeOptions: ["10", "30", "50"],
           }}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+          }}
         />
         <Modal
           title="Create Table"
-          visible={this.state.createDialogVisible}
+          visible={createDialogVisible}
           onCancel={() => this.changeCreateDialogVisible(false)}
           footer={null}
         >

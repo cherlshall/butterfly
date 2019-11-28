@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class HBaseAdminServiceImpl implements HBaseAdminService {
@@ -89,5 +94,30 @@ public class HBaseAdminServiceImpl implements HBaseAdminService {
     public int deleteFamily(String tableName, String... family) {
         check.checkExist(tableName);
         return dao.deleteFamily(tableName, family);
+    }
+
+    @Override
+    public List<String> truncate(List<String> tableNames) {
+        List<String> failTableNames = new Vector<>();
+        int threadNum = tableNames.size() > 16 ? 16 : tableNames.size();
+        ExecutorService service = Executors.newFixedThreadPool(threadNum);
+        CountDownLatch latch = new CountDownLatch(tableNames.size());
+        for (String tableName : tableNames) {
+            service.submit(() -> {
+                if (!dao.isDisable(tableName)) {
+                    dao.disable(tableName);
+                }
+                if (!dao.truncate(tableName)) {
+                    failTableNames.add(tableName);
+                }
+                latch.countDown();
+            });
+        }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return failTableNames;
     }
 }

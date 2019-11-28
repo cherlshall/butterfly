@@ -23,4 +23,6 @@ public interface HBaseAdminService {
     int addFamily(String tableName, String... family);
 
     int deleteFamily(String tableName, String... family);
+
+    List<String> truncate(List<String> tableName);
 }

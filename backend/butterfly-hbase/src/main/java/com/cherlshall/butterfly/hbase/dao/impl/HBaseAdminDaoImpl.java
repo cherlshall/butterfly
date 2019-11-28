@@ -190,4 +190,15 @@ public class HBaseAdminDaoImpl implements HBaseAdminDao {
         }
         return deleteNum;
     }
+
+    @Override
+    public boolean truncate(String tableName) {
+        try {
+            admin.truncateTable(TableName.valueOf(tableName), true);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

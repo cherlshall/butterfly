@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table, message, Tooltip } from 'antd';
+import { Drawer, Button, Row, Col, Spin, Icon, Input, Radio, Select, Modal, Popconfirm, Table, message, DatePicker } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ResizableTable from "@/mycomponents/ResizableTable";
 import ListDrawer from "@/mycomponents/ListDrawer";
@@ -12,8 +12,7 @@ import { splitLongText } from '@/utils/utils';
 
 const { Option } = Select;
 const { Search } = Input;
-
-const rotateTimeOutId = [];
+const { RangePicker } = DatePicker;
 
 @connect(({ hbaseTable, loading }) => ({
   hbaseTable,
@@ -33,10 +32,14 @@ class HBaseTable extends React.Component {
     deleteRowKey: new Set(),
     deleteColId: new Set(),
     timeMode: true,
+    rowkeyMode: true,
     rotate: 0,
+    rotateRowkey: 0,
     editColIndex: -1,
     recoverIndex: new Set(),
     onFirstPage: true,
+    startTime: 0,
+    endTime: 0,
   }
 
   componentDidMount() {
@@ -56,7 +59,7 @@ class HBaseTable extends React.Component {
 
   findByPage = (tableName, removeFirst) => {
     const { dispatch } = this.props;
-    const { lastRowKey, pageSize } = this.state;
+    const { lastRowKey, pageSize, startTime, endTime } = this.state;
     dispatch({
       type: 'hbaseTable/findByPage',
       payload: {
@@ -64,6 +67,8 @@ class HBaseTable extends React.Component {
         pageSize,
         rowKey: lastRowKey,
         removeFirst: removeFirst === undefined ? true : removeFirst,
+        startTime,
+        endTime,
       },
       callback: (lastRowKey, familyAndQualifiers) => {
         const newState = {
@@ -127,9 +132,20 @@ class HBaseTable extends React.Component {
   generaterColumns = familyAndQualifiers => {
     const columns = [
       {
-        title: 'rowKey',
+        title: () => (
+          <div>
+            <span>rowKey</span>
+            <Icon 
+              type="swap" 
+              onClick={this.changeRowkeyMode}
+              style={{color: '#1890FF', marginLeft: 8}}
+              className={styles.transitionIcon}
+              rotate={this.state.rotateRowkey}
+            />
+          </div>),
         dataIndex: 'rowKey',
         width: 120,
+        render: text => this.state.rowkeyMode ? text : "undo",
       }
     ];
     for (let i = 0; i < familyAndQualifiers.length; i++) {
@@ -305,6 +321,13 @@ class HBaseTable extends React.Component {
     })
   }
 
+  changeRowkeyMode = () => {
+    this.setState({
+      rowkeyMode: !this.state.rowkeyMode,
+      rotate: this.state.rotateRowkey === 0 ? 180 : 0,
+    })
+  }
+
   changeEditIndex = (index) => {
     if (this.cancleEditTimeout) {
       clearTimeout(this.cancleEditTimeout);
@@ -429,7 +452,7 @@ class HBaseTable extends React.Component {
             }}
             style={{cursor: disabled ? 'not-allowed' : 'edit'}}
           >
-            {text}
+            {splitLongText(text)}
           </div>;
         }
       }
@@ -447,7 +470,20 @@ class HBaseTable extends React.Component {
       </div>),
       dataIndex: 'timestamp',
       width: 200,
-      render: text => this.state.timeMode ? moment(text).format("YYYY-MM-DD HH:mm:ss.SSS") : text,
+      // render: text => {
+        
+      //   if (this.state.timeMode) {
+      //     if (text.length === 10) {
+      //       return moment.unix(text).format("YYYY-MM-DD HH:mm:ss.SSS")
+      //     }
+      //     if (text.length === 13) {
+      //       return moment(text).format("YYYY-MM-DD HH:mm:ss.SSS")
+      //     }
+      //   }
+      //   return text;
+      // },
+      render: text => this.state.timeMode ? (text + "").length === 10 ? moment.unix(text).format("YYYY-MM-DD HH:mm:ss") : 
+        moment(text).format("YYYY-MM-DD HH:mm:ss.SSS") : text,
     },
     {
       title: 'Action',
@@ -520,6 +556,21 @@ class HBaseTable extends React.Component {
     return num;
   }
 
+  onChangeTime = (dates) => {
+    this.setState({
+      startTime: dates[0] ? dates[0].unix() : 0,
+      endTime: dates[1] ? dates[1].unix() : 0,
+    })
+  }
+
+  onOkTime = (dates) => {
+    const {currentTableName} = this.state;
+    this.setState({
+      startTime: dates[0].unix(),
+      endTime: dates[1].unix(),
+    }, () => this.findFirstPage(currentTableName))
+  }
+
   render() {
     const { hbaseTable, loading } = this.props;
     const { dataSource, dataSourceCol, tableNames } = hbaseTable;
@@ -529,7 +580,7 @@ class HBaseTable extends React.Component {
       return (
       <GridContent>
         <Row gutter={24} style={{marginBottom: 12}}>
-          <Col span={12}>
+          <Col span={18}>
             {currentTableName && 
             <div>
               <Button 
@@ -553,10 +604,17 @@ class HBaseTable extends React.Component {
                 onSearch={this.findWithStartRowKey}
                 style={{display: 'inline-block', width: 220, marginRight: 12}}
               />
+              <RangePicker 
+                showTime={{format: 'HH:mm'}}
+                format="YYYY-MM-DD HH:mm"
+                placeholder={["Start Time", "End Time"]}
+                onChange={this.onChangeTime}
+                onOk={this.onOkTime}
+              />
             </div>
             }
           </Col>
-          <Col span={12} style={{textAlign: "right"}}>
+          <Col span={6} style={{textAlign: "right"}}>
             <Radio.Group 
                 value={showMode} 
                 onChange={(e) => this.setState({showMode: e.target.value})}
@@ -618,6 +676,7 @@ class HBaseTable extends React.Component {
         </div>
         <ListDrawer 
           title='ALL TABLE'
+          width={350}
           loading={!!loading.effects["hbaseTable/listTableName"]}
           onReload={this.listTableName}
           visible={drawerVisible}

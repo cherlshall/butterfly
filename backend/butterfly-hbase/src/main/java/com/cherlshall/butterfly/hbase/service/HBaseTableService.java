@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface HBaseTableService {
 
-    HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst);
+    HBaseTable findByPage(String tableName, String rowKey, int pageSize, boolean removeFirst, Long start, Long end);
 
     HBaseTable findByRowKey(String tableName, String rowKey);
 
