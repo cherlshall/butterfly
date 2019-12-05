@@ -1,6 +1,7 @@
 .idea/
 target/
 *.iml
+/backend/butterfly-ui/src/main/resources/static
 /frontend/node_modules
 /frontend/dist
 /frontend/src/pages/.umi

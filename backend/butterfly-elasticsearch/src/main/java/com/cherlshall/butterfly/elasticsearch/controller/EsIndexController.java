@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/es/index")
 public class EsIndexController {
+    
     @Autowired
     private EsIndexService service;
 

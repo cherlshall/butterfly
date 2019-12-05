@@ -20,3 +20,4 @@ eureka:
 
 hdfs:
   path: hdfs://node1:9000
+  max-read-line: 100

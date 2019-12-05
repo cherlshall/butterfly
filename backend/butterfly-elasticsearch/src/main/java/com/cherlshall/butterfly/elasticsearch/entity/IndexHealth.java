@@ -19,7 +19,7 @@ public class IndexHealth extends AbstractHealth {
         if (unassignedShards == 0) {
             this.setActiveShardPercent(100);
         } else {
-            this.setActiveShardPercent(activeShards / (activeShards + unassignedShards));
+            this.setActiveShardPercent(activeShards * 100 / (activeShards + unassignedShards));
         }
         return this;
     }

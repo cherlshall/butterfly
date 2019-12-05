@@ -36,7 +36,6 @@ public class EsDocDaoImpl implements EsDocDao {
     @Autowired
     private RestHighLevelClient client;
 
-
     @Override
     public int insert(String indexName, Map<String, Object> data) {
         IndexRequest request = new IndexRequest(indexName);

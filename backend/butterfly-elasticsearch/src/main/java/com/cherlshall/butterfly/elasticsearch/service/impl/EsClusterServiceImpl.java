@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class EsClusterServiceImpl implements EsClusterService {
 
     @Autowired
-    EsClusterDao dao;
+    private EsClusterDao dao;
 
     @Override
     public ClusterHealth health() {

@@ -6,10 +6,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -21,9 +18,7 @@ import java.util.Set;
 public class HBaseAdminDaoImpl implements HBaseAdminDao {
 
     @Autowired
-    HbaseTemplate template;
-    @Autowired
-    Admin admin;
+    private Admin admin;
 
     @Override
     public boolean create(String tableName, String... families) {
@@ -31,8 +26,7 @@ public class HBaseAdminDaoImpl implements HBaseAdminDao {
         for (String family : families) {
             hd.addFamily(new HColumnDescriptor(family.getBytes()));
         }
-        try (Connection connection = ConnectionFactory.createConnection(template.getConfiguration());
-             Admin admin = connection.getAdmin()) {
+        try {
             admin.createTable(hd);
         } catch (IOException e) {
             e.printStackTrace();

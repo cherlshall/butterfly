@@ -7,6 +7,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -20,6 +21,9 @@ public class HdfsContentDaoImpl implements HdfsContentDao {
 
     @Autowired
     private FileSystem fs;
+
+    @Value("${hdfs.max-read-line}")
+    private int maxReadLine;
 
     @Override
     public boolean write(String path, String content) {
@@ -41,9 +45,13 @@ public class HdfsContentDaoImpl implements HdfsContentDao {
              BufferedReader br = new BufferedReader(isr)) {
             StringBuilder sb = new StringBuilder();
             String line;
+            int readLineCount = 0;
             while((line = br.readLine()) != null){
                 sb.append(line);
                 sb.append("\n");
+                if (++readLineCount >= maxReadLine) {
+                    break;
+                }
             }
             return sb.toString();
         } catch (IOException e) {
@@ -67,7 +75,9 @@ public class HdfsContentDaoImpl implements HdfsContentDao {
                 if (lineIndex >= startLine && lineIndex < startLine + size) {
                     list.add(line);
                 }
-                lineIndex++;
+                if (++lineIndex >= maxReadLine) {
+                    break;
+                }
             }
             pageData.setTotal(lineIndex);
             return pageData;

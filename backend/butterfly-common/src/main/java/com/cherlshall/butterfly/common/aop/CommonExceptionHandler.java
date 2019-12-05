@@ -11,12 +11,19 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(ButterflyException.class)
     public R handleButterflyException(ButterflyException e) {
+        e.printStackTrace();
         return R.error(e.code(), e.msg());
     }
 
     @ExceptionHandler(Exception.class)
     public R handleException(Exception e) {
         e.printStackTrace();
+        return R.error(Code.SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public R handleThrowable(Throwable t) {
+        t.printStackTrace();
         return R.error(Code.SERVER_ERROR);
     }
 }

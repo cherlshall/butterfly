@@ -15,7 +15,7 @@ import java.util.*;
 public class HBaseTableDaoImpl implements HBaseTableDao {
 
     @Autowired
-    HbaseTemplate template;
+    private HbaseTemplate template;
 
     @Override
     public List<Result> findByRowKeyAndPage(String tableName, String rowKey, int pageSize) {

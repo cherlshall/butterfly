@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 public class HdfsFileServiceImpl implements HdfsFileService {
+
     @Autowired
     private HdfsFileDao dao;
 

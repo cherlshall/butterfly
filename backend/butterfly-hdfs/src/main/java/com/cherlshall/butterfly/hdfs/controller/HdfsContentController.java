@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class HdfsContentController {
 
     @Autowired
-    HdfsContentService service;
+    private HdfsContentService service;
 
     @GetMapping
     public R read(String path) {

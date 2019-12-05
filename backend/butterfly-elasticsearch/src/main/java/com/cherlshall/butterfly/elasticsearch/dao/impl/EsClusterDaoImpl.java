@@ -15,7 +15,7 @@ import java.io.IOException;
 public class EsClusterDaoImpl implements EsClusterDao {
 
     @Autowired
-    RestHighLevelClient client;
+    private RestHighLevelClient client;
 
     @Override
     public ClusterHealthResponse health() {

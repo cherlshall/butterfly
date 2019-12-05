@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class HBaseCheck {
 
     @Autowired
-    HBaseAdminDao dao;
+    private HBaseAdminDao dao;
 
     public void checkUsable(String tableName) {
         checkExist(tableName);

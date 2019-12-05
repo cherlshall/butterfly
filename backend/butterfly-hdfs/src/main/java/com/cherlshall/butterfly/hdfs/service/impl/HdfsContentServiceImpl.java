@@ -15,7 +15,7 @@ import java.util.*;
 public class HdfsContentServiceImpl implements HdfsContentService {
 
     @Autowired
-    HdfsContentDao dao;
+    private HdfsContentDao dao;
 
     @Override
     public boolean write(String path, String content) {
