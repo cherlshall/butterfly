@@ -5,38 +5,38 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: elasticsearch
-        uri: lb://service-elasticsearch
-        predicates:
-        - Path=/es/**
-        filters:
-        # 关键在下面一句，值为true则开启认证，false则不开启
-        # 这种配置方式和spring cloud gateway内置的GatewayFilterFactory一致
-        - Authorize=true
-        # 重写url
-        # - RewritePath=/server/(?<segment>.*), /$\{segment}
-      - id: hbase
-        uri: lb://service-hbase
-        predicates:
-        - Path=/hbase/**
-        filters:
-        - Authorize=true
-      - id: hdfs
-        uri: lb://service-hdfs
-        predicates:
-        - Path=/hdfs/**
-        filters:
-        - Authorize=true
-      - id: user
-        uri: lb://service-account
-        predicates:
-        - Path=/user/**
-        filters:
-        - Authorize=true
-      - id: account
-        uri: lb://service-account
-        predicates:
-        - Path=/fake/**,/geographic/**,/account/**,/api/**
+        - id: elasticsearch
+          uri: lb://service-elasticsearch
+          predicates:
+            - Path=/es/**
+          filters:
+            # 关键在下面一句，值为true则开启认证，false则不开启
+            # 这种配置方式和spring cloud gateway内置的GatewayFilterFactory一致
+            - Authorize=true
+          # 重写url
+          # - RewritePath=/server/(?<segment>.*), /$\{segment}
+        - id: hbase
+          uri: lb://service-hbase
+          predicates:
+            - Path=/hbase/**
+          filters:
+            - Authorize=true
+        - id: hdfs
+          uri: lb://service-hdfs
+          predicates:
+            - Path=/hdfs/**
+          filters:
+            - Authorize=true
+        - id: user
+          uri: lb://service-account
+          predicates:
+            - Path=/user/**
+          filters:
+            - Authorize=true
+        - id: account
+          uri: lb://service-account
+          predicates:
+            - Path=/fake/**,/geographic/**,/account/**,/api/**
   redis:
     host: 192.168.6.3
 
