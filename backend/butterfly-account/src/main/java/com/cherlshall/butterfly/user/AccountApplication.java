@@ -8,7 +8,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * @author hu.tengfei
  * @date 2019/8/4
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.cherlshall.butterfly")
 @EnableEurekaClient
 public class AccountApplication {
 
