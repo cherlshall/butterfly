@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal, Icon, Button, Table, Spin, Tabs, Skeleton, Slider, message } from 'antd';
+import { Row, Col, Modal, Icon, Table, Tabs, Skeleton, Slider, message } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 // import Json2Html from 'json-pretty-html';
-import JSONTree from 'react-json-tree';
-import styles from './Hdfs.less';
+// import JSONTree from 'react-json-tree';
 import ReactJson from 'react-json-view';
+import styles from './Hdfs.less';
 
 const { TabPane } = Tabs;
 
@@ -17,7 +17,6 @@ let jsonId = 0;
   loading,
 }))
 class ContentDialog extends Component {
-
   state = {
     type: '1',
     currentPage: 1,
@@ -28,30 +27,31 @@ class ContentDialog extends Component {
     jsonDialogVisible: false,
     textLineTotal: 10,
     iconBottom: 12,
-  }
+  };
 
   componentDidMount() {
     this.read();
     this.setIconBottomInterval();
   }
 
-  setIconBottomInterval = () => {
-    if (this.iconBottomInterval) {
-      clearInterval(this.iconBottomInterval)
-    }
-    this.iconBottomInterval = setInterval(() => {
-      this.setState({
-        iconBottom: this.state.iconBottom === 20 ? 12 : 20,
-      })
-    }, 1500)
-  }
-
   componentWillUnmount() {
     this.clear();
     if (this.iconBottomInterval) {
-      clearInterval(this.iconBottomInterval)
+      clearInterval(this.iconBottomInterval);
     }
   }
+
+  setIconBottomInterval = () => {
+    const { iconBottom } = this.state;
+    if (this.iconBottomInterval) {
+      clearInterval(this.iconBottomInterval);
+    }
+    this.iconBottomInterval = setInterval(() => {
+      this.setState({
+        iconBottom: iconBottom === 20 ? 12 : 20,
+      });
+    }, 1500);
+  };
 
   read = () => {
     const { dispatch, filePath } = this.props;
@@ -60,8 +60,8 @@ class ContentDialog extends Component {
       payload: {
         path: filePath,
       },
-    })
-  }
+    });
+  };
 
   readToTable = () => {
     const { dispatch, filePath } = this.props;
@@ -73,23 +73,21 @@ class ContentDialog extends Component {
         currentPage,
         pageSize,
       },
-    })
-  }
+    });
+  };
 
   clear = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'hdfs/clearContent',
-    })
-  }
+    });
+  };
 
-  changeType = (value) => {
+  changeType = value => {
     if (value === '1') {
       this.setIconBottomInterval();
-    } else {
-      if (this.iconBottomInterval) {
-        clearInterval(this.iconBottomInterval)
-      }
+    } else if (this.iconBottomInterval) {
+      clearInterval(this.iconBottomInterval);
     }
     if (!this.readMoreThanOnce && value === '2') {
       this.readMoreThanOnce = true;
@@ -97,27 +95,32 @@ class ContentDialog extends Component {
     }
     this.setState({
       type: value,
-    })
-  }
+    });
+  };
 
   onTableChange = (pagination, filters, sorter) => {
     const { current, pageSize } = pagination;
     if (current * pageSize > 10000) {
-      message.error("page too large")
+      message.error('page too large');
       return;
     }
-    this.setState({
-      currentPage: current,
-      pageSize,
-    }, this.readToTable)
-  }
+    this.setState(
+      {
+        currentPage: current,
+        pageSize,
+      },
+      this.readToTable
+    );
+  };
 
   getContentArr = (start, end) => {
-    if (this.props.hdfs.content.length === 0) {
+    const { hdfs } = this.props;
+    const { content } = hdfs;
+    if (content.length === 0) {
       return [];
     }
     if (this.contentArr === undefined) {
-      this.contentArr = this.props.hdfs.content.split('\n');
+      this.contentArr = content.split('\n');
       if (!this.contentArr[this.contentArr.length - 1]) {
         this.contentArr.pop();
       }
@@ -136,129 +139,184 @@ class ContentDialog extends Component {
       return this.contentArr.slice(start, end);
     }
     return this.contentArr;
-  }
+  };
 
   changeSlider = value => {
     this.setState({
       startPoint: value[0],
       endPoint: value[1],
-    })
-  }
+    });
+  };
 
   changeJsonVisible = visible => {
     this.setState({
       jsonDialogVisible: visible,
-    })
-  }
+    });
+  };
 
   showJson = json => {
     this.setState({
       jsonLine: json,
       jsonDialogVisible: true,
-    })
-  }
+    });
+  };
 
   nextText = () => {
+    const { textLineTotal } = this.state;
     this.setState({
-      textLineTotal: this.state.textLineTotal + 10,
-    })
-  }
+      textLineTotal: textLineTotal + 10,
+    });
+  };
 
   strToJson = text => {
     try {
-      return JSON.parse(text)      
+      return JSON.parse(text);
     } catch (error) {
-      message.error('format error')
-      return {text}
+      message.error('format error');
+      return { text };
     }
-  }
+  };
 
   render() {
     const { loading, hdfs, filePath, height, width } = this.props;
     const { content, contentColumn, contentDataSource, contentTotal } = hdfs;
-    const { type, currentPage, pageSize, startPoint, endPoint, jsonLine, jsonDialogVisible, textLineTotal, iconBottom } = this.state;
+    const {
+      type,
+      currentPage,
+      pageSize,
+      startPoint,
+      endPoint,
+      jsonLine,
+      jsonDialogVisible,
+      textLineTotal,
+      iconBottom,
+    } = this.state;
 
     return (
       <GridContent>
         <Tabs activeKey={type} onChange={this.changeType}>
           <TabPane tab="Text" key="1">
-            {type === '1' && <Skeleton loading={loading.effects['hdfs/read']} title={false} paragraph={{ rows: 4 }} active >
-              {this.getContentArr(0, textLineTotal).map(line => <p key={textId++}>{line}</p>)}
-              <div style={{textAlign: 'center', paddingTop: 32 - iconBottom, paddingBottom: iconBottom, transition: 'padding 1.5s'}}>
-                {this.getContentArr().length > textLineTotal ? 
-                  <Icon 
-                    type='double-right' rotate={90} onClick={this.nextText} 
-                    id={styles.bottom_icon}
-                  /> :
-                  <span style={{color: '#d9d9d9'}}>- End -</span>}
-              </div>
-            </Skeleton>}
+            {type === '1' && (
+              <Skeleton
+                loading={loading.effects['hdfs/read']}
+                title={false}
+                paragraph={{ rows: 4 }}
+                active
+              >
+                {this.getContentArr(0, textLineTotal).map(line => (
+                  <p key={textId++}>{line}</p>
+                ))}
+                <div
+                  style={{
+                    textAlign: 'center',
+                    paddingTop: 32 - iconBottom,
+                    paddingBottom: iconBottom,
+                    transition: 'padding 1.5s',
+                  }}
+                >
+                  {this.getContentArr().length > textLineTotal ? (
+                    <Icon
+                      type="double-right"
+                      rotate={90}
+                      onClick={this.nextText}
+                      id={styles.bottom_icon}
+                    />
+                  ) : (
+                    <span style={{ color: '#d9d9d9' }}>- End -</span>
+                  )}
+                </div>
+              </Skeleton>
+            )}
           </TabPane>
           <TabPane tab="Table" key="2">
-            {type === '2' && <Table
-              columns={contentColumn}
-              dataSource={contentDataSource}
-              bordered
-              size="middle"
-              rowKey={() => tableId++}
-              loading={loading.effects["hdfs/readToTable"]}
-              pagination={{
-                total: contentTotal,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                size: 'middle',
-                showTotal: (total) => `Total ${total} items`,
-                pageSizeOptions: ["10", "30", "50"],
-                current: currentPage,
-                pageSize: pageSize,
-              }}
-              onChange={this.onTableChange}
-              scroll={{x: contentColumn.length > 5 ? 'max-content' : false}}
-            />}
+            {type === '2' && (
+              <Table
+                columns={contentColumn}
+                dataSource={contentDataSource}
+                bordered
+                size="middle"
+                rowKey={() => tableId++}
+                loading={loading.effects['hdfs/readToTable']}
+                pagination={{
+                  total: contentTotal,
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                  size: 'middle',
+                  showTotal: total => `Total ${total} items`,
+                  pageSizeOptions: ['10', '30', '50'],
+                  current: currentPage,
+                  pageSize,
+                }}
+                onChange={this.onTableChange}
+                scroll={{ x: contentColumn.length > 5 ? 'max-content' : false }}
+              />
+            )}
           </TabPane>
           <TabPane tab="Json" key="3">
-            {type === '3' && <div>
-              <Row>
-                <Col span={1} style={{padding: '8px 0', color: '#52c41a'}}>{0}</Col>
-                <Col span={22}>
-                  <Slider range value={[startPoint, endPoint]} onChange={this.changeSlider} max={this.getContentArr().length} />
-                </Col>
-                <Col span={1} style={{textAlign: 'right', padding: '8px 0', color: '#f5222d'}}>{this.getContentArr().length}</Col>
-              </Row>
-              <Skeleton loading={loading.effects['hdfs/read']} title={false} paragraph={{ rows: 4 }} active >
-                {this.getContentArr(startPoint, endPoint).map(line => (
-                  <p key={jsonId++}>
-                    <Icon type='zoom-in' style={{marginRight: 4, color: '#40a9ff'}} onClick={() => this.showJson(line)} />
-                    {line}
-                  </p>
-                ))}
-              </Skeleton>
-            </div>}
+            {type === '3' && (
+              <div>
+                <Row>
+                  <Col span={1} style={{ padding: '8px 0', color: '#52c41a' }}>
+                    {0}
+                  </Col>
+                  <Col span={22}>
+                    <Slider
+                      range
+                      value={[startPoint, endPoint]}
+                      onChange={this.changeSlider}
+                      max={this.getContentArr().length}
+                    />
+                  </Col>
+                  <Col span={1} style={{ textAlign: 'right', padding: '8px 0', color: '#f5222d' }}>
+                    {this.getContentArr().length}
+                  </Col>
+                </Row>
+                <Skeleton
+                  loading={loading.effects['hdfs/read']}
+                  title={false}
+                  paragraph={{ rows: 4 }}
+                  active
+                >
+                  {this.getContentArr(startPoint, endPoint).map(line => (
+                    <p key={jsonId++}>
+                      <Icon
+                        type="zoom-in"
+                        style={{ marginRight: 4, color: '#40a9ff' }}
+                        onClick={() => this.showJson(line)}
+                      />
+                      {line}
+                    </p>
+                  ))}
+                </Skeleton>
+              </div>
+            )}
           </TabPane>
         </Tabs>
-        {jsonDialogVisible && <Modal
-          destroyOnClose={true}
-          title={`Json Format`}
-          visible={jsonDialogVisible}
-          onCancel={() => this.changeJsonVisible(false)}
-          footer={null}
-          width={600}
-          style={{ top: 48 }}
-          bodyStyle={{ height: height - 80, overflow: 'auto' }}
-        >
-          <ReactJson 
-            name={null}
-            src={this.strToJson(jsonLine)} 
-            displayObjectSize={false} 
-            displayDataTypes={false} 
-            enableClipboard={false}
-            collapseStringsAfterLength={50} // 以 ... 显示
-            collapsed={false} // false 全展开 true 全关闭 integer 展开的深度
-            indentWidth={4} // 缩进
-            iconStyle='triangle' // circle square
-            // theme='google'
-          />
-        </Modal>}
+        {jsonDialogVisible && (
+          <Modal
+            destroyOnClose
+            title="Json Format"
+            visible={jsonDialogVisible}
+            onCancel={() => this.changeJsonVisible(false)}
+            footer={null}
+            width={600}
+            style={{ top: 48 }}
+            bodyStyle={{ height: height - 80, overflow: 'auto' }}
+          >
+            <ReactJson
+              name={null}
+              src={this.strToJson(jsonLine)}
+              displayObjectSize={false}
+              displayDataTypes={false}
+              enableClipboard={false}
+              collapseStringsAfterLength={50} // 以 ... 显示
+              collapsed={false} // false 全展开 true 全关闭 integer 展开的深度
+              indentWidth={4} // 缩进
+              iconStyle="triangle" // circle square
+              // theme='google'
+            />
+          </Modal>
+        )}
       </GridContent>
     );
   }

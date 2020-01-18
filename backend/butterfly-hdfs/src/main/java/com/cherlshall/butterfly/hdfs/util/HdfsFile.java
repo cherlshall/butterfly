@@ -96,6 +96,7 @@ public class HdfsFile {
 
     /**
      * create current HdfsFile on hdfs
+     *
      * @return create success: true; failure/exists: false
      */
     public boolean createNewFile() {
@@ -112,6 +113,7 @@ public class HdfsFile {
 
     /**
      * delete current HdfsFile on hdfs
+     *
      * @return delete success: true; failure/exists: false
      */
     public boolean delete() {
@@ -125,6 +127,7 @@ public class HdfsFile {
 
     /**
      * rename/move current HdfsFile to dest
+     *
      * @param dest dest file
      * @return success: true; failure: false
      */
@@ -139,6 +142,7 @@ public class HdfsFile {
 
     /**
      * list files under current dir
+     *
      * @param filter filter files
      * @return files under current dir which pass filter
      */
@@ -170,6 +174,7 @@ public class HdfsFile {
 
     /**
      * mkdir recurrence
+     *
      * @return success: true; exist/failure: false
      */
     public boolean mkdirs() {
@@ -186,6 +191,7 @@ public class HdfsFile {
 
     /**
      * get current file name
+     *
      * @return if root return /, else return current file name
      */
     public String getName() {
@@ -197,6 +203,7 @@ public class HdfsFile {
 
     /**
      * get file size(byte)
+     *
      * @return file: file bytes; dir: 0; file not exists: -1
      */
     public long length() {

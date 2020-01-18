@@ -28,7 +28,7 @@ public interface AccountDao {
     @Select("select * from user where id = #{id}")
     @Results({
             @Result(column = "id", property = "tags", javaType = List.class,
-            many = @Many(select = "com.cherlshall.butterfly.user.dao.AccountDao.getTagsByUserId"))
+                    many = @Many(select = "com.cherlshall.butterfly.user.dao.AccountDao.getTagsByUserId"))
     })
     UserDetail getUserDetailById(int id);
 }

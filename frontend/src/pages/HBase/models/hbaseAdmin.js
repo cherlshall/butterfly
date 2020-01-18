@@ -1,4 +1,4 @@
-import * as service from '@/services/hbaseAdmin';
+import * as service from '@/services/hbase/admin';
 import { message } from 'antd';
 
 export default {
@@ -23,7 +23,7 @@ export default {
           callback(response.data[0]);
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -37,19 +37,19 @@ export default {
           },
         });
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *create({ payload, callback }, { call, put }) {
+    *create({ payload, callback }, { call }) {
       const response = yield call(service.create, payload);
       if (response.code === 200) {
-        message.success("create success")
+        message.success('create success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -71,26 +71,26 @@ export default {
             dataSource,
           },
         });
-        message.success("remake success")
+        message.success('remake success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
 
-    *truncate({ payload, callback }, { call, put, select }) {
+    *truncate({ payload, callback }, { call }) {
       const response = yield call(service.truncate, payload);
       if (response.code === 200) {
         const failNum = response.data.length;
         if (failNum === 0) {
-          message.success("success all")
+          message.success('success all');
         } else {
-          message.warn(`failure ${failNum} tables! table names are [${response.data.toString()}]`)
+          message.warn(`failure ${failNum} tables! table names are [${response.data.toString()}]`);
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback(response.data);
@@ -115,9 +115,9 @@ export default {
             dataSource,
           },
         });
-        message.success("delete success")
+        message.success('delete success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -142,9 +142,9 @@ export default {
             dataSource,
           },
         });
-        message.success("disable success")
+        message.success('disable success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -169,45 +169,44 @@ export default {
             dataSource,
           },
         });
-        message.success("enable success")
+        message.success('enable success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
 
-    *addFamily({ payload, callback }, { call, put, select }) {
+    *addFamily({ payload }, { call }) {
       const response = yield call(service.addFamily, payload);
       if (response.code === 200) {
-        message.success("add family success")
+        message.success('add family success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *deleteFamily({ payload, callback }, { call, put }) {
+    *deleteFamily({ payload }, { call }) {
       const response = yield call(service.deleteFamily, payload);
       if (response.code === 200) {
-        message.success("delete family success")
+        message.success('delete family success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *changeFamily({ payload, callback }, { call, put }) {
+    *changeFamily({ payload, callback }, { call }) {
       const response = yield call(service.changeFamily, payload);
       if (response.code === 200) {
         if (callback) {
           callback();
         }
-        message.success("change family success")
+        message.success('change family success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
-
   },
 
   reducers: {

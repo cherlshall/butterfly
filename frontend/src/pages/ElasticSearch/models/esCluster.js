@@ -1,4 +1,4 @@
-import * as service from '@/services/esCluster';
+import * as service from '@/services/elasticsearch/cluster';
 import { queryTags } from '@/services/api';
 import { message } from 'antd';
 
@@ -24,7 +24,7 @@ export default {
           },
         });
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -36,11 +36,10 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          searchTags: response.list
+          searchTags: response.list,
         },
       });
     },
-
   },
 
   reducers: {

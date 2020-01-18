@@ -1,7 +1,7 @@
 package com.cherlshall.butterfly.hbase.util;
 
 import com.cherlshall.butterfly.common.exception.ButterflyException;
-import com.cherlshall.butterfly.hbase.dao.HBaseAdminDao;
+import com.cherlshall.butterfly.hbase.dao.AdminDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class HBaseCheck {
 
     @Autowired
-    private HBaseAdminDao dao;
+    private AdminDao dao;
 
     public void checkUsable(String tableName) {
         checkExist(tableName);

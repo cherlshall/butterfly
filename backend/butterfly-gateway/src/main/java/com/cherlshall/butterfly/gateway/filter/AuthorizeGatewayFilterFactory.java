@@ -83,7 +83,8 @@ public class AuthorizeGatewayFilterFactory extends
         // 控制是否开启认证
         private boolean enabled;
 
-        public Config() {}
+        public Config() {
+        }
 
         public boolean isEnabled() {
             return enabled;

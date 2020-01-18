@@ -27,6 +27,12 @@ spring:
             - Path=/hdfs/**
           filters:
             - Authorize=true
+        - id: m2
+          uri: lb://service-m2
+          predicates:
+            - Path=/m2/**
+          filters:
+            - Authorize=true
         - id: user
           uri: lb://service-account
           predicates:

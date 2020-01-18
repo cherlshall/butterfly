@@ -58,7 +58,7 @@ export default [
           },
           {
             path: '/elasticsearch/esIndex/:indexName',
-            hideInMenu:true,
+            hideInMenu: true,
             name: 'esIndex',
             component: './ElasticSearch/EsIndex/EsIndex',
           },
@@ -82,7 +82,7 @@ export default [
           },
           {
             path: '/hbase/hbaseTable/:tableName',
-            hideInMenu:true,
+            hideInMenu: true,
             name: 'hbaseTable',
             component: './HBase/hbaseTable/hbaseTable',
           },
@@ -94,6 +94,20 @@ export default [
         name: 'hdfs',
         icon: 'folder',
         component: './Hdfs/Hdfs',
+        authority: ['admin'],
+      },
+      {
+        path: '/m2',
+        name: 'm2',
+        icon: 'api',
+        component: './M2/protocol/protocol',
+        authority: ['admin'],
+      },
+      {
+        path: '/m2/field/:protocolId/:protocolEnName',
+        hideInMenu: true,
+        name: 'm2Field',
+        component: './M2/field/field',
         authority: ['admin'],
       },
       {

@@ -1,6 +1,6 @@
-import * as fileService from '@/services/hdfsFile';
-import * as contentService from '@/services/hdfsContent';
-import { message, Tooltip } from 'antd';
+import * as fileService from '@/services/hdfs/file';
+import * as contentService from '@/services/hdfs/content';
+import { message } from 'antd';
 import { splitLongText } from '@/utils/utils';
 
 export default {
@@ -28,7 +28,7 @@ export default {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -50,36 +50,36 @@ export default {
             detailList,
           },
         });
-        message.success("delete success")
+        message.success('delete success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
 
-    *create({ payload, callback }, { call, put }) {
+    *create({ payload, callback }, { call }) {
       const response = yield call(fileService.create, payload);
       if (response.code === 200) {
-        message.success("create success");
+        message.success('create success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *mkdirs({ payload, callback }, { call, put }) {
+    *mkdirs({ payload, callback }, { call }) {
       const response = yield call(fileService.mkdirs, payload);
       if (response.code === 200) {
-        message.success("mkdir success");
+        message.success('mkdir success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -96,7 +96,7 @@ export default {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -109,13 +109,13 @@ export default {
             title: col,
             dataIndex: col,
             render: text => splitLongText(text),
-          })
-        })
+          });
+        });
         yield put({
           type: 'save',
           payload: {
             contentColumn,
-            contentDataSource: response.data.dataSource,
+            contentDataSource: response.data.list,
             contentTotal: response.data.total,
           },
         });
@@ -123,7 +123,7 @@ export default {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -138,7 +138,6 @@ export default {
         },
       });
     },
-
   },
 
   reducers: {

@@ -185,31 +185,44 @@ export function formatTrafic(val) {
   const tb = 1024 * gb;
 
   if (val > tb) {
-    return `${Math.floor(val / tb)} TB`
+    return `${Math.floor(val / tb)} TB`;
   }
   if (val > gb) {
-    return `${Math.floor(val / gb)} GB`
+    return `${Math.floor(val / gb)} GB`;
   }
   if (val > mb) {
-    return `${Math.floor(val / mb)} MB`
+    return `${Math.floor(val / mb)} MB`;
   }
   if (val > kb) {
-    return `${Math.floor(val / kb)} KB`
+    return `${Math.floor(val / kb)} KB`;
   }
-  return `${val} B`
+  return `${val} B`;
 }
 
-export function splitLongText(text) {
+export function splitLongText(text, maxLenth) {
   const len = text ? text.length : 0;
-  if (len > 30) {
-    return (
-      <Tooltip title={text}>
-        {`${text.slice(0, 30)}...`}
-      </Tooltip>
-    );
-  } else {
-    return text;
+  const maxLen = maxLenth || 30;
+  if (len > maxLen) {
+    return <Tooltip title={text}>{`${text.slice(0, maxLen)}...`}</Tooltip>;
   }
+  return text;
+}
+
+export function toHexString(text, minLenth) {
+  let hexStr = text.toString(16);
+  const minLen = minLenth || 0;
+  while (hexStr.length < minLen) {
+    hexStr = 0 + hexStr;
+  }
+  return `0x${hexStr}`;
+}
+
+export function getEveryFirst(obj) {
+  const result = {};
+  for (const i in obj) {
+    result[i] = obj[i][0];
+  }
+  return result;
 }
 
 // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性

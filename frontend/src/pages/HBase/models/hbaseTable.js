@@ -1,5 +1,5 @@
-import * as service from '@/services/hbaseTable';
-import { list, listFamily } from '@/services/hbaseAdmin';
+import * as service from '@/services/hbase/table';
+import { list, listFamily } from '@/services/hbase/admin';
 import { message } from 'antd';
 
 export default {
@@ -14,7 +14,6 @@ export default {
   },
 
   effects: {
-
     *listTableName({ callback }, { call, put }) {
       const response = yield call(list);
       if (response.code === 200) {
@@ -28,19 +27,19 @@ export default {
           callback(response.data[0]);
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
     *findByPage({ payload, callback }, { call, put }) {
       const response = yield call(service.findByPage, payload);
       if (response.code === 200) {
-        const data = response.data;
-        const familyAndQualifiers = data.familyAndQualifiers;
+        const { data } = response;
+        const { familyAndQualifiers } = data;
         yield put({
           type: 'save',
           payload: {
-            familyAndQualifiers: familyAndQualifiers,
+            familyAndQualifiers,
             dataSource: data.dataList,
             dataSourceCol: data.dataColList,
           },
@@ -53,7 +52,7 @@ export default {
           }
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -67,19 +66,21 @@ export default {
           },
         });
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
 
-    *insertRow({ payload, callback }, { call, put }) {
+    *insertRow({ payload, callback }, { call }) {
       const response = yield call(service.insertRow, payload);
       if (response.code === 200) {
-        message.success(`insert ${response.data} ${response.data.length === 1 ? 'field' : 'fields'} success`)
+        message.success(
+          `insert ${response.data} ${response.data.length === 1 ? 'field' : 'fields'} success`
+        );
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -103,10 +104,12 @@ export default {
         const dataSourceCol = yield select(state =>
           state.hbaseTable.dataSourceCol.map(item => {
             const data = { ...item };
-            
-            if (data.rowKey === payload.rowKey && 
-              data.family === family && 
-              data.qualifier === qualifier) {
+
+            if (
+              data.rowKey === payload.rowKey &&
+              data.family === family &&
+              data.qualifier === qualifier
+            ) {
               data.deleted = undefined;
             }
             return data;
@@ -119,9 +122,9 @@ export default {
             dataSourceCol,
           },
         });
-        message.success("recover success")
+        message.success('recover success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -156,9 +159,9 @@ export default {
             dataSourceCol,
           },
         });
-        message.success('delete success')
+        message.success('delete success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -180,9 +183,11 @@ export default {
         const dataSourceCol = yield select(state =>
           state.hbaseTable.dataSourceCol.map(item => {
             const data = { ...item };
-            if (data.rowKey === payload.rowKey && 
-              data.family === payload.family && 
-              data.qualifier === payload.qualifier) {
+            if (
+              data.rowKey === payload.rowKey &&
+              data.family === payload.family &&
+              data.qualifier === payload.qualifier
+            ) {
               data.deleted = true;
             }
             return data;
@@ -195,15 +200,14 @@ export default {
             dataSourceCol,
           },
         });
-        message.success('delete success')
+        message.success('delete success');
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
-
   },
 
   reducers: {

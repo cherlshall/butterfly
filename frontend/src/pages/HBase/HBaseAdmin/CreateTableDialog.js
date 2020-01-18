@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Icon, Button } from 'antd';
-import GridContent from '@/components/PageHeaderWrapper/GridContent';
-import styles from './HBaseAdmin.less';
+// import styles from './HBaseAdmin.less';
 
 let id = 0;
 
@@ -11,15 +10,14 @@ let id = 0;
   loading,
 }))
 class CreateTableDialog extends PureComponent {
-
   componentDidMount() {
     this.add();
   }
 
   create = (tableName, families) => {
-    const { dispatch } = this.props;
+    const { dispatch, createOver } = this.props;
     const fArr = [];
-    new Set(families || []).forEach((value) => {
+    new Set(families || []).forEach(value => {
       fArr.push(value);
     });
     dispatch({
@@ -28,9 +26,9 @@ class CreateTableDialog extends PureComponent {
         tableName,
         families: fArr,
       },
-      callback: this.props.createOver,
+      callback: createOver,
     });
-  }
+  };
 
   remove = k => {
     const { form } = this.props;
@@ -51,7 +49,8 @@ class CreateTableDialog extends PureComponent {
     const { form } = this.props;
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
-    const nextKeys = keys.concat(id++);
+    id += 1;
+    const nextKeys = keys.concat(id);
     // can use data-binding to set
     // important! notify form to detect changes
     form.setFieldsValue({
@@ -61,21 +60,22 @@ class CreateTableDialog extends PureComponent {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    const { form } = this.props;
+    form.validateFields((err, values) => {
       if (!err) {
         const { tableName, keys, families } = values;
         const familiesByKey = [];
         keys.forEach(k => {
           familiesByKey.push(families[k]);
-        })
+        });
         this.create(tableName, familiesByKey);
       }
     });
   };
 
   render() {
-    const { hbaseAdmin, loading } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { loading, form } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -98,7 +98,7 @@ class CreateTableDialog extends PureComponent {
       <Form.Item
         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
         label={index === 0 ? 'Family' : ''}
-        required={true}
+        required
         key={k}
       >
         {getFieldDecorator(`families[${k}]`, {
@@ -107,7 +107,10 @@ class CreateTableDialog extends PureComponent {
             {
               required: true,
               whitespace: true,
-              message: keys.length === 1 ? "Please input family's name." : "Please input family's name or delete this field.",
+              message:
+                keys.length === 1
+                  ? "Please input family's name."
+                  : "Please input family's name or delete this field.",
             },
           ],
         })(<Input placeholder="family name" style={{ width: '80%', marginRight: 8 }} />)}
@@ -122,12 +125,7 @@ class CreateTableDialog extends PureComponent {
     ));
     return (
       <Form onSubmit={this.handleSubmit}>
-        <Form.Item
-          {...formItemLayout}
-          label={'Table Name'}
-          required={true}
-          key={'tableName'}
-        >
+        <Form.Item {...formItemLayout} label="Table Name" required key="tableName">
           {getFieldDecorator('tableName', {
             validateTrigger: ['onChange', 'onBlur'],
             rules: [
@@ -146,8 +144,13 @@ class CreateTableDialog extends PureComponent {
           </Button>
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="primary" disabled={loading.effects["hbaseAdmin/create"]} htmlType="submit" style={{ width: '80%' }}>
-            {loading.effects["hbaseAdmin/create"] ? <Icon type="loading" /> : "Create"}
+          <Button
+            type="primary"
+            disabled={loading.effects['hbaseAdmin/create']}
+            htmlType="submit"
+            style={{ width: '80%' }}
+          >
+            {loading.effects['hbaseAdmin/create'] ? <Icon type="loading" /> : 'Create'}
           </Button>
         </Form.Item>
       </Form>

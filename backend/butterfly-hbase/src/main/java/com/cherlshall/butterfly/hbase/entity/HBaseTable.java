@@ -23,6 +23,7 @@ public class HBaseTable {
     private class FamilyAndQualifier {
         private String family;
         private Set<String> qualifiers;
+
         private FamilyAndQualifier(String family) {
             this.family = family;
             qualifiers = new TreeSet<>();

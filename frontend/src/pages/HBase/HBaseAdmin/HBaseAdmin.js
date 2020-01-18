@@ -1,11 +1,23 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Row, Col, Switch, Icon, Input, Radio, Tag, Popconfirm, Modal, message } from 'antd';
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Switch,
+  Icon,
+  Input,
+  Tag,
+  Popconfirm,
+  Modal,
+  message,
+} from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Highlighter from 'react-highlight-words';
-import styles from './HBaseAdmin.less';
+// import styles from './HBaseAdmin.less';
 import CreateTableDialog from './CreateTableDialog';
-import router from 'umi/router';
+// import router from 'umi/router';
 import Link from 'umi/link';
 import EditableTags from '@/mycomponents/EditableTags';
 
@@ -17,7 +29,6 @@ import EditableTags from '@/mycomponents/EditableTags';
   loading,
 }))
 class HBaseAdmin extends PureComponent {
-
   state = {
     changeDisableTableName: new Set(),
     deleteTableName: new Set(),
@@ -26,13 +37,13 @@ class HBaseAdmin extends PureComponent {
     editTableName: '',
     editingTableName: new Set(),
     selectedRowKeys: [],
-  }
+  };
 
   componentDidMount() {
     this.detail();
   }
 
-  changeCreateDialogVisible = (visible) => {
+  changeCreateDialogVisible = visible => {
     this.setState({
       createDialogVisible: visible,
     });
@@ -43,67 +54,67 @@ class HBaseAdmin extends PureComponent {
     dispatch({
       type: 'hbaseAdmin/detail',
     });
-  }
+  };
 
   disable = tableName => {
     const { dispatch } = this.props;
+    const { changeDisableTableName } = this.state;
     this.setState({
-      changeDisableTableName: this.state.changeDisableTableName.add(tableName),
-    })
+      changeDisableTableName: changeDisableTableName.add(tableName),
+    });
     dispatch({
       type: 'hbaseAdmin/disable',
       payload: {
         tableName,
       },
       callback: () => {
-        const changeDisableTableName = this.state.changeDisableTableName;
         changeDisableTableName.delete(tableName);
         this.setState({
           changeDisableTableName,
-        })
+        });
       },
     });
-  }
+  };
 
   enable = tableName => {
     const { dispatch } = this.props;
+    const { changeDisableTableName } = this.state;
     this.setState({
-      changeDisableTableName: this.state.changeDisableTableName.add(tableName),
-    })
+      changeDisableTableName: changeDisableTableName.add(tableName),
+    });
     dispatch({
       type: 'hbaseAdmin/enable',
       payload: {
         tableName,
       },
       callback: () => {
-        const changeDisableTableName = this.state.changeDisableTableName;
         changeDisableTableName.delete(tableName);
         this.setState({
           changeDisableTableName,
-        })
+        });
       },
     });
-  }
+  };
 
   deleteTable = tableName => {
     const { dispatch } = this.props;
+    const { deleteTableName } = this.state;
     this.setState({
-      deleteTableName: this.state.deleteTableName.add(tableName),
-    })
+      deleteTableName: deleteTableName.add(tableName),
+    });
     dispatch({
       type: 'hbaseAdmin/del',
       payload: {
         tableName,
       },
       callback: () => {
-        const deleteTableName = this.state.deleteTableName;
         deleteTableName.delete(tableName);
         this.setState({
           deleteTableName,
-        })
+        });
       },
     });
-  }
+  };
 
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -146,90 +157,39 @@ class HBaseAdmin extends PureComponent {
       }
     },
     render: (text, record) => {
-      if (record.disable || record.deleted || this.state.deleteTableName.has(record.tableName)) {
+      const { deleteTableName, searchText } = this.state;
+      if (record.disable || record.deleted || deleteTableName.has(record.tableName)) {
         return (
           <Highlighter
             highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-            searchWords={[this.state.searchText]}
+            searchWords={[searchText]}
             autoEscape
             textToHighlight={text.toString()}
-            onClick={() => {message.error(record.disable ? 'table is disabled' : 
-              record.deleted ? 'table has been deleted' : 'table is being deleted')}}
-            style={{cursor: "not-allowed", color: "#A9A9A9"}}
+            onClick={() => {
+              message.error(
+                record.disable
+                  ? 'table is disabled'
+                  : record.deleted
+                  ? 'table has been deleted'
+                  : 'table is being deleted'
+              );
+            }}
+            style={{ cursor: 'not-allowed', color: '#A9A9A9' }}
           />
-        )
-      } else {
-        return (
-          <Link to={`/hbase/hbaseTable/${text}`}>
-            <Highlighter
-              highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-              searchWords={[this.state.searchText]}
-              autoEscape
-              textToHighlight={text.toString()}
-            />
-          </Link>
-        )
+        );
       }
+      return (
+        <Link to={`/hbase/hbaseTable/${text}`}>
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={text.toString()}
+          />
+        </Link>
+      );
     },
-      
   });
-
-  handleSearch = (selectedKeys, confirm) => {
-    confirm();
-    this.setState({ searchText: selectedKeys[0] });
-  };
-
-  handleReset = clearFilters => {
-    clearFilters();
-    this.setState({ searchText: '' });
-  };
-
-  remake = (tableName, families) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'hbaseAdmin/remake',
-      payload: {
-        tableName,
-        families,
-        remakeTableName: this.state.remakeTableName.add(tableName),
-      },
-      callback: () => {
-        this.state.remakeTableName.delete(tableName);
-        this.setState({
-          remakeTableName: this.state.remakeTableName,
-        })
-      },
-    });
-  }
-
-  createOver = () => {
-    this.changeCreateDialogVisible(false);
-    this.detail();
-  }
-
-  saveTags = (deleteValue, additionTagsValue) => {
-    const { dispatch } = this.props;
-    const { editTableName } = this.state;
-    this.setState({
-      editingTableName: this.state.editingTableName.add(editTableName),
-    })
-    dispatch({
-      type: 'hbaseAdmin/changeFamily',
-      payload: {
-        tableName: editTableName,
-        remove: deleteValue,
-        addition: additionTagsValue,
-      },
-      callback: () => {
-        this.state.editingTableName.delete(editTableName);
-        this.setState({
-          editTableName: '',
-          editingTableName: this.state.editingTableName,
-        })
-        this.detail();
-      }
-    });
-  }
 
   columns = [
     {
@@ -250,78 +210,89 @@ class HBaseAdmin extends PureComponent {
       dataIndex: 'readOnly',
       key: 'readOnly',
       width: 80,
-      render: text => <span>{text ? "yes" : "no"}</span>,
+      render: text => <span>{text ? 'yes' : 'no'}</span>,
     },
     {
       title: 'Enabled',
       dataIndex: 'disable',
       key: 'disable',
       width: 80,
-      render: (text, record, index) => (
-        <Switch
-          checkedChildren={<Icon type="check" />}
-          unCheckedChildren={<Icon type="close" />}
-          checked={!text}
-          loading={this.state.changeDisableTableName.has(record.tableName)}
-          disabled={record.deleted || this.state.deleteTableName.has(record.tableName)}
-          onClick={text ? () => this.enable(record.tableName) : () => this.disable(record.tableName)}
-        />
-      ),
+      render: (text, record, index) => {
+        const { changeDisableTableName, deleteTableName } = this.state;
+        return (
+          <Switch
+            checkedChildren={<Icon type="check" />}
+            unCheckedChildren={<Icon type="close" />}
+            checked={!text}
+            loading={changeDisableTableName.has(record.tableName)}
+            disabled={record.deleted || deleteTableName.has(record.tableName)}
+            onClick={
+              text ? () => this.enable(record.tableName) : () => this.disable(record.tableName)
+            }
+          />
+        );
+      },
     },
     {
       title: 'Families',
       dataIndex: 'families',
       key: 'families',
       width: 380,
-      render: (text, record, index) => this.state.editTableName === record.tableName ? (
-        <EditableTags initValues={text} save={this.saveTags} saving={this.state.editingTableName.has(record.tableName)} />
-      ) : (
-        <span>
-          {text.map(family => {
-            return (
-              <Tag color='geekblue' key={family}>
-                {family}
-              </Tag>
-            );
-          })}
-        </span>
-      ),
+      render: (text, record, index) =>
+        this.state.editTableName === record.tableName ? (
+          <EditableTags
+            initValues={text}
+            save={this.saveTags}
+            saving={this.state.editingTableName.has(record.tableName)}
+          />
+        ) : (
+          <span>
+            {text.map(family => {
+              return (
+                <Tag color="geekblue" key={family}>
+                  {family}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
     },
     {
       title: 'Action',
       key: 'action',
       width: 160,
       render: (text, record) => {
-        const deleting = this.state.deleteTableName.has(record.tableName);
-        const remaking = this.state.remakeTableName.has(record.tableName);
+        const { deleteTableName, remakeTableName, editTableName } = this.state;
+        const deleting = deleteTableName.has(record.tableName);
+        const remaking = remakeTableName.has(record.tableName);
         const disabled = record.deleted || deleting;
-        const editing = this.state.editTableName === record.tableName;
+        const editing = editTableName === record.tableName;
         const popParams = {};
         if (disabled) {
           popParams.visible = false;
         }
         return record.deleted ? (
-          <Button 
-            style={{cursor: "pointer"}} 
-            type="primary" 
+          <Button
+            type="primary"
             size="small"
             disabled={remaking}
             icon={remaking ? 'loading' : 'redo'}
             onClick={() => this.remake(record.tableName, record.families)}
-            style={{cursor: remaking ? 'not-allowed' : 'pointer'}}
+            style={{ cursor: remaking ? 'not-allowed' : 'pointer' }}
           >
             Remake
-          </Button>) : (
+          </Button>
+        ) : (
           <div>
-            <Button 
-              style={{cursor: "pointer", marginRight: 8}} 
-              type={editing ? "default" : 'primary'}
+            <Button
+              style={{ cursor: 'pointer', marginRight: 8 }}
+              type={editing ? 'default' : 'primary'}
               size="small"
               disabled={disabled}
               icon={editing ? 'close-circle' : 'edit'}
-              onClick={() => this.setState({editTableName: editing ? '' : record.tableName})}
+              onClick={() => this.setState({ editTableName: editing ? '' : record.tableName })}
             >
-              {editing ? "Cancel" : "Edit"}
+              {editing ? 'Cancel' : 'Edit'}
             </Button>
             <Popconfirm
               title="Are you sure delete this table?"
@@ -331,25 +302,83 @@ class HBaseAdmin extends PureComponent {
               disabled={disabled}
               {...popParams}
             >
-              <Button 
-                style={{cursor: "pointer"}} 
-                type="danger" 
+              <Button
+                style={{ cursor: 'pointer' }}
+                type="danger"
                 size="small"
                 disabled={disabled}
                 icon={deleting ? 'loading' : record.deleted ? 'close-circle' : 'delete'}
               >
-                {record.deleted ? "Deleted" : "Delete"}
+                {record.deleted ? 'Deleted' : 'Delete'}
               </Button>
             </Popconfirm>
           </div>
-          
-        )},
-    }
-  ]
+        );
+      },
+    },
+  ];
+
+  handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+  remake = (tableName, families) => {
+    const { dispatch } = this.props;
+    const { remakeTableName } = this.state;
+    dispatch({
+      type: 'hbaseAdmin/remake',
+      payload: {
+        tableName,
+        families,
+        remakeTableName: remakeTableName.add(tableName),
+      },
+      callback: () => {
+        remakeTableName.delete(tableName);
+        this.setState({
+          remakeTableName,
+        });
+      },
+    });
+  };
+
+  createOver = () => {
+    this.changeCreateDialogVisible(false);
+    this.detail();
+  };
+
+  saveTags = (deleteValue, additionTagsValue) => {
+    const { dispatch } = this.props;
+    const { editTableName, editingTableName } = this.state;
+    this.setState({
+      editingTableName: editingTableName.add(editTableName),
+    });
+    dispatch({
+      type: 'hbaseAdmin/changeFamily',
+      payload: {
+        tableName: editTableName,
+        remove: deleteValue,
+        addition: additionTagsValue,
+      },
+      callback: () => {
+        editingTableName.delete(editTableName);
+        this.setState({
+          editTableName: '',
+          editingTableName,
+        });
+        this.detail();
+      },
+    });
+  };
 
   onSelectChange = selectedRowKeys => {
-    this.setState({selectedRowKeys})
-  }
+    this.setState({ selectedRowKeys });
+  };
 
   truncate = (tableNames, callback) => {
     const { dispatch } = this.props;
@@ -360,14 +389,14 @@ class HBaseAdmin extends PureComponent {
       },
       callback,
     });
-  }
+  };
 
   onClickTruncate = () => {
     const { selectedRowKeys } = this.state;
-    this.truncate(selectedRowKeys, (failTableNames) => {
-      this.setState({selectedRowKeys: failTableNames})
-    })
-  }
+    this.truncate(selectedRowKeys, failTableNames => {
+      this.setState({ selectedRowKeys: failTableNames });
+    });
+  };
 
   render() {
     const { hbaseAdmin, loading } = this.props;
@@ -376,19 +405,21 @@ class HBaseAdmin extends PureComponent {
 
     return (
       <GridContent>
-        <Row gutter={24} style={{marginBottom: 12}}>
+        <Row gutter={24} style={{ marginBottom: 12 }}>
           <Col span={24}>
-            <Button type="primary" onClick={() => this.changeCreateDialogVisible(true)}>Create Table</Button>
-            {selectedRowKeys.length > 0 && 
-              <Button 
-                loading={loading.effects['hbaseAdmin/truncate']} 
-                type="primary" 
+            <Button type="primary" onClick={() => this.changeCreateDialogVisible(true)}>
+              Create Table
+            </Button>
+            {selectedRowKeys.length > 0 && (
+              <Button
+                loading={loading.effects['hbaseAdmin/truncate']}
+                type="primary"
                 onClick={this.onClickTruncate}
                 style={{ marginLeft: 4 }}
               >
                 {`Truncate [${selectedRowKeys.length}]`}
               </Button>
-            }
+            )}
           </Col>
         </Row>
         <Table
@@ -397,14 +428,14 @@ class HBaseAdmin extends PureComponent {
           bordered
           size="middle"
           rowKey="tableName"
-          loading={loading.effects["hbaseAdmin/detail"]}
+          loading={loading.effects['hbaseAdmin/detail']}
           pagination={{
             total: dataSource.length,
             showSizeChanger: true,
             showQuickJumper: true,
             size: 'middle',
-            showTotal: (total) => `Total ${total} items`,
-            pageSizeOptions: ["10", "30", "50"],
+            showTotal: total => `Total ${total} items`,
+            pageSizeOptions: ['10', '30', '50'],
           }}
           rowSelection={{
             selectedRowKeys,
@@ -420,7 +451,7 @@ class HBaseAdmin extends PureComponent {
           <CreateTableDialog createOver={this.createOver} />
         </Modal>
       </GridContent>
-    )
+    );
   }
 }
 

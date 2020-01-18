@@ -46,4 +46,7 @@ export default {
   'menu.elasticsearch.esCluster': 'Cluster Manager',
   'menu.elasticsearch.esIndex': 'Index Detail',
   'menu.hdfs': 'HDFS',
+  'menu.m2': 'M2 Interface',
+  'menu.m2.m2Protocol': 'Protocol',
+  'menu.m2.m2Field': 'Field',
 };

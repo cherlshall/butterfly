@@ -1,5 +1,5 @@
-import * as service from '@/services/esIndex';
-import * as docService from '@/services/esDoc';
+import * as service from '@/services/elasticsearch/index';
+import * as docService from '@/services/elasticsearch/doc';
 import { message } from 'antd';
 
 export default {
@@ -13,27 +13,27 @@ export default {
   },
 
   effects: {
-    *createIndex({ payload, callback }, { call, put }) {
+    *createIndex({ payload, callback }, { call }) {
       const response = yield call(service.createIndex, payload);
       if (response.code === 200) {
-        message.success("create success");
+        message.success('create success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *deleteIndex({ payload, callback }, { call, put }) {
+    *deleteIndex({ payload, callback }, { call }) {
       const response = yield call(service.deleteIndex, payload);
       if (response.code === 200) {
-        message.success("delete success");
+        message.success('delete success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -52,7 +52,7 @@ export default {
           }
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -69,25 +69,24 @@ export default {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
     *listData({ payload, callback }, { call, put }) {
       const response = yield call(docService.list, payload);
       if (response.code === 200) {
-        const dataSource = response.data.dataSource;
+        const { dataSource } = response.data;
         dataSource.forEach(item => {
-          const newItem = {};
           for (const key in item) {
             const field = item[key];
-            if (typeof(field) === "object") {
+            if (typeof field === 'object') {
               item[key] = JSON.stringify(field);
             } else {
               item[key] = field;
             }
           }
-        })
+        });
         yield put({
           type: 'save',
           payload: {
@@ -99,19 +98,19 @@ export default {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
-    *createDoc({ payload, callback }, { call, put }) {
+    *createDoc({ payload, callback }, { call }) {
       const response = yield call(docService.insertDoc, payload);
       if (response.code === 200) {
-        message.success("insert success");
+        message.success('insert success');
         if (callback) {
           callback();
         }
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
     },
 
@@ -134,7 +133,7 @@ export default {
           },
         });
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
@@ -160,13 +159,12 @@ export default {
           },
         });
       } else {
-        message.error(response.msg || "unknown error");
+        message.error(response.msg || 'unknown error');
       }
       if (callback) {
         callback();
       }
     },
-
   },
 
   reducers: {

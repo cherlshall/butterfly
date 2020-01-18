@@ -26,7 +26,7 @@ public class ProxyServletConfiguration {
     private String target_url;
 
     @Bean
-    public ServletRegistrationBean<Servlet> proxyServletRegistration(){
+    public ServletRegistrationBean<Servlet> proxyServletRegistration() {
         ServletRegistrationBean<Servlet> registrationBean =
                 new ServletRegistrationBean<>(new ProxyServletWithCookie(), servlet_url);
         // 设置代理参数
