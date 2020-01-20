@@ -90,6 +90,32 @@ export default {
         message.error(response.msg || 'unknown error');
       }
     },
+
+    *changeActive({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.changeActive, payload);
+      if (response.code === 200) {
+        const list = yield select(state =>
+          state.m2Protocol.list.map(item => {
+            const data = { ...item };
+            if (data.id === payload.id) {
+              data.active = payload.active;
+            }
+            return data;
+          })
+        );
+        yield put({
+          type: 'save',
+          payload: {
+            list,
+          },
+        });
+      } else {
+        message.error(response.msg || 'unknown error');
+      }
+      if (callback) {
+        callback();
+      }
+    },
   },
 
   reducers: {

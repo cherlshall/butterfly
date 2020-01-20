@@ -70,7 +70,7 @@ public class ContentDaoImpl implements ContentDao {
             int lineIndex = 0;
             PageData<String> pageData = new PageData<>();
             List<String> list = new ArrayList<>();
-            pageData.setDataSource(list);
+            pageData.setList(list);
             while ((line = br.readLine()) != null) {
                 if (lineIndex >= startLine && lineIndex < startLine + size) {
                     list.add(line);

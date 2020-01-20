@@ -1,19 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Table,
-  Button,
-  Row,
-  Col,
-  Switch,
-  Icon,
-  Input,
-  Tag,
-  Popconfirm,
-  Modal,
-  message,
-  Tabs,
-} from 'antd';
+import { Table, Button, Row, Col, Switch, Icon, Input, Popconfirm, Modal } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Highlighter from 'react-highlight-words';
 import Link from 'umi/link';
@@ -35,6 +22,7 @@ class Field extends PureComponent {
     orderName: 'type',
     orderDirection: 'asc',
     deleteFieldId: new Set(),
+    changeActiveFieldId: new Set(),
     protocolId: 0,
     protocolEnName: '',
     filters: {},
@@ -60,6 +48,17 @@ class Field extends PureComponent {
       },
       this.list
     );
+    this.findProtocolById(protocolId);
+  };
+
+  findProtocolById = protocolId => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'm2Field/findProtocolById',
+      payload: {
+        id: protocolId,
+      },
+    });
   };
 
   list = () => {
@@ -141,17 +140,22 @@ class Field extends PureComponent {
         setTimeout(() => this.searchInput.select());
       }
     },
-    render: text =>
-      this.state.searchedColumn === dataIndex ? (
+    render: text => {
+      const { searchedColumn, searchText } = this.state;
+      if (text === null || text === undefined) {
+        return text;
+      }
+      return searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-          searchWords={[this.state.searchText]}
+          searchWords={[searchText]}
           autoEscape
           textToHighlight={text.toString()}
         />
       ) : (
         text
-      ),
+      );
+    },
   });
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -190,8 +194,11 @@ class Field extends PureComponent {
   };
 
   getColumns = () => {
-    const columns = [
-      {
+    const { m2Field } = this.props;
+    const { category } = m2Field.protocol;
+    let columns = [];
+    if (category !== 3) {
+      columns.push({
         title: 'TYPE',
         dataIndex: 'type',
         key: 'type',
@@ -199,7 +206,9 @@ class Field extends PureComponent {
         fixed: 'left',
         sorter: true,
         render: text => toHexString(text, 8),
-      },
+      });
+    }
+    columns = columns.concat([
       {
         title: 'Name(CN)',
         dataIndex: 'cnName',
@@ -214,12 +223,35 @@ class Field extends PureComponent {
         width: 120,
         ...this.getColumnSearchProps('enName'),
       },
-      {
+    ]);
+    columns.push({
+      title: 'Active',
+      dataIndex: 'active',
+      key: 'active',
+      width: 80,
+      render: (text, record, index) => {
+        const { changeActiveFieldId, deleteFieldId } = this.state;
+        return (
+          <Switch
+            checkedChildren={<Icon type="check" />}
+            unCheckedChildren={<Icon type="close" />}
+            checked={text === 1}
+            loading={changeActiveFieldId.has(record.id)}
+            disabled={record.deleted || deleteFieldId.has(record.id)}
+            onClick={() => this.changeActive(text === 1 ? 2 : 1, record.id)}
+          />
+        );
+      },
+    });
+    if (category !== 3) {
+      columns.push({
         title: 'Field Count',
         dataIndex: 'fieldCount',
         key: 'fieldCount',
         width: 100,
-      },
+      });
+    }
+    columns = columns.concat([
       {
         title: 'Value Type',
         dataIndex: 'valueType',
@@ -241,7 +273,9 @@ class Field extends PureComponent {
         key: 'size',
         width: 60,
       },
-      {
+    ]);
+    if (category !== 3) {
+      columns.push({
         title: 'Link',
         dataIndex: 'linkEnName',
         key: 'linkEnName',
@@ -249,7 +283,9 @@ class Field extends PureComponent {
         render: (text, record) => (
           <Link to={`/m2/field/${record.link}/${record.linkEnName}`}>{text}</Link>
         ),
-      },
+      });
+    }
+    columns = columns.concat([
       {
         title: 'Wireshark Name',
         dataIndex: 'wiresharkName',
@@ -327,8 +363,29 @@ class Field extends PureComponent {
           );
         },
       },
-    ];
+    ]);
     return columns;
+  };
+
+  changeActive = (active, id) => {
+    const { dispatch } = this.props;
+    const { changeActiveFieldId } = this.state;
+    this.setState({
+      changeActiveFieldId: changeActiveFieldId.add(id),
+    });
+    dispatch({
+      type: 'm2Field/changeActive',
+      payload: {
+        active,
+        id,
+      },
+      callback: () => {
+        changeActiveFieldId.delete(id);
+        this.setState({
+          changeActiveFieldId,
+        });
+      },
+    });
   };
 
   edit = record => {
@@ -394,7 +451,7 @@ class Field extends PureComponent {
 
   render() {
     const { m2Field, loading } = this.props;
-    const { list, total } = m2Field;
+    const { list, total, protocol } = m2Field;
     const {
       protocolId,
       currentPage,
@@ -456,6 +513,7 @@ class Field extends PureComponent {
             record={editRecord}
             editMode={editMode}
             protocolId={protocolId}
+            category={protocol.category}
           />
         </Modal>
       </GridContent>

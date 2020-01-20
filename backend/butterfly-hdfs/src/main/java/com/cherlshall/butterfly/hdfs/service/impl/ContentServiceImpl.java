@@ -35,7 +35,7 @@ public class ContentServiceImpl implements ContentService {
         TableData<JSONObject> tableData = new TableData<>();
         List<JSONObject> dataSource = new ArrayList<>();
         Set<String> fieldNames = new HashSet<>();
-        for (String line : pageData.getDataSource()) {
+        for (String line : pageData.getList()) {
             JSONObject jsonObject = JSONObject.parseObject(line);
             for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
                 fieldNames.add(entry.getKey());
@@ -45,7 +45,7 @@ public class ContentServiceImpl implements ContentService {
         }
         tableData.setColumns(new ArrayList<>(fieldNames));
         tableData.setTotal(pageData.getTotal());
-        tableData.setDataSource(dataSource);
+        tableData.setList(dataSource);
         return tableData;
     }
 

@@ -20,6 +20,7 @@ public class FieldController {
 
     @PostMapping()
     public R insert(@RequestBody Field field) {
+        field.setActive(1);
         service.insert(field);
         return R.ok();
     }
@@ -39,5 +40,11 @@ public class FieldController {
     @GetMapping()
     public R listByPage(FieldVO fieldVO) {
         return R.ok(service.listByPage(fieldVO));
+    }
+
+    @PutMapping("active/{active}/{id}")
+    public R changeActive(@PathVariable("active") Integer active, @PathVariable("id") Integer id) {
+        service.changeActive(active, id);
+        return R.ok();
     }
 }

@@ -130,7 +130,7 @@ public class DocDaoImpl implements DocDao {
             SearchHits hits = response.getHits();
             PageData<Map<String, Object>> pageData = new PageData<>();
             List<Map<String, Object>> sourceList = new ArrayList<>();
-            pageData.setDataSource(sourceList);
+            pageData.setList(sourceList);
             for (SearchHit hit : hits) {
                 Map<String, Object> source = hit.getSourceAsMap();
                 String id = hit.getId();

@@ -15,13 +15,24 @@ public class Field {
     private String cnName;
     private String enName;
     private Integer fieldCount;
+
+    /**
+     * 字段类型
+     * string、int、long、byte、tlv、extractor
+     */
     private String valueType;
+
     private Integer size;
     private Integer link;
     private String wiresharkName;
     private String wiresharkFilterSyntax;
     private String example;
     private String remark;
+
+    /**
+     * 是否正在使用 1: 正在使用 2: 废弃
+     */
+    private Integer active;
 
     @Invisible
     private String linkEnName;

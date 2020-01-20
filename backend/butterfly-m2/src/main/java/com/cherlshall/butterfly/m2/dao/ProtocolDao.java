@@ -56,4 +56,7 @@ public interface ProtocolDao {
 
     @Select("select en_name from protocol where id = #{id}")
     String getEnNameById(Integer id);
+
+    @Update("update protocol set active = #{active} where id = #{id}")
+    int updateActive(@Param("active") Integer active, @Param("id") Integer id);
 }

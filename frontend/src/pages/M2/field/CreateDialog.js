@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Icon, Button, Select, InputNumber, TreeSelect } from 'antd';
+import { Form, Input, Icon, Button, Select, InputNumber, TreeSelect, message } from 'antd';
 
 const { Option } = Select;
 
@@ -103,27 +103,44 @@ class CreateDialog extends PureComponent {
     e.preventDefault();
     const { form } = this.props;
     form.validateFields((err, values) => {
-      const valuesSubmit = { ...values };
-      if (values.valueType === 'tlv') {
-        valuesSubmit.link = values.linkTlv;
-      } else if (values.valueType === 'extractor') {
-        valuesSubmit.link = values.linkExt;
-      }
-      if (values.type.indexOf('0x') === 0 || values.type.indexOf('0X') === 0) {
-        valuesSubmit.type = parseInt(values.type, 16);
-      }
       if (!err) {
+        const valuesSubmit = { ...values };
+        if (values.valueType === 'tlv') {
+          valuesSubmit.link = values.linkTlv;
+        } else if (values.valueType === 'extractor') {
+          valuesSubmit.link = values.linkExt;
+        } else if (values.valueType === 'int') {
+          const size = Number(values.size || 0);
+          if (size > 4) {
+            message.error('int size cannot exceed 4');
+            return;
+          }
+        } else if (values.valueType === 'long') {
+          const size = Number(values.size || 0);
+          if (size > 8) {
+            message.error('long size cannot exceed 8');
+            return;
+          }
+        }
+        if (values.type !== undefined) {
+          if (values.type.indexOf('0x') === 0 || values.type.indexOf('0X') === 0) {
+            valuesSubmit.type = parseInt(values.type, 16).toString();
+          } else {
+            valuesSubmit.type = values.type;
+          }
+        }
         this.submit(valuesSubmit);
       }
     });
   };
 
-  hasSize = valueType => {
-    return valueType !== 'tlv' && valueType !== 'extractor' && valueType !== 'string';
+  getSubmitText = () => {
+    const { editMode } = this.props;
+    return editMode ? 'Update' : 'Create';
   };
 
   render() {
-    const { loading, form, record, editMode } = this.props;
+    const { loading, form, record, editMode, category } = this.props;
     const { tlvTreeData, extTreeData } = this.state;
     const { getFieldDecorator } = form;
     const formItemLayout = {
@@ -143,7 +160,10 @@ class CreateDialog extends PureComponent {
       },
     };
 
-    const valueType = ['string', 'int', 'long', 'byte', 'tlv', 'extractor'];
+    const valueType =
+      category === 3
+        ? ['string', 'int', 'long', 'byte']
+        : ['string', 'int', 'long', 'byte', 'tlv', 'extractor'];
 
     const selectValueType = form.getFieldValue('valueType');
 
@@ -152,7 +172,7 @@ class CreateDialog extends PureComponent {
         <Form.Item {...formItemLayout} label="Value Type" required key="valueType">
           {getFieldDecorator('valueType', {
             validateTrigger: ['onChange', 'onBlur'],
-            initialValue: record.valueType || 'string',
+            initialValue: record.valueType || valueType[0],
             rules: [
               {
                 required: true,
@@ -170,7 +190,7 @@ class CreateDialog extends PureComponent {
             </Select>
           )}
         </Form.Item>
-        {selectValueType !== 'extractor' && (
+        {category !== 3 && (
           <Form.Item {...formItemLayout} label="Type" required key="type">
             {getFieldDecorator('type', {
               validateTrigger: ['onChange', 'onBlur'],
@@ -264,14 +284,14 @@ class CreateDialog extends PureComponent {
           </Form.Item>
         )}
 
-        {this.hasSize(selectValueType) && (
-          <Form.Item {...formItemLayout} label="Size" required key="size">
+        {category === 3 && (
+          <Form.Item {...formItemLayout} label="Size" required={category === 3} key="size">
             {getFieldDecorator('size', {
               validateTrigger: ['onChange', 'onBlur'],
               initialValue: record.size,
               rules: [
                 {
-                  required: true,
+                  required: category === 3,
                   whitespace: true,
                   message: 'Please input field size.',
                 },
@@ -314,10 +334,8 @@ class CreateDialog extends PureComponent {
           >
             {loading.effects[editMode ? 'm2Protocol/update' : 'm2Protocol/create'] ? (
               <Icon type="loading" />
-            ) : editMode ? (
-              'Update'
             ) : (
-              'Create'
+              this.getSubmitText()
             )}
           </Button>
         </Form.Item>

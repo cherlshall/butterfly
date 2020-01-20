@@ -8,7 +8,7 @@ export default {
   state: {
     list: [],
     total: 0,
-    // protocolNames: [], // { id: 1, pId: 0, value: '1', title: 'Expand to load' },
+    protocol: {},
   },
 
   effects: {
@@ -97,6 +97,46 @@ export default {
         }
       } else {
         message.error(response.msg || 'unknown error');
+      }
+    },
+
+    *findProtocolById({ payload, callback }, { call, put }) {
+      const response = yield call(protocolService.findById, payload);
+      if (response.code === 200) {
+        yield put({
+          type: 'save',
+          payload: {
+            protocol: response.data,
+          },
+        });
+      } else {
+        message.error(response.msg || 'unknown error');
+      }
+    },
+
+    *changeActive({ payload, callback }, { call, put, select }) {
+      const response = yield call(service.changeActive, payload);
+      if (response.code === 200) {
+        const list = yield select(state =>
+          state.m2Field.list.map(item => {
+            const data = { ...item };
+            if (data.id === payload.id) {
+              data.active = payload.active;
+            }
+            return data;
+          })
+        );
+        yield put({
+          type: 'save',
+          payload: {
+            list,
+          },
+        });
+      } else {
+        message.error(response.msg || 'unknown error');
+      }
+      if (callback) {
+        callback();
       }
     },
   },

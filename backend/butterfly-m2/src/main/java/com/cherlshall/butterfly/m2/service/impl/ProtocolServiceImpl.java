@@ -25,11 +25,15 @@ public class ProtocolServiceImpl implements ProtocolService {
     @Override
     public void insert(Protocol protocol) {
         ProtocolVO check = new ProtocolVO();
-        check.setType(protocol.getType());
-        if (dao.count(check) != 0) {
-            throw new ButterflyException("Type is already exists");
+        if (protocol.getCategory() == 1) {
+            check.setType(protocol.getType());
+            if (dao.count(check) != 0) {
+                throw new ButterflyException("Type is already exists");
+            }
+            check.setType(null);
+        } else {
+            protocol.setType(null);
         }
-        check.setType(null);
         check.setEnName(protocol.getEnName());
         if (dao.count(check) != 0) {
             throw new ButterflyException("Name(EN) is already exists");
@@ -41,20 +45,29 @@ public class ProtocolServiceImpl implements ProtocolService {
 
     @Override
     public void delete(Integer id) {
+        checkInUse(id);
+        // 删除协议
         if (dao.delete(id) == 0) {
             throw new ButterflyException("删除失败");
         }
+        // 删除协议字段
+
+        // 删除协议的tlv和结构体
     }
 
     @Override
     public void update(ProtocolVO protocolVO) {
         Protocol beforeUpdate = dao.findById(protocolVO.getId());
         ProtocolVO check = new ProtocolVO();
-        check.setType(protocolVO.getType());
-        if (!protocolVO.getType().equals(beforeUpdate.getType()) && dao.count(check) != 0) {
-            throw new ButterflyException("Type is already exists");
+        if (protocolVO.getCategory() == 1) {
+            check.setType(protocolVO.getType());
+            if (!protocolVO.getType().equals(beforeUpdate.getType()) && dao.count(check) != 0) {
+                throw new ButterflyException("Type is already exists");
+            }
+            check.setType(null);
+        } else {
+            protocolVO.setType(null);
         }
-        check.setType(null);
         check.setEnName(protocolVO.getEnName());
         if (!protocolVO.getEnName().equals(beforeUpdate.getEnName()) && dao.count(check) != 0) {
             throw new ButterflyException("Name(EN) is already exists");
@@ -63,6 +76,12 @@ public class ProtocolServiceImpl implements ProtocolService {
             throw new ButterflyException("更新失败");
         }
     }
+
+    @Override
+    public Protocol findById(Integer id) {
+        return dao.findById(id);
+    }
+
 
     @Override
     public PageData<Protocol> listByPage(ProtocolVO protocolVO) {
@@ -80,5 +99,18 @@ public class ProtocolServiceImpl implements ProtocolService {
     @Override
     public List<ProtocolName> listProtocolName(Integer category, Integer protocolId) {
         return dao.namesByCategoryAndProtocolId(category, protocolId);
+    }
+
+    @Override
+    public void changeActive(Integer active, Integer id) {
+        if (dao.updateActive(active, id) == 0) {
+            throw new ButterflyException("更新状态失败");
+        }
+    }
+
+    private void checkInUse(Integer id) {
+        // 是否有字段对这个协议的Link
+
+        //
     }
 }

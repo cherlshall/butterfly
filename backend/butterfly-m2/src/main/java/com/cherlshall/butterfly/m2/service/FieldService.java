@@ -19,4 +19,6 @@ public interface FieldService {
     void update(FieldVO fieldVO);
 
     PageData<Field> listByPage(FieldVO fieldVO);
+
+    void changeActive(Integer active, Integer id);
 }

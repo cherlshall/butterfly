@@ -14,10 +14,17 @@ import java.util.regex.Pattern;
 
 public class CommonUpdateLangDriver extends XMLLanguageDriver {
 
-    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)\\}\\)");
+    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)}\\)");
+    private boolean defaultUpdateSet = false;
+    private boolean defaultNullEnable = false;
 
     @Override
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
+        UpdateSet updateSet = parameterType.getAnnotation(UpdateSet.class);
+        if (updateSet != null) {
+            defaultUpdateSet = true;
+            defaultNullEnable = updateSet.nullEnable();
+        }
         Matcher matcher = inPattern.matcher(script);
         StringBuilder scriptBuilder = new StringBuilder();
         if (matcher.find()) {
@@ -27,7 +34,13 @@ public class CommonUpdateLangDriver extends XMLLanguageDriver {
             for (Field field : parameterType.getDeclaredFields()) {
                 // 过滤不需要set的属性
                 if (shouldSet(field)) {
-                    String tmp = "<if test=\"_field != null\">_column=#{_field},</if>";
+                    UpdateSet annotation = field.getAnnotation(UpdateSet.class);
+                    String tmp;
+                    if ((annotation == null && defaultNullEnable) || (annotation != null && annotation.nullEnable())) {
+                        tmp = "_column=#{_field},";
+                    } else {
+                        tmp = "<if test=\"_field != null\">_column=#{_field},</if>";
+                    }
                     setScriptBuilder.append(tmp.replaceAll("_field", field.getName())
                             .replaceAll("_column", CaseFormat.LOWER_CAMEL
                                     .to(CaseFormat.LOWER_UNDERSCORE, field.getName())));
@@ -51,7 +64,10 @@ public class CommonUpdateLangDriver extends XMLLanguageDriver {
         if (field.isAnnotationPresent(UpdateSet.class)) {
             return true;
         }
-        return !field.isAnnotationPresent(UpdateWhere.class);
+        if (field.isAnnotationPresent(UpdateWhere.class)) {
+            return false;
+        }
+        return defaultUpdateSet;
     }
 
     // 根据实体类自动生成sql的动态where部分

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Icon, Button, Select } from 'antd';
+import { toHexString } from '@/utils/utils';
 
 const { Option } = Select;
 
@@ -41,13 +42,22 @@ class CreateDialog extends PureComponent {
     const { form } = this.props;
     form.validateFields((err, values) => {
       const valuesSubmit = { ...values };
-      if (values.type.indexOf('0x') === 0 || values.type.indexOf('0X') === 0) {
-        valuesSubmit.type = parseInt(values.type, 16);
+      if (values.type !== undefined) {
+        if (values.type.indexOf('0x') === 0 || values.type.indexOf('0X') === 0) {
+          valuesSubmit.type = parseInt(values.type, 16).toString();
+        } else {
+          valuesSubmit.type = values.type;
+        }
       }
       if (!err) {
         this.submit(valuesSubmit);
       }
     });
+  };
+
+  getSubmitText = () => {
+    const { editMode } = this.props;
+    return editMode ? 'Update' : 'Create';
   };
 
   render() {
@@ -72,19 +82,22 @@ class CreateDialog extends PureComponent {
     };
     return (
       <Form onSubmit={this.handleSubmit}>
-        <Form.Item {...formItemLayout} label="Type" required key="type">
-          {getFieldDecorator('type', {
-            validateTrigger: ['onChange', 'onBlur'],
-            initialValue: record.type,
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                message: 'Please input protocol type.',
-              },
-            ],
-          })(<Input placeholder="protocol type" style={{ width: '80%', marginRight: 8 }} />)}
-        </Form.Item>
+        {category === 1 && (
+          <Form.Item {...formItemLayout} label="Type" required key="type">
+            {getFieldDecorator('type', {
+              validateTrigger: ['onChange', 'onBlur'],
+              initialValue: record.type ? toHexString(record.type, 8) : '',
+              rules: [
+                {
+                  required: true,
+                  whitespace: true,
+                  message: 'Please input protocol type.',
+                },
+              ],
+            })(<Input placeholder="protocol type" style={{ width: '80%', marginRight: 8 }} />)}
+          </Form.Item>
+        )}
+
         {category !== 1 && (
           <Form.Item {...formItemLayout} label="Protocol" required key="protocolId">
             {getFieldDecorator('protocolId', {
@@ -153,10 +166,8 @@ class CreateDialog extends PureComponent {
           >
             {loading.effects[editMode ? 'm2Protocol/update' : 'm2Protocol/create'] ? (
               <Icon type="loading" />
-            ) : editMode ? (
-              'Update'
             ) : (
-              'Create'
+              this.getSubmitText()
             )}
           </Button>
         </Form.Item>

@@ -209,6 +209,9 @@ export function splitLongText(text, maxLenth) {
 }
 
 export function toHexString(text, minLenth) {
+  if (text === undefined || text === null) {
+    return '';
+  }
   let hexStr = text.toString(16);
   const minLen = minLenth || 0;
   while (hexStr.length < minLen) {

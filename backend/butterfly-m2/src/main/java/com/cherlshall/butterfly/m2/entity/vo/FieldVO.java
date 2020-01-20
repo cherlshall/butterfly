@@ -1,12 +1,14 @@
 package com.cherlshall.butterfly.m2.entity.vo;
 
 import com.cherlshall.butterfly.sql.annotation.Symbol;
+import com.cherlshall.butterfly.sql.annotation.UpdateSet;
 import com.cherlshall.butterfly.sql.annotation.UpdateWhere;
 import com.cherlshall.butterfly.sql.entity.ParamsVO;
 import com.cherlshall.butterfly.sql.enums.SymbolEnum;
 import lombok.Data;
 
 @Data
+@UpdateSet(nullEnable = true)
 public class FieldVO extends ParamsVO {
 
     @UpdateWhere
@@ -36,4 +38,6 @@ public class FieldVO extends ParamsVO {
 
     @Symbol(SymbolEnum.LIKE)
     private String remark;
+
+    private Integer active;
 }

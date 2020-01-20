@@ -42,4 +42,10 @@ public interface FieldDao {
     @Select("select count(1) from field (#{fieldVO})")
     @Lang(CommonSelectLangDriver.class)
     Long count(FieldVO fieldVO);
+
+    @Select("select sum(size) from field where protocol_id = #{protocolId}")
+    Integer sumSizeByProtocolId(Integer protocolId);
+
+    @Update("update field set active = #{active} where id = #{id}")
+    int updateActive(@Param("active") Integer active, @Param("id") Integer id);
 }

@@ -20,6 +20,7 @@ public class ProtocolController {
 
     @PostMapping()
     public R insert(@RequestBody Protocol protocol) {
+        protocol.setActive(1);
         service.insert(protocol);
         return R.ok();
     }
@@ -36,6 +37,11 @@ public class ProtocolController {
         return R.ok();
     }
 
+    @GetMapping("/{id}")
+    public R findById(@PathVariable("id") Integer id) {
+        return R.ok(service.findById(id));
+    }
+
     @GetMapping()
     public R listByPage(ProtocolVO protocolVO) {
         return R.ok(service.listByPage(protocolVO));
@@ -49,5 +55,11 @@ public class ProtocolController {
     @GetMapping("names/{category}/{protocolId}")
     public R listProtocolName(@PathVariable("category") Integer category, @PathVariable("protocolId") Integer protocolId) {
         return R.ok(service.listProtocolName(category, protocolId));
+    }
+
+    @PutMapping("active/{active}/{id}")
+    public R changeActive(@PathVariable("active") Integer active, @PathVariable("id") Integer id) {
+        service.changeActive(active, id);
+        return R.ok();
     }
 }

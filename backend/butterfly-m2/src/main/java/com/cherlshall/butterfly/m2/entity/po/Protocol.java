@@ -31,6 +31,11 @@ public class Protocol {
     private String description;
 
     /**
+     * 是否正在使用 1: 正在使用 2: 废弃
+     */
+    private Integer active;
+
+    /**
      * 所属协议的英文名
      */
     @Invisible

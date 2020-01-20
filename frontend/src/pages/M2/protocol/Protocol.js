@@ -1,23 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Table,
-  Button,
-  Row,
-  Col,
-  Switch,
-  Icon,
-  Input,
-  Tag,
-  Popconfirm,
-  Modal,
-  message,
-  Tabs,
-} from 'antd';
+import { Table, Button, Row, Col, Switch, Icon, Input, Popconfirm, Modal, Tabs } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
-import Link from 'umi/link';
+import Highlighter from 'react-highlight-words';
+// import Link from 'umi/link';
+import router from 'umi/router';
 import CreateDialog from './CreateDialog';
-import { splitLongText, toHexString } from '@/utils/utils';
+import { splitLongText, toHexString, getEveryFirst } from '@/utils/utils';
 
 const { TabPane } = Tabs;
 
@@ -36,16 +25,37 @@ class Protocol extends PureComponent {
     orderName: 'type',
     orderDirection: 'asc',
     deleteProtocolId: new Set(),
+    changeActiveProtocolId: new Set(),
     filters: {},
+    searchs: {},
   };
 
   componentDidMount() {
     this.list();
+    this.listProtocolName();
   }
+
+  listProtocolName = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'm2Protocol/listProtocolName',
+      payload: {
+        category: 1,
+      },
+    });
+  };
 
   list = () => {
     const { dispatch } = this.props;
-    const { category, currentPage, pageSize, orderName, orderDirection, filters } = this.state;
+    const {
+      category,
+      currentPage,
+      pageSize,
+      orderName,
+      orderDirection,
+      filters,
+      searchs,
+    } = this.state;
     dispatch({
       type: 'm2Protocol/list',
       payload: {
@@ -55,6 +65,7 @@ class Protocol extends PureComponent {
         orderName,
         orderDirection,
         ...filters,
+        ...searchs,
       },
     });
   };
@@ -62,33 +73,138 @@ class Protocol extends PureComponent {
   onTableChange = (pagination, filters, sorter) => {
     const { current, pageSize } = pagination;
     const orderDirection = sorter.order === 'descend' ? 'desc' : 'asc';
+    const fil = getEveryFirst(filters);
+    fil.protocolId = fil.protocolEnName;
+    fil.protocolEnName = undefined;
     this.setState(
       {
         currentPage: current,
         pageSize,
         orderName: sorter.field,
         orderDirection,
+        filters: fil,
       },
       this.list
     );
   };
 
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => this.handleReset(clearFilters, dataIndex)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => {
+      const { searchedColumn, searchText } = this.state;
+      if (text === null || text === undefined) {
+        return text;
+      }
+      return searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text.toString()}
+        />
+      ) : (
+        text
+      );
+    },
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    const value = selectedKeys[0];
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+    const { searchs } = this.state;
+    searchs[dataIndex] = value;
+    this.setState(
+      {
+        ...searchs,
+      },
+      this.list
+    );
+  };
+
+  handleReset = (clearFilters, dataIndex) => {
+    clearFilters();
+    this.setState({ searchText: '' });
+    const { searchs } = this.state;
+    searchs[dataIndex] = undefined;
+    this.setState(
+      {
+        ...searchs,
+      },
+      this.list
+    );
+  };
+
+  getProtocolFilter = () => {
+    const { m2Protocol } = this.props;
+    const { names } = m2Protocol;
+    const filters = [];
+    names.forEach(item => {
+      filters.push({ text: item.enName, value: item.id });
+    });
+    return filters;
+  };
+
   getColumns = category => {
     const columns = [];
-    columns.push({
-      title: 'TYPE',
-      dataIndex: 'type',
-      key: 'type',
-      width: 40,
-      render: text => toHexString(text, 8),
-      sorter: true,
-    });
+    if (category === 1) {
+      columns.push({
+        title: 'TYPE',
+        dataIndex: 'type',
+        key: 'type',
+        width: 40,
+        render: text => toHexString(text, 8),
+        sorter: true,
+      });
+    }
     if (category !== 1) {
       columns.push({
         title: 'Protocol Name',
         dataIndex: 'protocolEnName',
         key: 'protocolEnName',
         width: 120,
+        filters: this.getProtocolFilter(),
+        filterMultiple: false,
       });
     }
     columns.push({
@@ -96,13 +212,34 @@ class Protocol extends PureComponent {
       dataIndex: 'cnName',
       key: 'cnName',
       width: 120,
+      ...this.getColumnSearchProps('cnName'),
     });
     columns.push({
       title: 'Name(EN)',
       dataIndex: 'enName',
       key: 'enName',
       width: 120,
-      render: (text, record) => <Link to={`/m2/field/${record.id}/${record.enName}`}>{text}</Link>,
+      ...this.getColumnSearchProps('cnName'),
+      // render: (text, record) => <Link to={`/m2/field/${record.id}/${record.enName}`}>{text}</Link>,
+    });
+    columns.push({
+      title: 'Active',
+      dataIndex: 'active',
+      key: 'active',
+      width: 80,
+      render: (text, record, index) => {
+        const { changeActiveProtocolId, deleteProtocolId } = this.state;
+        return (
+          <Switch
+            checkedChildren={<Icon type="check" />}
+            unCheckedChildren={<Icon type="close" />}
+            checked={text === 1}
+            loading={changeActiveProtocolId.has(record.id)}
+            disabled={record.deleted || deleteProtocolId.has(record.id)}
+            onClick={() => this.changeActive(text === 1 ? 2 : 1, record.id)}
+          />
+        );
+      },
     });
     columns.push({
       title: 'Description',
@@ -114,7 +251,7 @@ class Protocol extends PureComponent {
     columns.push({
       title: 'Option',
       key: 'option',
-      width: 120,
+      width: category !== 1 ? 140 : 120,
       render: (text, record) => {
         const { deleteProtocolId } = this.state;
         const deleting = deleteProtocolId.has(record.id);
@@ -160,6 +297,27 @@ class Protocol extends PureComponent {
       },
     });
     return columns;
+  };
+
+  changeActive = (active, id) => {
+    const { dispatch } = this.props;
+    const { changeActiveProtocolId } = this.state;
+    this.setState({
+      changeActiveProtocolId: changeActiveProtocolId.add(id),
+    });
+    dispatch({
+      type: 'm2Protocol/changeActive',
+      payload: {
+        active,
+        id,
+      },
+      callback: () => {
+        changeActiveProtocolId.delete(id);
+        this.setState({
+          changeActiveProtocolId,
+        });
+      },
+    });
   };
 
   edit = record => {
@@ -211,6 +369,7 @@ class Protocol extends PureComponent {
   createOver = () => {
     this.changeCreateDialogVisible(false);
     this.list();
+    this.listProtocolName();
   };
 
   changeTab = k => {
@@ -253,10 +412,9 @@ class Protocol extends PureComponent {
         </Tabs>
         <Row gutter={24} style={{ marginBottom: 12 }}>
           <Col span={24}>
-            <Button
-              type="primary"
-              onClick={() => this.create()}
-            >{`Create ${this.getCategoryName()}`}</Button>
+            <Button type="primary" onClick={() => this.create()}>
+              {`Create ${this.getCategoryName()}`}
+            </Button>
           </Col>
         </Row>
         <Table
@@ -277,6 +435,13 @@ class Protocol extends PureComponent {
             pageSize,
           }}
           onChange={this.onTableChange}
+          onRow={record => {
+            return {
+              onDoubleClick: event => {
+                router.push(`/m2/field/${record.id}/${record.enName}`);
+              },
+            };
+          }}
         />
         <Modal
           title="Create Protocol"

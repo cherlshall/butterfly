@@ -19,9 +19,13 @@ public interface ProtocolService {
 
     void update(ProtocolVO protocolVO);
 
+    Protocol findById(Integer id);
+
     PageData<Protocol> listByPage(ProtocolVO protocolVO);
 
     List<ProtocolName> listProtocolName(Integer category);
 
     List<ProtocolName> listProtocolName(Integer category, Integer protocolId);
+
+    void changeActive(Integer active, Integer id);
 }
