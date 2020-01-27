@@ -388,7 +388,7 @@ class Protocol extends PureComponent {
     if (category === 1) {
       return 'Protocol';
     }
-    return category === 2 ? 'TLV' : 'Extractor';
+    return category === 2 ? 'TLV' : 'Struct';
   };
 
   render() {
@@ -408,7 +408,7 @@ class Protocol extends PureComponent {
         <Tabs defaultActiveKey="1" onChange={this.changeTab}>
           <TabPane tab="Protocol" key="1" />
           <TabPane tab="TLV" key="2" />
-          <TabPane tab="Extractor" key="3" />
+          <TabPane tab="Struct" key="3" />
         </Tabs>
         <Row gutter={24} style={{ marginBottom: 12 }}>
           <Col span={24}>
@@ -422,7 +422,7 @@ class Protocol extends PureComponent {
           dataSource={list}
           bordered
           size="middle"
-          rowKey="tableName"
+          rowKey="id"
           loading={loading.effects['m2Protocol/list']}
           pagination={{
             total,

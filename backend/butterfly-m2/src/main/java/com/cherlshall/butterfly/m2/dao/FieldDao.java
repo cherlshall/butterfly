@@ -5,6 +5,7 @@ import com.cherlshall.butterfly.m2.entity.vo.FieldVO;
 import com.cherlshall.butterfly.sql.driver.CommonSelectLangDriver;
 import com.cherlshall.butterfly.sql.driver.CommonUpdateLangDriver;
 import com.cherlshall.butterfly.sql.driver.SimpleInsertLangDriver;
+import com.cherlshall.butterfly.sql.driver.SimpleSelectLangDriver;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public interface FieldDao {
     List<Field> listByPage(FieldVO fieldVO);
 
     @Select("select count(1) from field (#{fieldVO})")
-    @Lang(CommonSelectLangDriver.class)
+    @Lang(SimpleSelectLangDriver.class)
     Long count(FieldVO fieldVO);
 
     @Select("select sum(size) from field where protocol_id = #{protocolId}")

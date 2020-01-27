@@ -6,6 +6,7 @@ import com.cherlshall.butterfly.m2.entity.vo.ProtocolVO;
 import com.cherlshall.butterfly.sql.driver.CommonSelectLangDriver;
 import com.cherlshall.butterfly.sql.driver.CommonUpdateLangDriver;
 import com.cherlshall.butterfly.sql.driver.SimpleInsertLangDriver;
+import com.cherlshall.butterfly.sql.driver.SimpleSelectLangDriver;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface ProtocolDao {
     List<Protocol> listWithProtocolNameByPage(ProtocolVO protocolVO);
 
     @Select("select count(1) from protocol (#{protocolVO})")
-    @Lang(CommonSelectLangDriver.class)
+    @Lang(SimpleSelectLangDriver.class)
     Long count(ProtocolVO protocolVO);
 
     @Select("select id, en_name from protocol where category = #{category}")

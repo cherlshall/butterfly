@@ -107,7 +107,7 @@ class CreateDialog extends PureComponent {
         const valuesSubmit = { ...values };
         if (values.valueType === 'tlv') {
           valuesSubmit.link = values.linkTlv;
-        } else if (values.valueType === 'extractor') {
+        } else if (values.valueType === 'struct') {
           valuesSubmit.link = values.linkExt;
         } else if (values.valueType === 'int') {
           const size = Number(values.size || 0);
@@ -162,8 +162,8 @@ class CreateDialog extends PureComponent {
 
     const valueType =
       category === 3
-        ? ['string', 'int', 'long', 'byte']
-        : ['string', 'int', 'long', 'byte', 'tlv', 'extractor'];
+        ? ['string', 'int', 'long', 'float', 'double', 'binary']
+        : ['string', 'int', 'long', 'float', 'double', 'binary', 'tlv', 'struct'];
 
     const selectValueType = form.getFieldValue('valueType');
 
@@ -259,7 +259,7 @@ class CreateDialog extends PureComponent {
           </Form.Item>
         )}
 
-        {selectValueType === 'extractor' && (
+        {selectValueType === 'struct' && (
           <Form.Item {...formItemLayout} label="Link" required key="linkExt">
             {getFieldDecorator('linkExt', {
               validateTrigger: ['onChange', 'onBlur'],

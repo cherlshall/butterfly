@@ -1,7 +1,11 @@
 package com.cherlshall.butterfly.m2.controller;
 
+import com.cherlshall.butterfly.common.exception.ButterflyException;
+import com.cherlshall.butterfly.common.validate.Validate;
 import com.cherlshall.butterfly.common.vo.R;
+import com.cherlshall.butterfly.m2.dao.ProtocolDao;
 import com.cherlshall.butterfly.m2.entity.po.Field;
+import com.cherlshall.butterfly.m2.entity.po.Protocol;
 import com.cherlshall.butterfly.m2.entity.vo.FieldVO;
 import com.cherlshall.butterfly.m2.service.FieldService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +22,18 @@ public class FieldController {
     @Autowired
     private FieldService service;
 
+    @Autowired
+    private ProtocolDao protocolDao;
+
     @PostMapping()
     public R insert(@RequestBody Field field) {
         field.setActive(1);
+        Integer protocolId = field.getProtocolId();
+        if (protocolId == null) {
+            throw new ButterflyException("所属协议不能为空");
+        }
+        Protocol protocol = protocolDao.findById(protocolId);
+        Validate.check(field, protocol.getCategory().toString());
         service.insert(field);
         return R.ok();
     }

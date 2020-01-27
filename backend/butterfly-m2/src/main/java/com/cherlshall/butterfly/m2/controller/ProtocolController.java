@@ -1,5 +1,6 @@
 package com.cherlshall.butterfly.m2.controller;
 
+import com.cherlshall.butterfly.common.validate.Validate;
 import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.m2.entity.po.Protocol;
 import com.cherlshall.butterfly.m2.entity.vo.ProtocolVO;
@@ -21,6 +22,7 @@ public class ProtocolController {
     @PostMapping()
     public R insert(@RequestBody Protocol protocol) {
         protocol.setActive(1);
+        Validate.check(protocol);
         service.insert(protocol);
         return R.ok();
     }

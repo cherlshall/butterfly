@@ -261,9 +261,11 @@ class Field extends PureComponent {
           { text: 'string', value: 'string' },
           { text: 'int', value: 'int' },
           { text: 'long', value: 'long' },
-          { text: 'byte', value: 'byte' },
+          { text: 'float', value: 'float' },
+          { text: 'double', value: 'double' },
+          { text: 'binary', value: 'binary' },
           { text: 'tlv', value: 'tlv' },
-          { text: 'extractor', value: 'extractor' },
+          { text: 'struct', value: 'struct' },
         ],
         filterMultiple: false,
       },
@@ -484,7 +486,7 @@ class Field extends PureComponent {
           dataSource={list}
           bordered
           size="middle"
-          rowKey="tableName"
+          rowKey="id"
           loading={loading.effects['m2Field/list']}
           pagination={{
             total,
