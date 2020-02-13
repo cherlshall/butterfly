@@ -69,9 +69,18 @@ export default {
           type: 'save',
           payload: {
             list: response.data.list,
-            count: response.data.total,
+            total: response.data.total,
           },
         });
+      } else {
+        message.error(response.msg || 'unknown error');
+      }
+    },
+
+    *getList({ payload, callback }, { call, put }) {
+      const response = yield call(service.listByPage, payload);
+      if (response.code === 200 && callback) {
+        callback(response.data);
       } else {
         message.error(response.msg || 'unknown error');
       }

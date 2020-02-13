@@ -46,4 +46,8 @@ export default {
   'menu.elasticsearch.esCluster': '集群管理',
   'menu.elasticsearch.esIndex': '索引详情',
   'menu.hdfs': 'HDFS',
+  'menu.m2': 'M2接口',
+  'menu.m2.m2Protocol': '协议管理',
+  'menu.m2.m2Field': '字段管理',
+  'menu.m2.m2Type': '类型管理',
 };

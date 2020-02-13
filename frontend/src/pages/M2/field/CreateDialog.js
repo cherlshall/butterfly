@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Icon, Button, Select, InputNumber, TreeSelect, message } from 'antd';
+import { toHexString } from '@/utils/utils';
 
 const { Option } = Select;
 
@@ -16,7 +17,31 @@ class CreateDialog extends PureComponent {
 
   componentDidMount() {
     this.listProtocolNames();
+    this.autoSetType();
   }
+
+  autoSetType = () => {
+    const { dispatch, category, editMode, protocolId, form } = this.props;
+    if (!editMode && category !== 3) {
+      dispatch({
+        type: 'm2Field/getList',
+        payload: {
+          currentPage: 1,
+          pageSize: 1,
+          orderName: 'type',
+          orderDirection: 'desc',
+          protocolId,
+        },
+        callback: data => {
+          let nextType = 0;
+          if (data.list && data.list.length > 0) {
+            nextType = data.list[0].type + 1;
+          }
+          form.setFieldsValue({ type: toHexString(nextType, 8) });
+        },
+      });
+    }
+  };
 
   listProtocolNames = () => {
     const { dispatch } = this.props;
@@ -105,17 +130,18 @@ class CreateDialog extends PureComponent {
     form.validateFields((err, values) => {
       if (!err) {
         const valuesSubmit = { ...values };
+
         if (values.valueType === 'tlv') {
           valuesSubmit.link = values.linkTlv;
         } else if (values.valueType === 'struct') {
           valuesSubmit.link = values.linkExt;
-        } else if (values.valueType === 'int') {
+        } else if (values.valueType === 'int' || values.valueType === 'int_network') {
           const size = Number(values.size || 0);
           if (size > 4) {
             message.error('int size cannot exceed 4');
             return;
           }
-        } else if (values.valueType === 'long') {
+        } else if (values.valueType === 'long' || values.valueType === 'long_network') {
           const size = Number(values.size || 0);
           if (size > 8) {
             message.error('long size cannot exceed 8');
@@ -132,6 +158,13 @@ class CreateDialog extends PureComponent {
         this.submit(valuesSubmit);
       }
     });
+  };
+
+  getValueType = () => {
+    const { category, m2Field } = this.props;
+    const { typeList, baseTypeList } = m2Field;
+    const valueType = category === 3 ? baseTypeList : typeList;
+    return valueType;
   };
 
   getSubmitText = () => {
@@ -160,11 +193,6 @@ class CreateDialog extends PureComponent {
       },
     };
 
-    const valueType =
-      category === 3
-        ? ['string', 'int', 'long', 'float', 'double', 'binary']
-        : ['string', 'int', 'long', 'float', 'double', 'binary', 'tlv', 'struct'];
-
     const selectValueType = form.getFieldValue('valueType');
 
     return (
@@ -172,7 +200,7 @@ class CreateDialog extends PureComponent {
         <Form.Item {...formItemLayout} label="Value Type" required key="valueType">
           {getFieldDecorator('valueType', {
             validateTrigger: ['onChange', 'onBlur'],
-            initialValue: record.valueType || valueType[0],
+            initialValue: record.valueType || this.getValueType()[0].value,
             rules: [
               {
                 required: true,
@@ -182,9 +210,9 @@ class CreateDialog extends PureComponent {
             ],
           })(
             <Select style={{ width: '80%' }} showSearch placeholder="Select name of protocol">
-              {valueType.map(t => (
-                <Option value={t} key={t}>
-                  {t}
+              {this.getValueType().map(t => (
+                <Option value={t.value} key={t.value}>
+                  {t.text}
                 </Option>
               ))}
             </Select>
@@ -194,7 +222,7 @@ class CreateDialog extends PureComponent {
           <Form.Item {...formItemLayout} label="Type" required key="type">
             {getFieldDecorator('type', {
               validateTrigger: ['onChange', 'onBlur'],
-              initialValue: record.type ? record.type.toString() : '',
+              initialValue: record.type ? toHexString(record.type, 8) : '',
               rules: [
                 {
                   required: true,
@@ -210,14 +238,7 @@ class CreateDialog extends PureComponent {
           {getFieldDecorator('cnName', {
             validateTrigger: ['onChange', 'onBlur'],
             initialValue: record.cnName,
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                message: 'Please input field Name(CN).',
-              },
-            ],
-          })(<Input placeholder="field name(CN)" style={{ width: '80%' }} />)}
+          })(<Input placeholder="������" style={{ width: '80%' }} />)}
         </Form.Item>
 
         <Form.Item {...formItemLayout} label="Name(EN)" required key="enName">
@@ -288,7 +309,7 @@ class CreateDialog extends PureComponent {
           <Form.Item {...formItemLayout} label="Size" required={category === 3} key="size">
             {getFieldDecorator('size', {
               validateTrigger: ['onChange', 'onBlur'],
-              initialValue: record.size,
+              initialValue: record.size === undefined ? '' : `${record.size}`,
               rules: [
                 {
                   required: category === 3,

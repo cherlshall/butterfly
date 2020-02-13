@@ -8,8 +8,8 @@ const FooterView = () => (
     <GlobalFooter
       links={[
         {
-          key: '首页',
-          title: '首页',
+          key: '主页',
+          title: '主页',
           href: 'http://188.131.238.102',
           blankTarget: true,
         },

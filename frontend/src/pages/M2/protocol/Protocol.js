@@ -27,7 +27,6 @@ class Protocol extends PureComponent {
     deleteProtocolId: new Set(),
     changeActiveProtocolId: new Set(),
     filters: {},
-    searchs: {},
   };
 
   componentDidMount() {
@@ -47,15 +46,7 @@ class Protocol extends PureComponent {
 
   list = () => {
     const { dispatch } = this.props;
-    const {
-      category,
-      currentPage,
-      pageSize,
-      orderName,
-      orderDirection,
-      filters,
-      searchs,
-    } = this.state;
+    const { category, currentPage, pageSize, orderName, orderDirection, filters } = this.state;
     dispatch({
       type: 'm2Protocol/list',
       payload: {
@@ -65,12 +56,12 @@ class Protocol extends PureComponent {
         orderName,
         orderDirection,
         ...filters,
-        ...searchs,
       },
     });
   };
 
   onTableChange = (pagination, filters, sorter) => {
+    const { orderName } = this.state;
     const { current, pageSize } = pagination;
     const orderDirection = sorter.order === 'descend' ? 'desc' : 'asc';
     const fil = getEveryFirst(filters);
@@ -80,7 +71,7 @@ class Protocol extends PureComponent {
       {
         currentPage: current,
         pageSize,
-        orderName: sorter.field,
+        orderName: sorter.field || orderName,
         orderDirection,
         filters: fil,
       },
@@ -147,32 +138,15 @@ class Protocol extends PureComponent {
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    const value = selectedKeys[0];
     this.setState({
       searchText: selectedKeys[0],
       searchedColumn: dataIndex,
     });
-    const { searchs } = this.state;
-    searchs[dataIndex] = value;
-    this.setState(
-      {
-        ...searchs,
-      },
-      this.list
-    );
   };
 
   handleReset = (clearFilters, dataIndex) => {
     clearFilters();
     this.setState({ searchText: '' });
-    const { searchs } = this.state;
-    searchs[dataIndex] = undefined;
-    this.setState(
-      {
-        ...searchs,
-      },
-      this.list
-    );
   };
 
   getProtocolFilter = () => {
@@ -202,7 +176,7 @@ class Protocol extends PureComponent {
         title: 'Protocol Name',
         dataIndex: 'protocolEnName',
         key: 'protocolEnName',
-        width: 120,
+        width: 160,
         filters: this.getProtocolFilter(),
         filterMultiple: false,
       });
@@ -211,23 +185,23 @@ class Protocol extends PureComponent {
       title: 'Name(CN)',
       dataIndex: 'cnName',
       key: 'cnName',
-      width: 120,
+      width: 160,
       ...this.getColumnSearchProps('cnName'),
     });
     columns.push({
       title: 'Name(EN)',
       dataIndex: 'enName',
       key: 'enName',
-      width: 120,
-      ...this.getColumnSearchProps('cnName'),
+      width: 160,
+      ...this.getColumnSearchProps('enName'),
       // render: (text, record) => <Link to={`/m2/field/${record.id}/${record.enName}`}>{text}</Link>,
     });
     columns.push({
       title: 'Active',
       dataIndex: 'active',
       key: 'active',
-      width: 80,
-      render: (text, record, index) => {
+      width: 40,
+      render: (text, record) => {
         const { changeActiveProtocolId, deleteProtocolId } = this.state;
         return (
           <Switch
@@ -421,14 +395,14 @@ class Protocol extends PureComponent {
           columns={this.getColumns(category)}
           dataSource={list}
           bordered
-          size="middle"
+          size="small"
           rowKey="id"
           loading={loading.effects['m2Protocol/list']}
           pagination={{
             total,
             showSizeChanger: true,
             showQuickJumper: true,
-            size: 'middle',
+            size: 'small',
             showTotal: t => `Total ${t} items`,
             pageSizeOptions: ['10', '30', '50'],
             current: currentPage,
@@ -437,14 +411,14 @@ class Protocol extends PureComponent {
           onChange={this.onTableChange}
           onRow={record => {
             return {
-              onDoubleClick: event => {
-                router.push(`/m2/field/${record.id}/${record.enName}`);
+              onDoubleClick: () => {
+                router.push(`/m2/field/${record.id}`);
               },
             };
           }}
         />
         <Modal
-          title="Create Protocol"
+          title={`${editMode ? 'Update' : 'Create'}${this.getCategoryName()}`}
           visible={createDialogVisible}
           onCancel={() => this.changeCreateDialogVisible(false)}
           footer={null}

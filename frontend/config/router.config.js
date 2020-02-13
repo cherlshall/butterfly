@@ -100,14 +100,24 @@ export default [
         path: '/m2',
         name: 'm2',
         icon: 'api',
-        component: './M2/protocol/protocol',
-        authority: ['admin'],
-      },
-      {
-        path: '/m2/field/:protocolId/:protocolEnName',
-        hideInMenu: true,
-        name: 'm2Field',
-        component: './M2/field/field',
+        routes: [
+          {
+            path: '/m2/protocol',
+            name: 'm2Protocol',
+            component: './M2/protocol/protocol',
+          },
+          {
+            path: '/m2/field/:protocolId',
+            hideInMenu: true,
+            name: 'm2Field',
+            component: './M2/field/field',
+          },
+          {
+            path: '/m2/type',
+            name: 'm2Type',
+            component: './M2/type/type',
+          },
+        ],
         authority: ['admin'],
       },
       {

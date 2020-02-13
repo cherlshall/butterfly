@@ -199,11 +199,46 @@ export function formatTrafic(val) {
   return `${val} B`;
 }
 
+function spliceByByte(text, maxLen) {
+  if (text === null || text === undefined) {
+    return '';
+  }
+  let len = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const c = text.charCodeAt(i);
+    if ((c >= 0x001 && c <= 0x007e) || (c >= 0xff60 && c <= 0xff9f)) {
+      len += 1;
+    } else {
+      len += 2;
+    }
+    if (len >= maxLen) {
+      return text.slice(0, i);
+    }
+  }
+  return text;
+}
+
+export function byteLen(text) {
+  let len = 0;
+  if (text === null || text === undefined) {
+    return len;
+  }
+  for (let i = 0; i < text.length; i += 1) {
+    const c = text.charCodeAt(i);
+    if ((c >= 0x001 && c <= 0x007e) || (c >= 0xff60 && c <= 0xff9f)) {
+      len += 1;
+    } else {
+      len += 2;
+    }
+  }
+  return len;
+}
+
 export function splitLongText(text, maxLenth) {
-  const len = text ? text.length : 0;
+  const len = byteLen(text);
   const maxLen = maxLenth || 30;
   if (len > maxLen) {
-    return <Tooltip title={text}>{`${text.slice(0, maxLen)}...`}</Tooltip>;
+    return <Tooltip title={text}>{`${spliceByByte(text, maxLenth)}...`}</Tooltip>;
   }
   return text;
 }

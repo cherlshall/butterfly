@@ -12,7 +12,31 @@ const { Option } = Select;
 class CreateDialog extends PureComponent {
   componentDidMount() {
     this.loadProtocolNames();
+    this.autoSetType();
   }
+
+  autoSetType = () => {
+    const { dispatch, category, editMode, form } = this.props;
+    if (!editMode) {
+      dispatch({
+        type: 'm2Protocol/getList',
+        payload: {
+          category,
+          currentPage: 1,
+          pageSize: 1,
+          orderName: 'type',
+          orderDirection: 'desc',
+        },
+        callback: data => {
+          let nextType = 0;
+          if (data.list && data.list.length > 0) {
+            nextType = data.list[0].type + 1;
+          }
+          form.setFieldsValue({ type: toHexString(nextType, 8) });
+        },
+      });
+    }
+  };
 
   loadProtocolNames = () => {
     const { dispatch } = this.props;
@@ -115,6 +139,9 @@ class CreateDialog extends PureComponent {
                 style={{ width: '80%', marginRight: 8 }}
                 showSearch
                 placeholder="Select name of protocol"
+                filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
               >
                 {names.map(name => (
                   <Option value={name.id.toString()} key={name.id}>
@@ -129,13 +156,6 @@ class CreateDialog extends PureComponent {
           {getFieldDecorator('cnName', {
             validateTrigger: ['onChange', 'onBlur'],
             initialValue: record.cnName,
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                message: 'Please input protocol Name(CN).',
-              },
-            ],
           })(<Input placeholder="protocol name(CN)" style={{ width: '80%', marginRight: 8 }} />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="Name(EN)" required key="enName">

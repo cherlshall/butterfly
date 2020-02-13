@@ -49,4 +49,5 @@ export default {
   'menu.m2': 'M2 Interface',
   'menu.m2.m2Protocol': 'Protocol',
   'menu.m2.m2Field': 'Field',
+  'menu.m2.m2Type': 'Type',
 };

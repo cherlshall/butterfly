@@ -83,7 +83,7 @@ public class FieldServiceImpl implements FieldService {
     public PageData<Field> listByPage(FieldVO fieldVO) {
         List<Field> fields = dao.listByPage(fieldVO);
         for (Field field : fields) {
-            if (field.getValueType().equals("extractor")) {
+            if (field.getValueType().equals("struct")) {
                 field.setSize(dao.sumSizeByProtocolId(field.getLink()));
             }
         }

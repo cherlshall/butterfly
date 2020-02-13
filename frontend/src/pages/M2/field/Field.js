@@ -1,12 +1,23 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Row, Col, Switch, Icon, Input, Popconfirm, Modal } from 'antd';
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Switch,
+  Icon,
+  Input,
+  Popconfirm,
+  Modal,
+  Breadcrumb,
+  message,
+} from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Highlighter from 'react-highlight-words';
 import Link from 'umi/link';
-import router from 'umi/router';
 import CreateDialog from './CreateDialog';
-import { splitLongText, toHexString, getEveryFirst } from '@/utils/utils';
+import { splitLongText, toHexString, getEveryFirst, getPageQuery } from '@/utils/utils';
 
 @connect(({ m2Field, loading }) => ({
   m2Field,
@@ -24,14 +35,13 @@ class Field extends PureComponent {
     deleteFieldId: new Set(),
     changeActiveFieldId: new Set(),
     protocolId: 0,
-    protocolEnName: '',
     filters: {},
-    searchs: {},
   };
 
   componentDidMount() {
     this.init();
     window.onhashchange = this.init;
+    this.listType();
   }
 
   componentWillUnmount() {
@@ -40,15 +50,21 @@ class Field extends PureComponent {
 
   init = () => {
     const { match } = this.props;
-    const { protocolId, protocolEnName } = match.params;
+    const { protocolId } = match.params;
     this.setState(
       {
         protocolId,
-        protocolEnName,
       },
       this.list
     );
     this.findProtocolById(protocolId);
+  };
+
+  listType = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'm2Field/listType',
+    });
   };
 
   findProtocolById = protocolId => {
@@ -63,15 +79,7 @@ class Field extends PureComponent {
 
   list = () => {
     const { dispatch } = this.props;
-    const {
-      protocolId,
-      currentPage,
-      pageSize,
-      orderName,
-      orderDirection,
-      filters,
-      searchs,
-    } = this.state;
+    const { protocolId, currentPage, pageSize, orderName, orderDirection, filters } = this.state;
     dispatch({
       type: 'm2Field/list',
       payload: {
@@ -81,19 +89,19 @@ class Field extends PureComponent {
         orderName,
         orderDirection,
         ...filters,
-        ...searchs,
       },
     });
   };
 
   onTableChange = (pagination, filters, sorter) => {
+    const { orderName } = this.state;
     const { current, pageSize } = pagination;
     const orderDirection = sorter.order === 'descend' ? 'desc' : 'asc';
     this.setState(
       {
         currentPage: current,
         pageSize,
-        orderName: sorter.field,
+        orderName: sorter.field || orderName,
         orderDirection,
         filters: getEveryFirst(filters),
       },
@@ -160,50 +168,89 @@ class Field extends PureComponent {
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    const value = selectedKeys[0];
     this.setState({
       searchText: selectedKeys[0],
       searchedColumn: dataIndex,
     });
-    const { searchs } = this.state;
-    searchs[dataIndex] = value;
-    this.setState(
-      {
-        ...searchs,
-      },
-      this.list
-    );
   };
 
   handleReset = (clearFilters, dataIndex) => {
     clearFilters();
     this.setState({ searchText: '' });
-    const { searchs } = this.state;
-    searchs[dataIndex] = undefined;
-    this.setState(
-      {
-        ...searchs,
-      },
-      this.list
-    );
   };
 
-  goLink = url => {
-    router.push(url);
-    this.init();
+  getEnName = () => {
+    const { m2Field, loading } = this.props;
+    if (loading.effects['m2Field/findProtocolById']) {
+      return 'loading...';
+    }
+    const { protocol } = m2Field;
+    return protocol.enName;
+  };
+
+  generateUrl = protocolId => {
+    const { m2Field } = this.props;
+    const { protocol } = m2Field;
+    const params = getPageQuery() || {};
+    const { history } = params;
+    if (history) {
+      return `/#/m2/field/${protocolId}?history=${history},${protocol.id}-${this.getEnName()}`;
+    }
+    return `/#/m2/field/${protocolId}?history=${protocol.id}-${this.getEnName()}`;
+  };
+
+  getBreadcrumbHref = (protocolId, history) => {
+    if (history) {
+      return `/#/m2/field/${protocolId}?history=${history}`;
+    }
+    return `/#/m2/field/${protocolId}`;
+  };
+
+  getBreadcrumb = () => {
+    const params = getPageQuery() || {};
+    const { history } = params;
+    let historyArr = [];
+    if (history) {
+      historyArr = history.split(',');
+    }
+    let historyTemp = '';
+    return (
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <a href="/#/m2/protocol">Protocol</a>
+        </Breadcrumb.Item>
+        {historyArr.map((item, index) => {
+          const split = item.indexOf('-');
+          const protocolId = item.substring(0, split);
+          const enName = item.substring(split + 1);
+          const href = this.getBreadcrumbHref(protocolId, historyTemp);
+          if (index !== 0) {
+            historyTemp += ',';
+          }
+          historyTemp += `${protocolId}-${enName}`;
+          return (
+            <Breadcrumb.Item>
+              <a href={href}>{enName}</a>
+            </Breadcrumb.Item>
+          );
+        })}
+        <Breadcrumb.Item>{this.getEnName()}</Breadcrumb.Item>
+      </Breadcrumb>
+    );
   };
 
   getColumns = () => {
     const { m2Field } = this.props;
-    const { category } = m2Field.protocol;
+    const { typeList, protocol } = m2Field;
+    const { category } = protocol;
     let columns = [];
     if (category !== 3) {
       columns.push({
         title: 'TYPE',
         dataIndex: 'type',
         key: 'type',
-        width: 100,
-        fixed: 'left',
+        width: 90,
+        // fixed: 'left',
         sorter: true,
         render: text => toHexString(text, 8),
       });
@@ -213,60 +260,51 @@ class Field extends PureComponent {
         title: 'Name(CN)',
         dataIndex: 'cnName',
         key: 'cnName',
-        width: 120,
+        width: 160,
         ...this.getColumnSearchProps('cnName'),
       },
       {
         title: 'Name(EN)',
         dataIndex: 'enName',
         key: 'enName',
-        width: 120,
+        width: 160,
         ...this.getColumnSearchProps('enName'),
       },
-    ]);
-    columns.push({
-      title: 'Active',
-      dataIndex: 'active',
-      key: 'active',
-      width: 80,
-      render: (text, record, index) => {
-        const { changeActiveFieldId, deleteFieldId } = this.state;
-        return (
-          <Switch
-            checkedChildren={<Icon type="check" />}
-            unCheckedChildren={<Icon type="close" />}
-            checked={text === 1}
-            loading={changeActiveFieldId.has(record.id)}
-            disabled={record.deleted || deleteFieldId.has(record.id)}
-            onClick={() => this.changeActive(text === 1 ? 2 : 1, record.id)}
-          />
-        );
+      {
+        title: 'Active',
+        dataIndex: 'active',
+        key: 'active',
+        width: 60,
+        render: (text, record) => {
+          const { changeActiveFieldId, deleteFieldId } = this.state;
+          return (
+            <Switch
+              checkedChildren={<Icon type="check" />}
+              unCheckedChildren={<Icon type="close" />}
+              checked={text === 1}
+              loading={changeActiveFieldId.has(record.id)}
+              disabled={record.deleted || deleteFieldId.has(record.id)}
+              onClick={() => this.changeActive(text === 1 ? 2 : 1, record.id)}
+            />
+          );
+        },
       },
-    });
-    if (category !== 3) {
-      columns.push({
-        title: 'Field Count',
-        dataIndex: 'fieldCount',
-        key: 'fieldCount',
-        width: 100,
-      });
-    }
+    ]);
+    // if (category !== 3) {
+    //   columns.push({
+    //     title: 'Field Count',
+    //     dataIndex: 'fieldCount',
+    //     key: 'fieldCount',
+    //     width: 80,
+    //   })
+    // }
     columns = columns.concat([
       {
         title: 'Value Type',
         dataIndex: 'valueType',
         key: 'valueType',
         width: 120,
-        filters: [
-          { text: 'string', value: 'string' },
-          { text: 'int', value: 'int' },
-          { text: 'long', value: 'long' },
-          { text: 'float', value: 'float' },
-          { text: 'double', value: 'double' },
-          { text: 'binary', value: 'binary' },
-          { text: 'tlv', value: 'tlv' },
-          { text: 'struct', value: 'struct' },
-        ],
+        filters: typeList,
         filterMultiple: false,
       },
       {
@@ -281,9 +319,10 @@ class Field extends PureComponent {
         title: 'Link',
         dataIndex: 'linkEnName',
         key: 'linkEnName',
-        width: 80,
+        width: 160,
         render: (text, record) => (
-          <Link to={`/m2/field/${record.link}/${record.linkEnName}`}>{text}</Link>
+          <a href={this.generateUrl(record.link)}>{text}</a>
+          // <Link to={this.generateUrl(record.link)}>{text}</Link>
         ),
       });
     }
@@ -299,14 +338,14 @@ class Field extends PureComponent {
         title: 'Wireshark Filter Syntax',
         dataIndex: 'wiresharkFilterSyntax',
         key: 'wiresharkFilterSyntax',
-        width: 200,
-        render: text => splitLongText(text, 20),
+        width: 180,
+        render: text => splitLongText(text),
       },
       {
         title: 'Example',
         dataIndex: 'example',
         key: 'example',
-        width: 120,
+        width: 110,
         render: text => splitLongText(text, 15),
       },
       {
@@ -314,13 +353,13 @@ class Field extends PureComponent {
         dataIndex: 'remark',
         key: 'remark',
         width: 160,
-        render: text => splitLongText(text, 20),
+        render: text => splitLongText(text, 25),
       },
       {
         title: 'Option',
         key: 'option',
-        width: 180,
-        fixed: 'right',
+        width: 150,
+        // fixed: 'right',
         render: (text, record) => {
           const { deleteFieldId } = this.state;
           const deleting = deleteFieldId.has(record.id);
@@ -401,6 +440,11 @@ class Field extends PureComponent {
   };
 
   create = () => {
+    const { loading } = this.props;
+    if (loading.effects['m2Field/findProtocolById']) {
+      message.info('Please wait, loading...');
+      return;
+    }
     this.setState(
       {
         editMode: false,
@@ -461,11 +505,13 @@ class Field extends PureComponent {
       createDialogVisible,
       editRecord,
       editMode,
-      protocolEnName,
     } = this.state;
 
     return (
       <GridContent>
+        <Row gutter={24} style={{ marginBottom: 12 }}>
+          <Col span={24}>{this.getBreadcrumb()}</Col>
+        </Row>
         <Row gutter={24} style={{ marginBottom: 12 }}>
           <Col span={24}>
             <Button
@@ -474,7 +520,7 @@ class Field extends PureComponent {
               style={{ marginRight: 12 }}
               icon="reload"
             >
-              {protocolEnName}
+              {this.getEnName()}
             </Button>
             <Button type="primary" onClick={() => this.create()}>
               Create Field
@@ -485,24 +531,24 @@ class Field extends PureComponent {
           columns={this.getColumns()}
           dataSource={list}
           bordered
-          size="middle"
+          size="small"
           rowKey="id"
           loading={loading.effects['m2Field/list']}
           pagination={{
             total,
             showSizeChanger: true,
             showQuickJumper: true,
-            size: 'middle',
+            size: 'small',
             showTotal: t => `Total ${t} items`,
             pageSizeOptions: ['10', '30', '50'],
             current: currentPage,
             pageSize,
           }}
           onChange={this.onTableChange}
-          scroll={{ x: 'max-content' }}
+          // scroll={{ x: 'max-content' }}
         />
         <Modal
-          title="Create Field"
+          title={editMode ? 'Update Field' : 'Create Field'}
           visible={createDialogVisible}
           onCancel={() => this.changeCreateDialogVisible(false)}
           footer={null}
