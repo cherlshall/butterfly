@@ -13,7 +13,7 @@ export default {
     *fetchNotices(_, { call, put, select }) {
       const uid = getUid();
       if (uid !== '') {
-        const response = yield call(queryNotices, {uid});
+        const response = yield call(queryNotices);
         if (response && response.data) {
           const data = response.data;
           yield put({

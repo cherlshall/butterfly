@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.10.1",
+    "@antv/g6": "^3.3.7",
     "@babel/runtime": "^7.3.1",
     "antd": "^3.13.0",
     "bizcharts": "^3.4.3",
@@ -62,7 +63,8 @@
     "react-json-view": "^1.19.1",
     "react-media": "^1.9.2",
     "react-resizable": "^1.8.0",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "reqwest": "^2.0.5"
   },
   "devDependencies": {
     "@types/react": "^16.8.1",

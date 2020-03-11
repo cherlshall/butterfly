@@ -6,8 +6,8 @@ export async function query() {
   return request('/api/users');
 }
 
-export async function queryCurrent(params) {
-  return request(`/server/user/currentUser?${stringify(params)}`);
+export async function queryCurrent() {
+  return request(`/server/user/currentUser`);
 }
 
 export async function currentAuthority() {

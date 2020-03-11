@@ -24,12 +24,12 @@ public class UserServiceImpl implements UserService {
     private AccountDao accountDao;
 
     @Override
-    public List<Notice> getNotices(int userId) {
+    public List<Notice> getNotices(Integer userId) {
         return noticeDao.getNoticesByUserId(userId);
     }
 
     @Override
-    public UserDetail getCurrentUser(int id) {
+    public UserDetail getCurrentUser(Integer id) {
         UserDetail userDetail = accountDao.getUserDetailById(id);
         String provinceId = userDetail.getProvince();
         String cityId = userDetail.getCity();

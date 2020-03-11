@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean logout(int uid) {
+    public boolean logout(Integer uid) {
         Boolean delete = template.delete(uid + "");
         if (delete == null) {
             return false;

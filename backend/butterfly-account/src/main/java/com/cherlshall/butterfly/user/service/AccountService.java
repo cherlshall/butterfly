@@ -13,6 +13,6 @@ public interface AccountService {
     /**
      * 登出
      */
-    boolean logout(int uid);
+    boolean logout(Integer uid);
 
 }

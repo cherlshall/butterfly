@@ -27,7 +27,7 @@ export default [
         path: '/dashboard',
         name: 'dashboard',
         icon: 'dashboard',
-        component: './Dashboard/Analysis',
+        component: './Dashboard/Topo',
         // routes: [
         //   {
         //     path: '/dashboard/analysis',

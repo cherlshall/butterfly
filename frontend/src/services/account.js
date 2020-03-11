@@ -13,3 +13,10 @@ export async function accountLogout({ uid }) {
     method: 'POST',
   });
 }
+
+export async function upload(file) {
+  return request(`/server/account/upload`, {
+    method: 'POST',
+    body: file,
+  });
+}

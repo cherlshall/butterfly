@@ -1,11 +1,15 @@
 package com.cherlshall.butterfly.user.controller;
 
+import com.cherlshall.butterfly.common.CookieUtil;
+import com.cherlshall.butterfly.common.vo.Code;
 import com.cherlshall.butterfly.common.vo.R;
 import com.cherlshall.butterfly.user.entity.UserLogin;
 import com.cherlshall.butterfly.user.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -22,11 +26,18 @@ public class AccountController {
     }
 
     @PostMapping("/logout")
-    public R logout(@RequestParam("uid") int uid) {
+    public R logout(HttpServletRequest request) {
+        Integer uid = CookieUtil.getUid(request.getCookies());
         boolean logout = service.logout(uid);
         if (logout) {
             return R.ok("logout success");
         }
         return R.error("logout failure");
     }
+
+    @PostMapping("upload")
+    public R upload(@RequestParam MultipartFile file) {
+        return R.ok();
+    }
+
 }

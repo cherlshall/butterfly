@@ -10,10 +10,10 @@ public interface UserService {
     /**
      * 根据用户id查询通知信息
      */
-    List<Notice> getNotices(int userId);
+    List<Notice> getNotices(Integer userId);
 
     /**
      * 根据用户id获得用户详细信息
      */
-    UserDetail getCurrentUser(int id);
+    UserDetail getCurrentUser(Integer id);
 }

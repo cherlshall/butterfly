@@ -1,6 +1,7 @@
 import * as service from '@/services/m2/field';
 import * as protocolService from '@/services/m2/protocol';
 import * as typeService from '@/services/m2/type';
+import * as accountService from '@/services/account';
 import { message } from 'antd';
 
 export default {
@@ -35,6 +36,12 @@ export default {
       } else {
         message.error(response.msg || 'unknown error');
       }
+    },
+
+    *upload({ payload, callback }, { call }) {
+      console.log(111);
+      const response = yield call(accountService.upload, payload);
+      console.log(2222);
     },
 
     *deleteById({ payload, callback }, { call, put, select }) {
