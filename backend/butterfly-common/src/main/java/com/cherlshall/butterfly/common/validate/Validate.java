@@ -15,14 +15,20 @@ import java.util.Objects;
 public class Validate {
 
     @SuppressWarnings("unchecked")
-    private static Class<? extends Annotation>[] rules = new Class[]{Required.class, Among.class, RangeLength.class,
-            RangeValue.class, RegEx.class, SetNull.class, Trim.class};
+    private static Class<? extends Annotation>[] rules = new Class[]{ SetNull.class, Trim.class, Customize.class,
+            Required.class, Among.class, RangeLength.class, RangeValue.class, RegEx.class };
 
     public static void check(Object checked) {
         check(checked, null);
     }
 
     public static void check(Object checked, String type) {
+        if (checked == null) {
+            throw new ButterflyException("参数不能为空");
+        }
+        if (type != null && type.isEmpty()) {
+            type = null;
+        }
         Class<?> aClass = checked.getClass();
         Field[] fields = aClass.getDeclaredFields();
         for (Field field : fields) {
@@ -57,44 +63,65 @@ public class Validate {
             if (conditions.length == 0) {
                 return true;
             }
+            // 外层为或 只要符合一个就返回true
             for (String condition : conditions) {
-                if (condition.contains("=")) {
-                    String[] split = condition.split("=");
-                    try {
-                        Field field = aClass.getField(split[0]);
-                        field.setAccessible(true);
-                        Object value = field.get(checked);
-                        if (Objects.equals(String.valueOf(value), split[1])) {
-                            return true;
+                // 内层为且 全部符合返回true
+                String[] cons = condition.split(",");
+                boolean shouldParse = true; // 内层是否全部符合
+                for (String con : cons) {
+                    if (con.contains("=")) {
+                        boolean notEq = con.contains("!=");
+                        String[] split = condition.split(notEq ? "!=" : "=");
+                        try {
+                            Field field = aClass.getField(split[0]);
+                            field.setAccessible(true);
+                            Object value = field.get(checked);
+                            // 只要有一个不符合，就设置为false
+                            if (Objects.equals(String.valueOf(value), split[1]) == notEq) {
+                                shouldParse = false;
+                                break;
+                            }
+                        } catch (NoSuchFieldException e) {
+                            shouldParse = false;
+                            break;
                         }
-                    } catch (NoSuchFieldException e) {
-                        return false;
+                    } else {
+                        if (!con.equals(type)) {
+                            shouldParse = false;
+                            break;
+                        }
                     }
-                } else if (condition.equals(type)) {
+                }
+                if (shouldParse) {
                     return true;
                 }
             }
+            // 外层没有一个能符合的
+            return false;
         } catch (NoSuchMethodException ignored) {
+            // 对于没有where参数的，则应该执行parse
             return true;
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     private static void parse(Object object, Field field, Annotation rule, String name, Object value, String valueStr) {
         try {
             @SuppressWarnings("unchecked")
-            Class<? extends RuleParser> parser = (Class<? extends RuleParser>) rule.getClass()
+            Class<? extends RuleParser>[] parsers = (Class<? extends RuleParser>[]) rule.getClass()
                     .getMethod("parser").invoke(rule);
-            if (parser != null && !parser.newInstance().parse(object, field, value, valueStr, rule)) {
-                String message = null;
-                try {
-                    message = parseMessage(rule, name);
-                } catch (NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
+            for (Class<? extends RuleParser> parser : parsers) {
+                if (parser != null && !parser.newInstance().parse(object, field, value, valueStr, rule)) {
+                    String message = null;
+                    try {
+                        message = parseMessage(rule, name);
+                    } catch (NoSuchMethodException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    throw new ButterflyException(message);
                 }
-                throw new ButterflyException(message);
             }
         } catch (ReflectiveOperationException ignored) {
         }

@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author hu.tengfei
- * @date 2020/1/7
+ * Created by htf on 2020/1/7.
  */
 @RestController
 @RequestMapping("m2/field")

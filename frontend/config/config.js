@@ -70,7 +70,7 @@ export default {
   },
   // 路由配置
   routes: pageRoutes,
-  history: 'hash', // 默认是 browser
+  history: 'browser', // browser/hash 默认是 browser
   // Theme for antd
   // https://ant.design/docs/react/customize-theme-cn
   theme: {

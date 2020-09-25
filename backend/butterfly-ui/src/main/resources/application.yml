@@ -9,9 +9,9 @@ server:
   port: 8000
 proxy:
   # localhost:8000/server/example
-  servlet_url: /server/*
+  servlet-url: /server/*
   # localhost:9000/example
-  target_url: http://localhost:9000/
+  target-url: http://localhost:9000/
 eureka:
   instance:
     #eureka主机名，会在控制页面中显示

@@ -5,8 +5,7 @@ import com.cherlshall.butterfly.sql.annotation.Invisible;
 import lombok.Data;
 
 /**
- * @author hu.tengfei
- * @date 2020/1/7
+ * Created by htf on 2020/1/7.
  */
 @Data
 public class Protocol {

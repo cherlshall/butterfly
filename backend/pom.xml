@@ -26,6 +26,7 @@
         <module>butterfly-ui</module>
         <module>butterfly-m2</module>
         <module>butterfly-sql</module>
+        <module>butterfly-util</module>
     </modules>
 
     <properties>

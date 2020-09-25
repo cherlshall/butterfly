@@ -12,6 +12,12 @@
     <artifactId>butterfly-common</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.cherlshall</groupId>
+            <artifactId>butterfly-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- springboot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

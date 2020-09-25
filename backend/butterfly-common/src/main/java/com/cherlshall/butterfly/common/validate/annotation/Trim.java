@@ -23,5 +23,5 @@ public @interface Trim {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default TrimParser.class;
+    Class<? extends RuleParser>[] parser() default TrimParser.class;
 }

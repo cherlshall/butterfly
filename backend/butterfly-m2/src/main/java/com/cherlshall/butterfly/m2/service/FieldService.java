@@ -4,11 +4,8 @@ import com.cherlshall.butterfly.common.vo.PageData;
 import com.cherlshall.butterfly.m2.entity.po.Field;
 import com.cherlshall.butterfly.m2.entity.vo.FieldVO;
 
-import java.util.List;
-
 /**
- * @author hu.tengfei
- * @date 2020/1/7
+ * Created by htf on 2020/1/7.
  */
 public interface FieldService {
 

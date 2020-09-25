@@ -28,6 +28,8 @@ eureka:
       #在注册中心中进行注册
       defaultZone: http://localhost:8888/eureka/
 
-token:
-  #过期时间（小时）
-  timeout: 24
+auth:
+  crowd:
+    url: http://localhost:8095/crowd/
+    applicationName: m2
+    applicationPassword: 111111

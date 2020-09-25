@@ -3,8 +3,7 @@ package com.cherlshall.butterfly.common;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author hu.tengfei
- * @date 2019/8/5
+ * Created by htf on 2019/8/5.
  */
 public class TokenUtil {
 

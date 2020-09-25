@@ -8,8 +8,8 @@ export async function accountLogin(params) {
   });
 }
 
-export async function accountLogout({ uid }) {
-  return request(`/server/account/logout?uid=${uid}`, {
+export async function accountLogout() {
+  return request(`/server/account/logout`, {
     method: 'POST',
   });
 }

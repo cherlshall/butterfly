@@ -1,9 +1,6 @@
 package com.cherlshall.butterfly.sql.driver;
 
-import com.cherlshall.butterfly.sql.annotation.Column;
-import com.cherlshall.butterfly.sql.annotation.Invisible;
-import com.cherlshall.butterfly.sql.annotation.Symbol;
-import com.cherlshall.butterfly.sql.annotation.TableAlias;
+import com.cherlshall.butterfly.sql.annotation.*;
 import com.cherlshall.butterfly.sql.enums.SymbolEnum;
 import com.google.common.base.CaseFormat;
 import org.apache.ibatis.mapping.SqlSource;
@@ -145,6 +142,9 @@ public class CommonSelectLangDriver extends XMLLanguageDriver {
             }
         } else {
             tmp = "<if test=\"_field != null\"> AND _column = #{_field}</if>";
+        }
+        if (field.isAnnotationPresent(NullValid.class)) {
+            tmp += "<if test=\"_field == null\"> AND _column is null</if>";
         }
         return tmp.replaceAll("_field", field.getName()).replaceAll("_column", columnName);
     }

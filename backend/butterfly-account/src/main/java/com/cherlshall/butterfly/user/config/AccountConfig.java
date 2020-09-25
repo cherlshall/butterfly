@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author hu.tengfei
- * @date 2019/8/6
+ * Created by htf on 2019/8/6.
  */
 @Configuration
 public class AccountConfig {

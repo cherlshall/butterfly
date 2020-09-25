@@ -3,6 +3,8 @@ package com.cherlshall.butterfly.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class User {
     private Integer id;
@@ -10,7 +12,7 @@ public class User {
     @JsonIgnore
     private String password;
     private Integer status;
-    private String authority;
+    private List<String> authority;
     private String name;
     private String phone;
     private String email;

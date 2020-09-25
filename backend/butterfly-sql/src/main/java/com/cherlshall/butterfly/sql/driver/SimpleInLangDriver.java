@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class SimpleInLangDriver extends XMLLanguageDriver {
 
-    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)\\}\\)");
+    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)}\\)");
 
     @Override
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {

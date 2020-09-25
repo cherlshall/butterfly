@@ -1,8 +1,6 @@
 package com.cherlshall.butterfly.user.cache;
 
-import com.cherlshall.butterfly.common.io.FileUtil;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import com.cherlshall.butterfly.common.io.ResourceUtil;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -18,22 +16,22 @@ public class FakeConfig {
     @PostConstruct
     public void init() {
         try {
-            CHART_DATA = FileUtil.readJsonStringFromResources("cache/fake/chartData.json");
+            CHART_DATA = ResourceUtil.readStringFromResource("cache/fake/chartData.json");
         } catch (IOException e) {
             System.out.println("初始化fake_chart_data失败");
         }
         try {
-            TAGS = FileUtil.readJsonStringFromResources("cache/fake/tags.json");
+            TAGS = ResourceUtil.readStringFromResource("cache/fake/tags.json");
         } catch (IOException e) {
             System.out.println("初始化fake_tags失败");
         }
         try {
-            LIST = FileUtil.readJsonStringFromResources("cache/fake/list.json");
+            LIST = ResourceUtil.readStringFromResource("cache/fake/list.json");
         } catch (IOException e) {
             System.out.println("初始化fake_list失败");
         }
         try {
-            NOTICE = FileUtil.readJsonStringFromResources("cache/fake/notice.json");
+            NOTICE = ResourceUtil.readStringFromResource("cache/fake/notice.json");
         } catch (IOException e) {
             System.out.println("初始化fake_notice失败");
         }

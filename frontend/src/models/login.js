@@ -1,7 +1,12 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
 import { accountLogin, accountLogout } from '@/services/account';
-import { setToken, getToken, removeToken, setUid, getUid, removeUid } from '@/utils/authority';
+import {
+  setToken,
+  removeToken,
+  removeAuthority,
+  setAuthority
+} from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 import { message } from 'antd';
@@ -15,24 +20,21 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
+      const { autoLogin } = payload;
       const response = yield call(accountLogin, payload);
       if (response.code === 200) {
-        yield put({
-          type: 'changeLoginStatus',
-          payload: response.data,
-        });
-        // Login successfully
-        if (response.data.status === 'ok') {
-          setToken(response.data.token);
-          setUid(response.data.id);
+        const { status, token, currentAuthority} = response.data;
+        if (status === 'ok') {
+          setToken(token, autoLogin);
+          setAuthority(currentAuthority, autoLogin);
           reloadAuthorized();
-          const urlParams = new URL(window.location.href);
-          const params = getPageQuery();
-          let { redirect } = params;
+          const query = getPageQuery();
+          let { redirect } = query;
           if (redirect) {
-            const redirectUrlParams = new URL(redirect);
-            if (redirectUrlParams.origin === urlParams.origin) {
-              redirect = redirect.substr(urlParams.origin.length);
+            const url = new URL(window.location.href);
+            const redirectUrl = new URL(redirect);
+            if (redirectUrl.origin === url.origin) {
+              redirect = redirect.substr(url.origin.length);
               if (redirect.match(/^\/.*#/)) {
                 redirect = redirect.substr(redirect.indexOf('#') + 1);
               }
@@ -44,63 +46,28 @@ export default {
           yield put(routerRedux.replace(redirect || '/'));
         }
       } else {
-        message.error(response.msg || "server error");
+        message.error(response.msg || 'server error');
       }
     },
 
     *getCaptcha({ payload }, { call }) {
-      
+
     },
 
-    *logout(_, { call, put }) {
-      const uid = getUid();
-      if (uid !== '') {
-        const response = yield call(accountLogout, {uid});
-        if (response.code === 200) {
-          yield put({
-            type: 'changeLoginStatus',
-            payload: {
-              status: false,
-              currentAuthority: 'guest',
-            },
-          });
-          removeToken();
-          removeUid();
-          reloadAuthorized();
-          yield put(
-            routerRedux.replace({
-              pathname: '/user/login',
-              search: stringify({
-                redirect: window.location.href,
-              }),
-            })
-          );
-        }
-      } else {
-        removeToken();
-        removeUid();
-        reloadAuthorized();
-        yield put(
-          routerRedux.replace({
-            pathname: '/user/login',
-            search: stringify({
-              redirect: window.location.href,
-            }),
+    *logout({ redirect }, { call, put }) {
+      removeToken();
+      removeAuthority();
+      reloadAuthorized();
+      yield put(
+        routerRedux.replace({
+          pathName: '/user/login',
+          search: stringify({
+            redirect: redirect || window.location.href,
           })
-        );
-      }
-      
+        })
+      )
     },
 
   },
 
-  reducers: {
-    changeLoginStatus(state, { payload }) {
-      return {
-        ...state,
-        status: payload.status,
-        type: payload.type,
-      };
-    },
-  },
 };

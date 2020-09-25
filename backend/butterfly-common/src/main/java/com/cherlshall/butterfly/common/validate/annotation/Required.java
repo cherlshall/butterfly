@@ -33,5 +33,5 @@ public @interface Required {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default RequiredParser.class;
+    Class<? extends RuleParser>[] parser() default RequiredParser.class;
 }

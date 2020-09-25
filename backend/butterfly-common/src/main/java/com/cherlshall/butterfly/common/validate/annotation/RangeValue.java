@@ -38,5 +38,5 @@ public @interface RangeValue {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default RangeValueParser.class;
+    Class<? extends RuleParser>[] parser() default RangeValueParser.class;
 }

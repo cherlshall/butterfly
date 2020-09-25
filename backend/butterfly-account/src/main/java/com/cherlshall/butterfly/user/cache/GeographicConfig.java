@@ -1,8 +1,8 @@
 package com.cherlshall.butterfly.user.cache;
 
-import com.cherlshall.butterfly.common.io.FileUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cherlshall.butterfly.common.io.ResourceUtil;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -18,12 +18,12 @@ public class GeographicConfig {
     @PostConstruct
     public void init() {
         try {
-            PROVINCE = FileUtil.readJsonArrayFromResources("cache/geographic/province.json");
+            PROVINCE = ResourceUtil.readJSONArrayFromResource("cache/geographic/province.json");
         } catch (IOException e) {
             System.out.println("初始化省份信息失败");
         }
         try {
-            CITY = FileUtil.readJsonObjectFromResources("cache/geographic/city.json");
+            CITY = ResourceUtil.readJSONObjectFromResource("cache/geographic/city.json");
         } catch (IOException e) {
             System.out.println("初始化城市信息失败");
         }

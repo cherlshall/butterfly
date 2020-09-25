@@ -23,5 +23,5 @@ public @interface SetNull {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default SetNullParser.class;
+    Class<? extends RuleParser>[] parser() default SetNullParser.class;
 }

@@ -8,6 +8,9 @@ import java.lang.reflect.Field;
 public class RangeLengthParser implements RuleParser {
     @Override
     public boolean parse(Object object, Field field, Object value, String valueStr, Annotation annotation) {
+        if (value == null) {
+            return true;
+        }
         RangeLength rangeLength = (RangeLength) annotation;
         int max = rangeLength.maxLength();
         int min = rangeLength.minLength();

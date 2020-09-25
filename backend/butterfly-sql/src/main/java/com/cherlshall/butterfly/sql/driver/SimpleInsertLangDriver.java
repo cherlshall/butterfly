@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class SimpleInsertLangDriver extends XMLLanguageDriver {
 
-    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)\\}\\)");
+    private final Pattern inPattern = Pattern.compile("\\(#\\{(\\w+)}\\)");
 
     @Override
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
@@ -25,17 +25,17 @@ public class SimpleInsertLangDriver extends XMLLanguageDriver {
             valuesBuilder.append("(");
             for (Field field : parameterType.getDeclaredFields()) {
                 if (!field.isAnnotationPresent(Invisible.class)) {
-                    columnsBuilder.append(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
-                            field.getName()) + ",");
-                    valuesBuilder.append("#{" + field.getName() + "},");
+                    columnsBuilder.append("`").append(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field.getName()))
+                            .append("`,");
+                    valuesBuilder.append("#{").append(field.getName()).append("},");
                 }
             }
             columnsBuilder.deleteCharAt(columnsBuilder.lastIndexOf(","));
             valuesBuilder.deleteCharAt(valuesBuilder.lastIndexOf(","));
             columnsBuilder.append(")");
             valuesBuilder.append(")");
-            scriptBuilder.append("<script>" + matcher.replaceAll(
-                    columnsBuilder.toString() + " values " + valuesBuilder.toString()) + "</script>");
+            scriptBuilder.append("<script>").append(matcher.replaceAll(
+                    columnsBuilder.toString() + " values " + valuesBuilder.toString())).append("</script>");
         }
         return super.createSqlSource(configuration, scriptBuilder.toString(), parameterType);
     }

@@ -33,5 +33,5 @@ public @interface Among {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default AmongParser.class;
+    Class<? extends RuleParser>[] parser() default AmongParser.class;
 }

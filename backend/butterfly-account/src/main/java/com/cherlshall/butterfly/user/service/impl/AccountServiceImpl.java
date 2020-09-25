@@ -1,56 +1,42 @@
 package com.cherlshall.butterfly.user.service.impl;
 
-import com.cherlshall.butterfly.common.TokenUtil;
-import com.cherlshall.butterfly.user.config.AccountConfig;
 import com.cherlshall.butterfly.user.dao.AccountDao;
+import com.cherlshall.butterfly.user.entity.LoginResult;
 import com.cherlshall.butterfly.user.entity.User;
 import com.cherlshall.butterfly.user.service.AccountService;
+import com.cherlshall.butterfly.user.util.Token;
+import com.cherlshall.butterfly.util.auth.Identity;
+import com.cherlshall.butterfly.util.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
-    private AccountConfig config;
-    @Autowired
     private AccountDao accountDao;
-    @Autowired
-    private StringRedisTemplate template;
 
     @Override
-    public Map<String, Object> login(String userName, String password) {
-        User user = accountDao.getIdAndAuthority(userName, password);
-        Map<String, Object> result = new HashMap<>();
-        if (user != null && user.getAuthority() != null) {
-            String token = TokenUtil.create(user.getId());
-            result.put("status", "ok");
-            result.put("type", "account");
-            result.put("currentAuthority", user.getAuthority());
-            result.put("id", user.getId());
-            result.put("token", token);
-            template.opsForValue().set(user.getId().toString(), token, config.getTokenTimeout(), TimeUnit.HOURS);
-            return result;
-        } else {
-            result.put("status", "error");
-            result.put("type", "account");
-            result.put("currentAuthority", "guest");
-            return result;
+    public LoginResult login(String userName, String password) {
+        List<String> authority = accountDao.getAuthority(userName, password);
+        if (authority == null) {
+            return LoginResult.ofFailure();
         }
+        String token = Token.create(userName, authority);
+        return LoginResult.ofSuccess(String.join(Identity.SEP, authority), token);
     }
 
     @Override
-    public boolean logout(Integer uid) {
-        Boolean delete = template.delete(uid + "");
-        if (delete == null) {
-            return false;
-        }
-        return delete;
+    public boolean logout(String token) {
+        return true;
     }
+
+    @Override
+    public UserInfo getUserInfoByToken(String token) {
+        return Token.parse(token);
+    }
+
 
 }

@@ -2,6 +2,7 @@ package com.cherlshall.butterfly.common;
 
 import com.cherlshall.butterfly.common.exception.ButterflyException;
 import com.cherlshall.butterfly.common.vo.Code;
+import com.cherlshall.butterfly.util.auth.Identity;
 
 import javax.servlet.http.Cookie;
 import java.util.*;
@@ -43,5 +44,17 @@ public class CookieUtil {
             throw new ButterflyException(Code.BAD_REQUEST);
         }
         return uid;
+    }
+
+    public static String getUserName(Cookie[] cookies) {
+        return getFirstValue(cookies, "userName");
+    }
+
+    public static String[] getAuth(Cookie[] cookies) {
+        String identity = CookieUtil.getFirstValue(cookies, "identity");
+        if (identity == null) {
+            return null;
+        }
+        return identity.split(Identity.SEP);
     }
 }

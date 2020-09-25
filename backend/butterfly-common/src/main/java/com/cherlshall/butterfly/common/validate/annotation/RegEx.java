@@ -33,5 +33,5 @@ public @interface RegEx {
     /**
      * 指定规则解析器
      */
-    Class<? extends RuleParser> parser() default RegExParser.class;
+    Class<? extends RuleParser>[] parser() default RegExParser.class;
 }
